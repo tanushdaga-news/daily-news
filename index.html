@@ -184,6 +184,52 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
 .section-head h2 { font-size: 32px; }
 @media (prefers-reduced-motion: reduce) { .blob, .arr, .pill .led.on { animation: none; } .card, .tabbtn, .hero .tick { transition: none; } }
 @media (max-width: 520px) { .tabs { gap: 6px; } .tabbtn { padding: 10px 4px; font-size: 13px; } .hero { padding: 22px 16px 16px; } }
+
+/* ---- v4: robust hide, 4 tabs, quiz, popups ---- */
+[hidden] { display: none !important; }
+.tabs { grid-template-columns: repeat(4, minmax(0,1fr)); }
+@media (max-width: 520px) { .tabbtn small { font-size: 11px; } .tabbtn .ic { font-size: 20px; } }
+.btn.big { padding: 12px 24px; font-size: 16px; border-radius: 12px; }
+.qcard { background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--cat); border-radius: 18px; padding: 26px 22px; max-width: 720px; margin: 28px auto 0; animation: rise .4s ease both; }
+.qcard h2 { font-family: var(--font-display); font-size: 32px; margin: 8px 0 8px; }
+.qcard p { margin: 0 0 14px; color: var(--muted); }
+.qemoji { font-size: 54px; line-height: 1; }
+.qfacts { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
+.qfacts span { background: var(--tint); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600; }
+.qbest { color: var(--fg) !important; font-weight: 600; }
+.qtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14px; color: var(--muted); font-weight: 600; }
+.qdots { display: flex; gap: 6px; }
+.qdots i { width: 28px; height: 6px; border-radius: 99px; background: var(--line); }
+.qdots i.on { background: var(--cat); }
+.qdots i.ok { background: var(--up); }
+.qdots i.no { background: var(--down); }
+.qsrc { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 18px 0 4px; }
+.qcard h3 { font-family: var(--font-display); font-size: clamp(22px, 4vw, 28px); line-height: 1.2; margin: 0 0 16px; }
+.qopts { display: grid; gap: 10px; }
+.qopt { text-align: left; display: flex; gap: 12px; align-items: center; border: 2px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 14px; font-weight: 600; cursor: pointer; min-height: 52px; transition: border-color .15s, transform .15s; }
+.qopt:hover:not(:disabled) { border-color: var(--cat); transform: translateX(3px); }
+.qopt b { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--tint); display: grid; place-items: center; font-size: 13px; }
+.qopt.right { border-color: var(--up); background: color-mix(in srgb, var(--up) 14%, var(--surface)); }
+.qopt.wrong { border-color: var(--down); background: color-mix(in srgb, var(--down) 12%, var(--surface)); }
+.qopt:disabled { cursor: default; }
+.qexp { margin-top: 14px !important; color: var(--fg) !important; }
+.qnav { margin-top: 16px; display: flex; justify-content: flex-end; }
+.modal { --cat: var(--tone); position: fixed; inset: 0; background: rgba(8,16,22,.64); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; animation: fade .2s ease both; }
+.mbox { position: relative; background: var(--surface); color: var(--fg); border-radius: 22px; border-top: 6px solid var(--tone); padding: 24px 22px 22px; max-width: 380px; width: 100%; max-height: 92vh; overflow: auto; text-align: center; box-shadow: 0 30px 70px -20px rgba(0,0,0,.6); animation: pop .4s cubic-bezier(.2,1.4,.4,1) both; }
+.memoji { font-size: 62px; line-height: 1; display: inline-block; animation: wob 1.8s ease-in-out infinite; }
+.ring { width: 190px; height: 190px; display: block; margin: 8px auto 0; }
+.mbox h3 { font-family: var(--font-display); font-size: 27px; line-height: 1.15; margin: 10px 0 6px; letter-spacing: .01em; }
+.mbox p { margin: 0 0 8px; color: var(--muted); }
+.mbtns { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+.mbtns .btn.primary { background: var(--tone); border-color: var(--tone); color: #fff; }
+.copybox { width: 100%; min-height: 120px; font: inherit; font-size: 14px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--bg); color: var(--fg); }
+.confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; border-radius: inherit; }
+.confetti i { position: absolute; top: -16px; width: 8px; height: 14px; border-radius: 2px; animation: fall linear forwards; }
+@keyframes fall { to { transform: translateY(560px) rotate(620deg); } }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes wob { 50% { transform: rotate(-7deg) scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .memoji, .mbox, .modal, .qcard { animation: none; } .confetti { display: none; } .qopt { transition: none; } }
 </style>
 
 <div class="wrap">
@@ -210,23 +256,25 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     <input type="hidden" id="topic" value="business">
   </div>
 
-  <div class="chips" role="group" aria-label="Filter stories">
+  <div class="chips" id="chips" role="group" aria-label="Filter stories">
     <button class="chip" type="button" data-f="all" aria-pressed="true">All stories</button>
     <button class="chip" type="button" data-f="high" aria-pressed="false">High India impact</button>
     <button class="chip" type="button" data-f="saved" aria-pressed="false">Saved</button>
     <button class="chip surprise" type="button" id="surprise">Surprise me</button>
   </div>
 
-  <div class="section-head">
+  <div class="section-head" id="shead">
     <h2 id="topic-title"><span class="dot"></span><span id="topic-label">Business news</span></h2>
     <span class="asof" id="asof"></span>
   </div>
   <div class="progress" id="progress"><div class="bar"><i id="bar"></i></div><span id="ptext"></span></div>
   <section class="list" id="list" style="margin-top:16px" aria-live="polite"></section>
-  <div class="next"><button class="btn primary" id="next" type="button"></button></div>
+  <div class="next" id="nextwrap"><button class="btn primary" id="next" type="button"></button></div>
+  <section id="quizbox" hidden></section>
 
-  <p class="foot">Stories are an edition of reports from 21 to 24 Oct 2026 (see the banner above if it is out of date), summarised from the linked outlets; figures are as those outlets reported them. The numbers at the top are the last reported closing figures, not live ticks; use “Live quote” for the current value. The “Impact on India” panels are analysis, not reporting, and are marked as such. The pictures are charts and drawings built from the reported numbers, not photographs. Use “See photos” for real pictures and the source links for the full reports.</p>
+  <p class="foot">Stories are an edition of reports from 21 to 24 Oct 2026 (see the banner above if it is out of date), summarised from the linked outlets; figures are as those outlets reported them. The numbers at the top are the last reported closing figures, not live ticks; use “Live quote” for the current value. The “Impact on India” panels are analysis, not reporting, and are marked as such. The pictures are charts and drawings built from the reported numbers, not photographs. Use “See photos” for real pictures and the source links for the full reports. Your streak grows by one day when you open the full depth of all 15 stories in an edition; missing a whole day resets it.</p>
 </div>
+<div class="modal" id="modal" hidden></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -235,7 +283,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
 
   var NEWS = {
     business: { label: 'Business news', color: 'var(--biz)', stories: [
-      { id: 'b1', level: 'Medium', date: 'Fri 23 Oct', tag: 'Markets · US',
+      { id: 'b1', quiz: {"q": "On Friday 23 Oct, which US index fell the most?", "o": ["Dow Jones", "S&P 500", "Nasdaq Composite", "None of them fell"], "a": 0, "e": "The Dow fell 1.23%, the S&P 500 0.52% and the Nasdaq 0.21%."}, level: 'Medium', date: 'Fri 23 Oct', tag: 'Markets · US',
         title: 'Dow sheds 653 points as the tech sell-off spreads and oil climbs',
         summary: 'The Dow fell 652.82 points (1.23%) to 52,215.16, the S&P 500 lost 0.52% to 7,623.68 and the Nasdaq Composite slipped 0.21% to 25,955.34. The S&P and Nasdaq fell for a second straight week, while the Dow finished the week higher.',
         nums: [{ n: '−1.23%', l: 'Dow Jones' }, { n: '−0.52%', l: 'S&P 500' }, { n: '−0.21%', l: 'Nasdaq Composite' }],
@@ -250,7 +298,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         q: 'Wall Street Dow falls tech sell-off oil October 23 2026',
         art: { type: 'hbars', div: true, max: 1.6, title: 'Friday 23 Oct, % change', rows: [
           { l: 'Dow Jones', v: -1.23, t: '−1.23%' }, { l: 'S&P 500', v: -0.52, t: '−0.52%' }, { l: 'Nasdaq', v: -0.21, t: '−0.21%' }] } },
-      { id: 'b2', level: 'High', date: 'Fri 23 Oct', tag: 'Oil · Energy',
+      { id: 'b2', quiz: {"q": "Where did Brent crude settle on Friday, its highest in six months?", "o": ["$96.40", "$104.15", "$116.72", "$126.41"], "a": 2, "e": "$126.41 was the April peak; $116.72 was Friday’s settle."}, level: 'High', date: 'Fri 23 Oct', tag: 'Oil · Energy',
         title: 'Brent settles at $116.72, a six-month high, as Saudi attacks mount',
         summary: 'Brent crude settled at $116.72 a barrel, its highest in six months and a third straight weekly gain; US crude closed just above $103. Brent has risen about 12% since 1 October on a closing basis.',
         nums: [{ n: '$116.72', l: 'Brent settle, Fri' }, { n: '≈ +12%', l: 'Brent since 1 Oct (closes)' }, { n: '41%', l: 'Hormuz flow below pre-war (Kpler)' }],
@@ -266,7 +314,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         art: { type: 'vbars', title: 'Brent settle, $ a barrel', unit: '$', cols: [
           { l: 'Feb 27', v: 72.48, t: '72' }, { l: 'Apr 30', v: 126.41, t: '126' }, { l: 'Oct 16', v: 109.86, t: '110' }, { l: 'Oct 22', v: 113.17, t: '113' }, { l: 'Oct 23', v: 116.72, t: '117', hl: true }],
           min: 0, side: [{ n: '41%', c: 'Hormuz flow below\npre-war (Kpler)' }, { n: '≈ +12%', c: 'Brent since\n1 Oct (closes)' }] } },
-      { id: 'b3', level: 'High', date: 'Fri 23 Oct', tag: 'Markets · India',
+      { id: 'b3', quiz: {"q": "What was the Nifty 50’s close on Friday 23 Oct?", "o": ["21,950", "22,600", "23,100", "24,000"], "a": 1, "e": "The Sensex closed at 73,123.83."}, level: 'High', date: 'Fri 23 Oct', tag: 'Markets · India',
         title: 'Sensex and Nifty fall again as crude hits $114 and the rupee weakens',
         summary: 'The Sensex slipped 125.56 points (0.17%) to 73,123.83 and the Nifty 50 fell 87.65 points (0.39%) to 22,600. Mid and small caps took the sharper hit, and the rupee weakened from 94.78 to about 95.15 per dollar.',
         nums: [{ n: '73,123.83', l: 'Sensex close' }, { n: '22,600', l: 'Nifty 50 close' }, { n: '≈ ₹95.15', l: 'per US dollar' }],
@@ -282,7 +330,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         art: { type: 'hbars', div: true, max: 3.5, title: 'Friday 23 Oct, % change', rows: [
           { l: 'Sensex', v: -0.17, t: '−0.17%' }, { l: 'Nifty 50', v: -0.39, t: '−0.39%' }, { l: 'Midcap 100', v: -2.21, t: '−2.21%' },
           { l: 'Smallcap 100', v: -2.94, t: '−2.94%' }, { l: 'Nifty Metal', v: -2.98, t: '−2.98%' }, { l: 'PSU Bank', v: -2.52, t: '−2.52%' }] } },
-      { id: 'b4', level: 'High', date: 'Fri 23 Oct · final day', tag: 'IPO · India',
+      { id: 'b4', quiz: {"q": "How many times was Jio Platforms’ IPO subscribed overall?", "o": ["3.04 times", "12.5 times", "22.19 times", "70.55 times"], "a": 2, "e": "70.55x was the QIB portion; 3.04x was day one."}, level: 'High', date: 'Fri 23 Oct · final day', tag: 'IPO · India',
         title: 'Jio’s record IPO ends at 22.19x, led by institutions',
         summary: 'Jio Platforms’ roughly ₹30,200 crore issue closed with 22.19 times overall subscription, with 438.26 crore shares bid against 19.75 crore on offer. Institutions were far more eager than retail: QIBs bid 70.55x, retail 2.72x.',
         nums: [{ n: '22.19x', l: 'overall subscription' }, { n: '70.55x', l: 'QIB portion' }, { n: '2.72x', l: 'retail portion' }],
@@ -297,7 +345,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         q: 'Jio Platforms IPO subscription final day QIB',
         art: { type: 'hbars', title: 'Jio IPO subscription, times', max: 78, rows: [
           { l: 'QIB', v: 70.55, t: '70.55x', c: 'var(--biz)' }, { l: 'Overall', v: 22.19, t: '22.19x' }, { l: 'Non-institutional', v: 14.0, t: '14.00x' }, { l: 'Retail', v: 2.72, t: '2.72x' }] } },
-      { id: 'b5', level: 'Medium', date: '22–23 Oct', tag: 'Energy · Gulf',
+      { id: 'b5', quiz: {"q": "What happened to Saudi stocks after the report on Aramco’s Dhahran headquarters?", "o": ["They fell 2.5%", "They rose 2.5%", "They were unchanged", "They fell 10%"], "a": 0, "e": "Aramco did not comment on the report."}, level: 'Medium', date: '22–23 Oct', tag: 'Energy · Gulf',
         title: 'Aramco asks Dhahran HQ staff to work remotely; Saudi stocks fall 2.5%',
         summary: 'Aramco told staff to leave its Dhahran headquarters and work from home, according to Reuters sources cited by Energy News Beat, and Saudi stocks fell 2.5% after the report. Aramco did not comment.',
         nums: [{ n: '−2.5%', l: 'Saudi stocks after report' }, { n: '7 mb/d', l: 'East-West pipeline capacity' }, { n: '10 mb/d', l: 'capacity Aramco is studying' }],
@@ -314,7 +362,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     ] },
 
     global: { label: 'Global news', color: 'var(--glob)', stories: [
-      { id: 'g1', level: 'High', date: '22–23 Oct', tag: 'Middle East',
+      { id: 'g1', quiz: {"q": "Roughly what share of the world’s oil and gas normally passes through the Strait of Hormuz?", "o": ["About 1 in 50", "About 1 in 20", "About 1 in 5", "About 1 in 2"], "a": 2, "e": "That is why incidents there move energy prices."}, level: 'High', date: '22–23 Oct', tag: 'Middle East',
         title: 'Iran claims seven ships hit near Hormuz; Trump calls it fake and hints at new strikes',
         summary: 'Iran’s Revolutionary Guard says it struck four ships and that three more hit mines near the Strait of Hormuz. President Trump calls the claims fake, and no independent confirmation of the seven-ship total was found.',
         nums: [{ n: '7', l: 'ships claimed hit (disputed)' }, { n: '≈1 in 5', l: 'of world oil and LNG normally passes Hormuz' }, { n: '$126.41', l: 'Brent peak, 30 Apr' }],
@@ -328,7 +376,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         sources: [{ n: 'Al Jazeera explainer', u: 'https://www.aljazeera.com/news/2026/10/23/us-iran-war-then-and-now-how-the-landscape-has-changed-since-february' }, { n: 'Al Jazeera live blog', u: 'https://www.aljazeera.com/news/liveblog/2026/10/23/trump-hints-new-strikes-says-us-knocked-hell-out-of-iran' }, { n: 'Energy News Beat', u: 'https://energynewsbeat.co/crude-oil/brent-tops-114-as-houthi-attacks-reach-saudi-oil-and-aramco-clears-its-headquarters/' }],
         q: 'Strait of Hormuz IRGC ships mines tanker Trump Iran strikes',
         art: { type: 'hormuz' } },
-      { id: 'g2', level: 'Medium', date: 'Fri 23 Oct', tag: 'Europe · Energy',
+      { id: 'g2', quiz: {"q": "How full is the EU’s gas storage, according to the IEA chief’s warning?", "o": ["About 52%", "About 72%", "About 90%", "About 100%"], "a": 1, "e": "The usual level at this time of year is about 90%."}, level: 'Medium', date: 'Fri 23 Oct', tag: 'Europe · Energy',
         title: 'Europe enters winter with record-low gas reserves, IEA chief warns',
         summary: 'EU gas storage is about 72% full against a usual 90% at this time of year. IEA head Fatih Birol says Europe cannot absorb further supply shocks and that “life will not be easy for Europe this year and also next year”.',
         nums: [{ n: '72%', l: 'EU gas storage (usual 90%)' }, { n: '≈ +140%', l: 'gas prices since February' }, { n: '≈ 1/10', l: 'of Europe’s LNG came via Hormuz pre-war' }],
@@ -343,7 +391,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         q: 'Europe gas storage winter IEA Birol warning',
         art: { type: 'hbars', title: 'EU gas storage, % full', max: 100, rows: [
           { l: 'Now', v: 72, t: '72%', c: 'var(--glob)' }, { l: 'Usual for\nthis date', v: 90, t: '≈ 90%' }] } },
-      { id: 'g3', level: 'Low', date: 'Fri 23 Oct', tag: 'Middle East',
+      { id: 'g3', quiz: {"q": "In which country did gunmen attack a church funeral on Friday?", "o": ["Jordan", "Lebanon", "Egypt", "Syria"], "a": 0, "e": "The attack was in Hamoud village, Karak governorate."}, level: 'Low', date: 'Fri 23 Oct', tag: 'Middle East',
         title: 'Gunmen kill at least seven at a church funeral in Jordan',
         summary: 'Two masked gunmen attacked a Greek Orthodox church in Hamoud village, Karak governorate, killing at least seven people and wounding 34. No group has claimed responsibility.',
         nums: [{ n: '≥ 7', l: 'killed' }, { n: '34', l: 'wounded' }, { n: '≈ 300,000', l: 'Christians in Jordan (of ≈ 11.5M)' }],
@@ -357,7 +405,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         q: 'Jordan church attack Karak Hamoud gunmen',
         art: { type: 'stats', title: 'Church attack, Karak, Jordan', tiles: [
           { n: '≥ 7', c: 'people killed' }, { n: '34', c: 'wounded' }, { n: '27', c: 'of the wounded in\nhospital treatment' }, { n: '2', c: 'masked gunmen' }] } },
-      { id: 'g4', level: 'Low', date: 'Sun 25 Oct', tag: 'Europe · Serbia',
+      { id: 'g4', quiz: {"q": "On which date does Serbia hold its snap election?", "o": ["23 October", "25 October", "28 October", "3 November"], "a": 1, "e": "3 November is the date of the US midterms."}, level: 'Low', date: 'Sun 25 Oct', tag: 'Europe · Serbia',
         title: 'Serbia votes Sunday in a snap election as students challenge Vučić',
         summary: 'Serbia holds a snap parliamentary election on 25 October. President Aleksandar Vučić resigned the presidency in September to lead his Progressive Party’s list as candidate for prime minister, against a student-backed list that grew out of nationwide protests.',
         nums: [{ n: '250', l: 'National Assembly seats' }, { n: '3%', l: 'threshold for lists' }, { n: '16', l: 'killed in the 2024 Novi Sad canopy collapse' }],
@@ -372,7 +420,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         q: 'Serbia snap election Vucic students protest October 2026',
         art: { type: 'stats', title: 'Serbia’s 25 October election', tiles: [
           { n: '250', c: 'seats, one nationwide\nconstituency' }, { n: '3%', c: 'threshold for lists' }, { n: '14 yrs', c: 'SNS in government' }, { n: '16', c: 'killed in Novi Sad\ncanopy collapse, 2024' }] } },
-      { id: 'g5', level: 'Medium', date: 'Fri 23 Oct', tag: 'Ukraine · Russia',
+      { id: 'g5', quiz: {"q": "About how many residents remain in Russian-occupied Oleshky, whom the local ceasefire is meant to let leave?", "o": ["About 200", "About 2,000", "About 24,000", "About 240,000"], "a": 1, "e": "About 24,000 lived there before the war."}, level: 'Medium', date: 'Fri 23 Oct', tag: 'Ukraine · Russia',
         title: 'White House says Melania Trump secured a local ceasefire in Oleshky',
         summary: 'The White House says the First Lady secured a “localised” ceasefire in Russian-occupied Oleshky so about 2,000 remaining residents can leave. A Ukrainian official said it would begin on 27 October; the Kremlin said timing is still being coordinated.',
         nums: [{ n: '≈ 2,000', l: 'residents remaining (of ≈ 24,000)' }, { n: '27 Oct', l: 'start per a Ukrainian official' }, { n: 'Nov', l: 'next talks, Abu Dhabi' }],
@@ -389,7 +437,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     ] },
 
     sports: { label: 'Sports news', color: 'var(--sport)', stories: [
-      { id: 's1', level: 'High', date: 'Sat 24 Oct', tag: 'Cricket',
+      { id: 's1', quiz: {"q": "What is the score in India’s five-match T20I series against New Zealand, as of this edition?", "o": ["New Zealand lead 1–0", "Level at 1–1", "India lead 1–0", "India lead 2–0"], "a": 2, "e": "India won the first T20I; the second match was due on 24 Oct."}, level: 'High', date: 'Sat 24 Oct', tag: 'Cricket',
         title: 'India lead New Zealand 1–0; Kishan out as the 2nd T20I starts at 12:30 PM IST',
         summary: 'India lead the five-match T20I series 1–0 after chasing 226 in the opener. The second match is today at Hagley Oval, Christchurch, and Ishan Kishan is out with an adductor strain. As of this edition (about 6:35 AM IST) the match has not started.',
         nums: [{ n: '1–0', l: 'India lead, 5-match series' }, { n: '12:30 PM', l: 'IST start today' }, { n: '20 of 32', l: 'India wins in T20Is v NZ' }],
@@ -404,7 +452,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         q: 'India vs New Zealand 2nd T20I Hagley Oval Ishan Kishan ruled out',
         art: { type: 'stats', title: 'India v NZ T20I series', tiles: [
           { n: '1–0', c: 'India lead after\n1st T20I (22 Oct)' }, { n: '12:30 PM', c: '2nd T20I, today\nIST, Christchurch' }, { n: '3 left', c: 'after today: 27 Oct,\n30 Oct, 1 Nov' }, { n: '20 of 32', c: 'India wins v NZ\nin T20Is' }] } },
-      { id: 's2', level: 'High', date: 'Thu 22 Oct', tag: 'Cricket',
+      { id: 's2', quiz: {"q": "What target did India chase down in the first T20I at Hagley Oval?", "o": ["186", "205", "226", "250"], "a": 2, "e": "New Zealand made 225/4; India won by four wickets with two balls to spare."}, level: 'High', date: 'Thu 22 Oct', tag: 'Cricket',
         title: 'India chase 226 in New Zealand, their highest successful T20I chase',
         summary: 'Chasing 226 at Hagley Oval, India won the first T20I by four wickets with two balls to spare, their highest successful T20I chase. Glenn Phillips had made an unbeaten 82 off 40 for New Zealand.',
         nums: [{ n: '226', l: 'target chased, 1st T20I' }, { n: '4 wkts', l: 'margin, 2 balls to spare' }, { n: '82* (40)', l: 'Glenn Phillips, NZ' }],
@@ -420,7 +468,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         art: { type: 'hbars', title: 'Top scores, 1st T20I (runs)', max: 90, rows: [
           { l: 'G. Phillips (NZ)\n40 balls', v: 82, t: '82*', c: 'var(--sport)' }, { l: 'Sanju Samson\n33 balls', v: 67, t: '67' }, { l: 'Finn Allen (NZ)\n24 balls', v: 45, t: '45' },
           { l: 'Shreyas Iyer\n28 balls', v: 42, t: '42' }, { l: 'Naman Dhir\n15 balls', v: 42, t: '42*' }] } },
-      { id: 's3', level: 'High', date: '19–24 Oct', tag: 'Para sport',
+      { id: 's3', quiz: {"q": "How many medals did India win at the Asian Para Games, a record?", "o": ["102", "108", "114", "125"], "a": 2, "e": "The previous best was 108, at Hangzhou."}, level: 'High', date: '19–24 Oct', tag: 'Para sport',
         title: 'India finish the Asian Para Games with a record 114 medals',
         summary: 'India ended on 30 gold, 35 silver and 49 bronze, fourth in the standings, beating their previous best of 108 from Hangzhou. Para-athletics gave 65 medals, and para-swimming rose from one medal to 11.',
         nums: [{ n: '114', l: 'medals: 30 gold, 35 silver, 49 bronze' }, { n: '108', l: 'previous best, Hangzhou' }, { n: '4th', l: 'final standing' }],
@@ -433,7 +481,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         sources: [{ n: 'India TV', u: 'https://www.indiatvnews.com/sports/other/india-finishes-asian-para-games-2026-with-record-medal-tally-check-full-list-of-winners-2026-10-23-1057759' }, { n: 'Outlook India', u: 'https://www.outlookindia.com/sports/others/asian-para-games-2026-india-medal-tally-full-list' }],
         q: 'India Asian Para Games 2026 record 114 medals Nagoya',
         art: { type: 'waffle', title: '114 medals · 4th place · record', parts: [['#d9a516', 30, '30 gold'], ['#98a4ad', 35, '35 silver'], ['#b8733a', 49, '49 bronze']] } },
-      { id: 's4', level: 'High', date: '20–23 Oct', tag: 'Para sport',
+      { id: 's4', quiz: {"q": "Which Indian athlete set a Games record of 24.80 s in the 200 m T12?", "o": ["Simran", "Deepthi Jeevanji", "Pranav Soorma", "Sumit Antil"], "a": 0, "e": "Deepthi Jeevanji’s Games record was in the 400 m T20 (56.36 s)."}, level: 'High', date: '20–23 Oct', tag: 'Para sport',
         title: 'Para Games stars: Soorma, Gavit, Simran, Antil and Sheetal Devi',
         summary: 'Pranav Soorma won golds in discus and club throw, Dilip Gavit took the 100 m and 400 m T47, and Simran won the 100 m and 200 m T12. Sumit Antil won javelin gold, and Mona Agarwal won two rifle golds.',
         nums: [{ n: '65', l: 'para-athletics medals (22 gold)' }, { n: '1 → 11', l: 'para-swimming medals' }, { n: '24.80 s', l: 'Simran, 200 m T12 (Games record)' }],
@@ -447,7 +495,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         q: 'Pranav Soorma Sheetal Devi Simran Asian Para Games gold',
         art: { type: 'stats', title: 'Para Games highlights', tiles: [
           { n: '65', c: 'para-athletics medals\n22 gold' }, { n: '1 → 11', c: 'para-swimming\nmedals' }, { n: '24.80 s', c: 'Simran, 200 m T12\nGames record' }, { n: '2 golds', c: 'each: Soorma, Gavit,\nSimran, Agarwal' }] } },
-      { id: 's5', level: 'High', date: 'Fri 23 Oct', tag: 'Kabaddi',
+      { id: 's5', quiz: {"q": "What was the score when India’s men beat England in the Commonwealth Kabaddi opener?", "o": ["36–30", "46–26", "50–20", "73–13"], "a": 1, "e": "73–13 was the women’s win over Malaysia."}, level: 'High', date: 'Fri 23 Oct', tag: 'Kabaddi',
         title: 'India win Commonwealth Kabaddi openers: men 46–26 England, women 73–13 Malaysia',
         summary: 'India’s men beat England 46–26 (23–9 at half-time) and the women beat Malaysia 73–13 (30–11 at half-time) in the first Commonwealth Kabaddi Championship matches on Friday.',
         nums: [{ n: '46–26', l: 'India men v England' }, { n: '73–13', l: 'India women v Malaysia' }, { n: '23–31 Oct', l: 'tournament dates' }],
@@ -480,9 +528,11 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var saved = lsGet('nd2-saved') || {};
-  var opened = lsGet('nd2-open') || {};
+  var SEEN_KEY = 'nd3-seen-' + SNAPSHOT_ISO;
+  var seen = lsGet(SEEN_KEY) || {};   // stories whose depth was opened in this edition
+  var exp = {};                        // stories currently expanded (this visit only)
   var filter = 'all';
-  var firstShow = {};   // first story per topic opens by default the first time it is shown
+  var view = 'news';
 
   // ---------- helpers ----------
   function h(tag, props, kids) {
@@ -524,10 +574,42 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     $('stripnote').textContent = 'Last reported closing figures from the ' + SNAPSHOT + ' edition, not live ticks. Tap “Live quote” for the current value.';
   }
 
-  // ---------- IST clock, NSE hours, edition age, streak ----------
+  // ---------- IST clock, NSE hours, edition age ----------
   function ist() {
     var p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hour12: false }).formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
     return { iso: p.year + '-' + p.month + '-' + p.day, mins: (+p.hour % 24) * 60 + (+p.minute), wk: p.weekday };
+  }
+  function topicKeys() { return Object.keys(NEWS); }
+  function totalStories() { var n = 0; topicKeys().forEach(function (k) { n += NEWS[k].stories.length; }); return n; }
+  function seenCount() { var n = 0; topicKeys().forEach(function (k) { NEWS[k].stories.forEach(function (s) { if (seen[s.id]) n++; }); }); return n; }
+
+  // ---------- streak: a day counts only when all stories were opened ----------
+  function dayDiff(a, b) { return Math.round((Date.parse(b) - Date.parse(a)) / 86400000); }
+  function streakGet() { var r = lsGet('nd3-streak'); return (r && typeof r.n === 'number') ? r : { last: '', n: 0 }; }
+  function markSeen(id) {
+    if (!seen[id]) {
+      seen[id] = 1; lsSet(SEEN_KEY, seen); renderPills();
+      if (seenCount() >= totalStories()) completeEdition();
+    }
+    renderProgress();
+  }
+  function completeEdition() {
+    var r = streakGet();
+    if (r.last && dayDiff(r.last, SNAPSHOT_ISO) <= 0) return;      // already counted (or an older edition)
+    var n = (r.last && r.n > 0 && dayDiff(r.last, SNAPSHOT_ISO) === 1) ? r.n + 1 : 1;
+    lsSet('nd3-streak', { last: SNAPSHOT_ISO, n: n }); renderPills();
+    if (n % 10 === 0) {
+      popup({ tone: '#e0701a', emoji: '🔥', big: String(n), label: 'DAY STREAK', heading: 'GOOD! KEEP GOING', sub: 'You have read every story for ' + n + ' days in a row.', confetti: true, buttons: [{ t: 'Keep it going', primary: true }] });
+    } else {
+      toast(n === 1 ? 'All stories read. Streak started 🔥' : 'All stories read · ' + n + '-day streak 🔥');
+    }
+  }
+  function checkBreak() {
+    var r = streakGet();
+    if (r.n > 0 && r.last && dayDiff(r.last, ist().iso) >= 2) {
+      var was = r.n; r.n = 0; lsSet('nd3-streak', r); renderPills();
+      popup({ tone: '#5f6f77', emoji: '😭', big: '0', label: 'DAY STREAK', heading: 'LET’S BUILD IT AGAIN', sub: 'Your ' + was + '-day streak ended because a day was missed. Read all stories today to start a new one.', buttons: [{ t: 'Start again', primary: true }] });
+    }
   }
   function renderPills() {
     var t = ist(), wd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(t.wk) > -1, open = wd && t.mins >= 555 && t.mins <= 930;
@@ -535,36 +617,173 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     box.appendChild(h('span', { class: 'pill' }, [h('i', { class: 'led' + (open ? ' on' : '') }), open ? 'NSE trading hours now' : 'NSE closed (hours 9:15–15:30 IST, Mon–Fri)']));
     var days = Math.round((Date.parse(t.iso) - Date.parse(SNAPSHOT_ISO)) / 86400000);
     box.appendChild(h('span', { class: 'pill', text: 'Edition: ' + SNAPSHOT }));
-    var stk = streak(t.iso);
-    if (stk > 0) box.appendChild(h('span', { class: 'pill', text: '🔥 ' + stk + '-day streak' }));
+    var n = seenCount(), tot = totalStories(), r = streakGet();
+    var tip = 'Open “Read the depth” on all ' + tot + ' stories to add a day to your streak.';
+    box.appendChild(h('span', { class: 'pill', title: tip, text: (n >= tot ? '✅ ' : '📖 ') + n + '/' + tot + ' read' }));
+    box.appendChild(h('span', { class: 'pill', title: tip, text: '🔥 ' + r.n + '-day streak' }));
     var s2 = $('stale');
-    if (days >= 1) { s2.hidden = false; s2.textContent = 'This edition is from ' + SNAPSHOT + ', ' + days + ' day' + (days > 1 ? 's' : '') + ' ago. A fresh edition is meant to be published each morning; reload the page later, or ask Claude to refresh it now.'; }
+    if (days >= 1) { s2.hidden = false; s2.textContent = 'This edition is from ' + SNAPSHOT + ', ' + days + ' day' + (days > 1 ? 's' : '') + ' ago. A fresh edition is meant to be published each morning; reload the page later.'; }
     else s2.hidden = true;
-  }
-  function streak(today) {
-    var r = lsGet('nd2-streak') || { last: '', n: 0 };
-    if (r.last !== today) {
-      var y = new Date(Date.parse(today) - 86400000).toISOString().slice(0, 10);
-      r = { last: today, n: r.last === y ? r.n + 1 : 1 }; lsSet('nd2-streak', r);
-    }
-    return r.n;
   }
   function renderTabs() {
     var box = $('tabs'), cur = $('topic').value; box.textContent = '';
     var ic = { business: '📈', global: '🌍', sports: '🏆' };
     topicKeys().forEach(function (k) {
-      var b = h('button', { class: 'tabbtn', type: 'button', 'aria-pressed': String(k === cur), style: '--cat:' + NEWS[k].color }, [h('span', { class: 'ic', text: ic[k] }), NEWS[k].label.replace(' news', ''), h('small', { text: NEWS[k].stories.length + ' stories' })]);
-      b.addEventListener('click', function () { $('topic').value = k; lsSet('nd2-topic', k); renderNews(); });
+      var b = h('button', { class: 'tabbtn', type: 'button', 'aria-pressed': String(view === 'news' && k === cur), style: '--cat:' + NEWS[k].color }, [h('span', { class: 'ic', text: ic[k] || '📰' }), NEWS[k].label.replace(' news', ''), h('small', { text: NEWS[k].stories.length + ' stories' })]);
+      b.addEventListener('click', function () { view = 'news'; $('topic').value = k; lsSet('nd2-topic', k); renderNews(); });
       box.appendChild(b);
     });
+    var q = h('button', { class: 'tabbtn', type: 'button', 'aria-pressed': String(view === 'quiz'), style: '--cat:#7b3fd1' }, [h('span', { class: 'ic', text: '🧠' }), 'Quiz', h('small', { text: '5 questions' })]);
+    q.addEventListener('click', function () { view = 'quiz'; quizReset(); renderNews(); });
+    box.appendChild(q);
   }
   function surprise() {
     var all = []; topicKeys().forEach(function (k) { NEWS[k].stories.forEach(function (s) { all.push([k, s]); }); });
-    var un = all.filter(function (a) { return !opened[a[1].id]; }), pool = un.length ? un : all, p = pool[Math.floor(Math.random() * pool.length)];
-    filter = 'all'; Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'), function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-f') === 'all')); });
-    $('topic').value = p[0]; lsSet('nd2-topic', p[0]); opened[p[1].id] = 1; lsSet('nd2-open', opened); renderNews();
+    var un = all.filter(function (a) { return !seen[a[1].id]; }), pool = un.length ? un : all, p = pool[Math.floor(Math.random() * pool.length)];
+    view = 'news'; filter = 'all'; Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'), function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-f') === 'all')); });
+    $('topic').value = p[0]; lsSet('nd2-topic', p[0]); exp[p[1].id] = 1; renderNews(); markSeen(p[1].id);
     var n = document.getElementById('card-' + p[1].id), rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (n) n.scrollIntoView({ behavior: rm ? 'auto' : 'smooth', block: 'center' });
+  }
+
+  // ---------- copy (works on phones: tries three routes) ----------
+  function legacyCopy(t) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px';
+      document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, t.length);
+      var ok = document.execCommand('copy'); document.body.removeChild(ta); return ok;
+    } catch (e) { return false; }
+  }
+  function copyText(t) {
+    if (legacyCopy(t)) { toast('Summary copied'); return; }
+    var viaApi = (navigator.clipboard && navigator.clipboard.writeText) ? navigator.clipboard.writeText(t) : Promise.reject();
+    viaApi.then(function () { toast('Summary copied'); }, function () {
+      if (navigator.share) { navigator.share({ text: t }).catch(function () {}); return; }
+      popup({ tone: '#0b6e8a', emoji: '📋', heading: 'Copy this text', sub: 'Your browser blocked automatic copying. Press and hold the text below, choose Select all, then Copy.', text: t, buttons: [{ t: 'Done', primary: true }] });
+    });
+  }
+
+  // ---------- popups ----------
+  var ringN = 0, lastFocus = null;
+  function ring(big, label) {
+    var id = 'rp' + (++ringN), svg = el('svg', { viewBox: '0 0 200 200', class: 'ring', role: 'img', 'aria-label': label + ' ' + big });
+    add(svg, 'circle', { cx: 100, cy: 100, r: 96, fill: 'var(--surface)', stroke: 'var(--tone)', 'stroke-width': 4 });
+    add(svg, 'circle', { cx: 100, cy: 100, r: 60, fill: 'none', stroke: 'var(--tone)', 'stroke-width': 2, opacity: 0.45 });
+    var defs = add(svg, 'defs', {}); add(defs, 'path', { id: id, d: 'M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0' });
+    var reps = Math.max(2, Math.round(30 / (label.length + 3))), str = ''; for (var i = 0; i < reps; i++) str += label + ' ✦ ';
+    var t = add(svg, 'text', { 'font-size': 15, 'font-weight': 800, 'letter-spacing': 1.5, fill: 'var(--tone)' }); t.style.fontFamily = 'var(--font-ui)';
+    var tp = document.createElementNS(NS, 'textPath'); tp.setAttribute('href', '#' + id); tp.setAttribute('startOffset', '0');
+    tp.setAttribute('textLength', '480'); tp.setAttribute('lengthAdjust', 'spacing'); tp.textContent = str.trim(); t.appendChild(tp);
+    txt(svg, 100, big.length > 3 ? 112 : 119, big, big.length > 3 ? 38 : 50, FG, 'middle', 800);
+    return svg;
+  }
+  function confetti() {
+    var c = h('div', { class: 'confetti', 'aria-hidden': 'true' }), cols = ['#d9a516', '#1f8a5b', '#2f6fdb', '#d4800f', '#e05297', '#4fb8d6'];
+    for (var i = 0; i < 40; i++) {
+      var p = h('i'); p.style.left = (Math.random() * 100) + '%'; p.style.background = cols[i % cols.length];
+      p.style.animationDelay = (Math.random() * 0.8) + 's'; p.style.animationDuration = (2.2 + Math.random() * 1.6) + 's'; c.appendChild(p);
+    }
+    return c;
+  }
+  function closePopup() { var m = $('modal'); if (m.hidden) return; m.hidden = true; m.textContent = ''; if (lastFocus && lastFocus.focus) { try { lastFocus.focus({ preventScroll: true }); } catch (e) {} } }
+  function popup(o) {
+    var m = $('modal'); m.textContent = ''; m.style.setProperty('--tone', o.tone);
+    var box = h('div', { class: 'mbox', role: 'dialog', 'aria-modal': 'true', 'aria-label': o.heading });
+    if (o.confetti) box.appendChild(confetti());
+    box.appendChild(h('div', { class: 'memoji', text: o.emoji }));
+    if (o.big) box.appendChild(ring(o.big, o.label));
+    box.appendChild(h('h3', { text: o.heading }));
+    if (o.sub) box.appendChild(h('p', { text: o.sub }));
+    if (o.text) { var ta = h('textarea', { class: 'copybox', readonly: 'readonly' }); ta.value = o.text; box.appendChild(ta); }
+    var row = h('div', { class: 'mbtns' });
+    o.buttons.forEach(function (b) {
+      var bt = h('button', { class: 'btn' + (b.primary ? ' primary' : ''), type: 'button', text: b.t });
+      bt.addEventListener('click', function () { closePopup(); if (b.f) b.f(); }); row.appendChild(bt);
+    });
+    box.appendChild(row); m.appendChild(box); lastFocus = document.activeElement; m.hidden = false;
+    try { row.firstChild.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  // ---------- quiz ----------
+  var quiz = { state: 'intro', qs: [], i: 0, score: 0, locked: false };
+  var TONES = {
+    5: { w: 'SCHOLAR', e: '🎓🏆', c: '#d9a516', m: 'A perfect score. You really know today’s news!' },
+    4: { w: 'VERY GOOD', e: '🎉', c: '#1f8a5b', m: 'Almost perfect. Well read!' },
+    3: { w: 'GOOD', e: '👍', c: '#2f6fdb', m: 'A solid score. Re-read a few stories to climb higher.' },
+    2: { w: 'AVERAGE', e: '😐', c: '#d4800f', m: 'Not bad. Open more of the stories and try again.' },
+    1: { w: 'FAIL', e: '😢', c: '#c0392b', m: 'Read the stories in depth, then try again.' },
+    0: { w: 'FAIL', e: '😵', c: '#c0392b', m: 'Read the stories in depth, then try again.' }
+  };
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function quizReset() { quiz = { state: 'intro', qs: [], i: 0, score: 0, locked: false }; }
+  function buildQ(s) {
+    var z = s.quiz;
+    if (z && z.o && z.o.length >= 2 && typeof z.a === 'number' && z.a >= 0 && z.a < z.o.length) {
+      return { q: z.q, o: shuffle(z.o.map(function (t, i) { return { t: t, c: i === z.a }; })), e: z.e || '', src: s.title };
+    }
+    var nn = (s.nums || []).filter(function (n) { return /\d/.test(n.n); }); if (!nn.length) return null;
+    var n = nn[0], others = [];
+    topicKeys().forEach(function (k) { NEWS[k].stories.forEach(function (o) { if (o !== s) (o.nums || []).forEach(function (m) { if (/\d/.test(m.n) && m.n !== n.n && others.indexOf(m.n) < 0) others.push(m.n); }); }); });
+    if (others.length < 3) return null;
+    shuffle(others);
+    return { q: 'In the story “' + s.title + '”, which figure goes with: ' + n.l + '?', o: shuffle([{ t: n.n, c: true }].concat(others.slice(0, 3).map(function (t) { return { t: t, c: false }; }))), e: '', src: s.title };
+  }
+  function pickQuestions() {
+    var keys = shuffle(topicKeys().slice()), counts = shuffle([2, 2, 1]), want = {}, qs = [];
+    keys.forEach(function (k, i) { want[k] = counts[i % counts.length]; });
+    keys.forEach(function (k) {
+      var got = 0; shuffle(NEWS[k].stories.slice()).forEach(function (s) { if (got >= want[k]) return; var q = buildQ(s); if (q) { qs.push(q); got++; } });
+    });
+    return shuffle(qs).slice(0, 5);
+  }
+  function startQuiz() { quiz = { state: 'q', qs: pickQuestions(), i: 0, score: 0, locked: false, res: [] }; renderQuiz(); }
+  function finishQuiz() {
+    var sc = quiz.score, best = lsGet('nd3-quizbest-' + SNAPSHOT_ISO);
+    if (best === null || sc > best) lsSet('nd3-quizbest-' + SNAPSHOT_ISO, sc);
+    var t = TONES[sc], total = quiz.qs.length;
+    quizReset(); renderQuiz();
+    popup({ tone: t.c, emoji: t.e, big: sc + '/' + total, label: t.w, heading: sc >= 2 ? t.w + '!' : 'FAIL', sub: t.m, confetti: sc === total, buttons: [{ t: 'Try again', primary: true, f: startQuiz }, { t: 'Back to news', f: function () { view = 'news'; renderNews(); window.scrollTo(0, 0); } }] });
+  }
+  function renderQuiz() {
+    var box = $('quizbox'); box.textContent = '';
+    var wrap = h('div', { class: 'qcard', style: '--cat:#7b3fd1' });
+    if (quiz.state === 'intro') {
+      var best = lsGet('nd3-quizbest-' + SNAPSHOT_ISO);
+      wrap.appendChild(h('div', { class: 'qemoji', text: '🧠' }));
+      wrap.appendChild(h('h2', { text: 'Today’s news quiz' }));
+      wrap.appendChild(h('p', { text: 'Five quick questions from today’s ' + totalStories() + ' stories. One mark each. Read the stories first, then see how much you remember.' }));
+      wrap.appendChild(h('div', { class: 'qfacts' }, [h('span', { text: '5 questions' }), h('span', { text: '1 mark each' }), h('span', { text: 'From all 3 topics' })]));
+      if (best !== null) wrap.appendChild(h('p', { class: 'qbest', text: 'Your best score on this edition: ' + best + '/5' }));
+      var go = h('button', { class: 'btn primary big', type: 'button', text: best !== null ? 'Take it again' : 'Start the quiz' });
+      go.addEventListener('click', startQuiz); wrap.appendChild(go);
+    } else {
+      var q = quiz.qs[quiz.i], dots = h('div', { class: 'qdots' });
+      quiz.qs.forEach(function (_, i) { dots.appendChild(h('i', { class: i < quiz.i ? (quiz.res && quiz.res[i] ? 'ok' : 'no') : (i === quiz.i ? 'on' : '') })); });
+      wrap.appendChild(h('div', { class: 'qtop' }, [h('span', { text: 'Question ' + (quiz.i + 1) + ' of ' + quiz.qs.length }), dots, h('span', { text: 'Score ' + quiz.score })]));
+      wrap.appendChild(h('div', { class: 'qsrc', text: 'From: ' + q.src }));
+      wrap.appendChild(h('h3', { text: q.q }));
+      var opts = h('div', { class: 'qopts' }), exp2 = h('p', { class: 'qexp' }); exp2.hidden = true;
+      var nav = h('div', { class: 'qnav' }); nav.hidden = true;
+      var nb = h('button', { class: 'btn primary big', type: 'button', text: quiz.i + 1 < quiz.qs.length ? 'Next question →' : 'See my score' });
+      nb.addEventListener('click', function () { quiz.i++; quiz.locked = false; if (quiz.i >= quiz.qs.length) finishQuiz(); else renderQuiz(); });
+      nav.appendChild(nb);
+      var btns = [];
+      q.o.forEach(function (o, i) {
+        var b = h('button', { class: 'qopt', type: 'button' }, [h('b', { text: 'ABCD'.charAt(i) }), h('span', { text: o.t })]);
+        b.addEventListener('click', function () {
+          if (quiz.locked) return; quiz.locked = true;
+          quiz.res = quiz.res || []; quiz.res[quiz.i] = o.c;
+          if (o.c) quiz.score++;
+          btns.forEach(function (x, j) { x.disabled = true; if (q.o[j].c) x.classList.add('right'); else if (x === b) x.classList.add('wrong'); });
+          exp2.textContent = (o.c ? '✅ Correct, +1 mark. ' : '❌ Not quite. ') + (q.e || ''); exp2.hidden = false; nav.hidden = false;
+          try { nb.focus({ preventScroll: true }); } catch (e) {}
+        });
+        btns.push(b); opts.appendChild(b);
+      });
+      wrap.appendChild(opts); wrap.appendChild(exp2); wrap.appendChild(nav);
+    }
+    box.appendChild(wrap);
   }
 
   // ---------- chart drawing (SVG built from the reported numbers) ----------
@@ -680,7 +899,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   function photoUrl(q) { return 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(q); }
 
   function card(story, cat, idx) {
-    var isOpen = !!opened[story.id];
+    var isOpen = !!exp[story.id];
     var c = h('article', { class: 'card', id: 'card-' + story.id, style: '--i:' + idx });
     var figure = h('div', { class: 'art' }, [art(story), h('em', { text: 'Chart from reported numbers' })]);
     var main = h('div', { class: 'main' });
@@ -711,10 +930,9 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     var save = h('button', { class: 'btn', type: 'button', 'aria-pressed': String(!!saved[story.id]), text: saved[story.id] ? '★ Saved' : '☆ Save' });
     var copy = h('button', { class: 'btn', type: 'button', text: 'Copy summary' });
     toggle.addEventListener('click', function () {
-      var now = depth.hidden; depth.hidden = !now;
-      toggle.setAttribute('aria-expanded', String(now)); toggle.textContent = now ? 'Hide depth' : 'Read the depth';
-      if (now) opened[story.id] = 1; else delete opened[story.id];
-      lsSet('nd2-open', opened); renderProgress();
+      var opening = depth.hidden; depth.hidden = !opening;
+      toggle.setAttribute('aria-expanded', String(opening)); toggle.textContent = opening ? 'Hide depth' : 'Read the depth';
+      if (opening) { exp[story.id] = 1; markSeen(story.id); } else { delete exp[story.id]; renderProgress(); }
     });
     save.addEventListener('click', function () {
       if (saved[story.id]) delete saved[story.id]; else saved[story.id] = 1;
@@ -724,10 +942,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
       if (filter === 'saved') renderNews();
     });
     copy.addEventListener('click', function () {
-      var t = story.title + '\n' + story.summary + '\nImpact on India (' + story.level + '): ' + story.india;
-      var done = function () { toast('Summary copied'); };
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, function () { toast('Copy is not available here'); });
-      else toast('Copy is not available here');
+      copyText(story.title + '\n' + story.summary + '\nImpact on India (' + story.level + '): ' + story.india);
     });
     main.appendChild(h('div', { class: 'actions' }, [toggle, save, copy]));
 
@@ -738,12 +953,16 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   function topicKeys() { return Object.keys(NEWS); }
   function renderProgress() {
     var key = $('topic').value, cat = NEWS[key];
-    var n = cat.stories.filter(function (s) { return opened[s.id]; }).length;
+    var n = cat.stories.filter(function (s) { return seen[s.id]; }).length, all = seenCount(), tot = totalStories();
     $('bar').style.width = (n / cat.stories.length * 100) + '%';
-    $('ptext').textContent = n === cat.stories.length ? 'You have opened all ' + n + ' stories in this topic.' : n + ' of ' + cat.stories.length + ' stories opened';
+    $('ptext').textContent = n + ' of ' + cat.stories.length + ' stories read here · ' + all + ' of ' + tot + ' today' + (all < tot ? ' (read all ' + tot + ' to grow your streak)' : ' ✓');
   }
   function renderNews() {
     renderTabs();
+    var isQ = view === 'quiz';
+    ['chips', 'shead', 'progress', 'list', 'nextwrap'].forEach(function (id) { $(id).hidden = isQ; });
+    $('quizbox').hidden = !isQ;
+    if (isQ) { renderQuiz(); return; }
     var key = $('topic').value, cat = NEWS[key], list = $('list');
     list.textContent = '';
     document.querySelector('.progress').style.setProperty('--cat', cat.color);
@@ -761,15 +980,15 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
       node.style.setProperty('--cat', cat.color);
       list.appendChild(node);
     });
-    var idx = topicKeys().indexOf(key), nextKey = topicKeys()[(idx + 1) % topicKeys().length];
-    $('next').style.setProperty('--cat', NEWS[nextKey].color);
-    $('next').textContent = 'Next: ' + NEWS[nextKey].label + ' →';
-    $('next').onclick = function () { $('topic').value = nextKey; lsSet('nd2-topic', nextKey); renderNews(); window.scrollTo(0, 0); };
+    var idx = topicKeys().indexOf(key), last = idx === topicKeys().length - 1, nextKey = last ? 'quiz' : topicKeys()[idx + 1];
+    $('next').style.setProperty('--cat', last ? '#7b3fd1' : NEWS[nextKey].color);
+    $('next').textContent = last ? 'Next: take the quiz →' : 'Next: ' + NEWS[nextKey].label + ' →';
+    $('next').onclick = function () {
+      if (last) { view = 'quiz'; quizReset(); } else { view = 'news'; $('topic').value = nextKey; lsSet('nd2-topic', nextKey); }
+      renderNews(); window.scrollTo(0, 0);
+    };
     renderProgress();
   }
-
-  // first story open the first time, so the page shows depth immediately
-  if (!lsGet('nd2-seen')) { opened.b1 = 1; opened.g1 = 1; opened.s1 = 1; lsSet('nd2-open', opened); lsSet('nd2-seen', 1); }
 
   var sn = lsGet('nd2-name'); if (sn) $('name').value = sn;
   var st = lsGet('nd2-topic'); if (st && NEWS[st]) $('topic').value = st;
@@ -784,7 +1003,9 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   });
 
   $('surprise').addEventListener('click', surprise);
-  renderGreeting(); renderStrip(); renderPills(); renderNews();
+  renderGreeting(); renderStrip(); renderPills(); renderNews(); checkBreak();
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePopup(); });
+  $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closePopup(); });
   setInterval(function () { renderGreeting(); renderPills(); }, 60000);
 })();
 </script>
