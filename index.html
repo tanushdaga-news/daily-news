@@ -1,0 +1,792 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Personalized News Digest</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap');
+
+/* Layout: greeting + live numbers strip on top, controls, then five full-width story cards
+   (drawn data chart on the left, text and India impact on the right, depth opens below). */
+:root {
+  --bg: #f1f4f5;
+  --surface: #ffffff;
+  --fg: #12232c;
+  --muted: #55696f;
+  --line: #d6dee1;
+  --accent: #0b6e8a;
+  --biz: #0f7a5c;
+  --glob: #4b57c4;
+  --sport: #d4600f;
+  --art-bg: #e9eff1;
+  --down: #c0392b;
+  --up: #1f8a5b;
+  --fire: #e0701a;
+  --warn: #b7791f;
+  --tint: #e6f0f3;
+  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-ui: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1a20; --surface: #15262e; --fg: #e8f0f2; --muted: #93a8af; --line: #26404a;
+    --accent: #4fb8d6; --biz: #4cc9a0; --glob: #8d98f0; --sport: #f09a5a; --art-bg: #1b313a;
+    --down: #ff8a7a; --up: #4cc9a0; --fire: #ffb067; --warn: #f0b84a; --tint: #1a3039;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1a20; --surface: #15262e; --fg: #e8f0f2; --muted: #93a8af; --line: #26404a;
+  --accent: #4fb8d6; --biz: #4cc9a0; --glob: #8d98f0; --sport: #f09a5a; --art-bg: #1b313a;
+  --down: #ff8a7a; --up: #4cc9a0; --fire: #ffb067; --warn: #f0b84a; --tint: #1a3039;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-ui); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+}
+.wrap { max-width: 1080px; margin: 0 auto; }
+button { font: inherit; color: inherit; }
+
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 7vw, 64px); line-height: 1.05; letter-spacing: -.01em; margin: 10px 0 0; text-wrap: balance; overflow-wrap: anywhere; }
+.sub { color: var(--muted); margin: 10px 0 0; max-width: 60ch; }
+
+/* numbers strip */
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); gap: 10px; margin-top: 24px; overflow-x: auto; padding-bottom: 4px; }
+.tick { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; min-width: 0; }
+.tick b { display: block; font-variant-numeric: tabular-nums; font-size: 20px; line-height: 1.2; }
+.tick span { font-size: 12px; color: var(--muted); }
+.tick i { font-style: normal; font-size: 12px; font-weight: 600; margin-left: 6px; }
+.neg { color: var(--down); } .pos { color: var(--up); } .hot { color: var(--fire); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px 18px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); align-items: end; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1 1 220px; max-width: 340px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--muted); }
+.field input, .field select { font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; min-height: 46px; width: 100%; }
+.field select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 40px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; }
+.field input:focus-visible, .field select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+.progress { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.progress .bar { flex: 1 1 180px; height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; max-width: 360px; }
+.progress .bar i { display: block; height: 100%; width: 0; background: var(--cat); border-radius: 999px; transition: width .4s ease; }
+.progress span { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin: 30px 0 16px; }
+.section-head h2 { font-family: var(--font-display); font-weight: 600; font-size: 28px; margin: 0; display: flex; align-items: center; gap: 10px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--cat); flex: none; }
+.asof { font-size: 14px; color: var(--muted); }
+
+.list { display: grid; gap: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr); animation: rise .45s ease both; animation-delay: calc(var(--i) * 60ms); }
+.art { background: var(--art-bg); min-width: 0; position: relative; }
+.art svg { display: block; width: 100%; height: auto; }
+.art em { position: absolute; right: 10px; bottom: 6px; font-style: normal; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.main { padding: 20px 20px 18px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+@media (min-width: 820px) {
+  .card { grid-template-columns: 390px minmax(0, 1fr); }
+  .art { display: flex; align-items: center; }
+  .main { padding: 24px 26px 20px; }
+  .depth { grid-column: 1 / -1; }
+}
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: var(--muted); }
+.meta .tag { color: var(--cat); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: 12px; }
+.lvl { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px 2px 8px; font-size: 12px; font-weight: 600; color: var(--fg); }
+.lvl .seg { display: inline-flex; gap: 2px; }
+.lvl .seg i { width: 8px; height: 8px; border-radius: 2px; background: var(--line); }
+.lvl[data-l="High"] .seg i:nth-child(-n+3) { background: var(--down); }
+.lvl[data-l="Medium"] .seg i:nth-child(-n+2) { background: var(--warn); }
+.lvl[data-l="Low"] .seg i:nth-child(-n+1) { background: var(--muted); }
+.card h3 { font-family: var(--font-display); font-weight: 600; font-size: clamp(23px, 3.2vw, 30px); line-height: 1.16; margin: 0; text-wrap: balance; }
+.sum { margin: 0; overflow-wrap: anywhere; }
+.nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.nums div { background: var(--tint); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+.nums b { display: block; font-size: 18px; line-height: 1.2; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.nums span { font-size: 12px; color: var(--muted); line-height: 1.3; display: block; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn[aria-pressed="true"] { border-color: var(--warn); color: var(--warn); }
+
+.depth { border-top: 1px solid var(--line); padding: 20px; display: grid; gap: 20px; background: var(--surface); }
+@media (min-width: 820px) { .depth { padding: 24px 26px 26px; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+.depth h4 { margin: 0 0 8px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.depth ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
+.depth li, .depth p { overflow-wrap: anywhere; }
+.depth p { margin: 0; }
+.india { border: 1px solid var(--line); border-left: 4px solid var(--down); border-radius: 10px; padding: 14px 16px; background: var(--tint); }
+.india[data-l="Medium"] { border-left-color: var(--warn); }
+.india[data-l="Low"] { border-left-color: var(--muted); }
+.india h4 { color: var(--fg); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.india small { display: block; margin-top: 8px; font-size: 12px; color: var(--muted); }
+.src { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 14px; color: var(--muted); }
+.src a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.empty { border: 1px dashed var(--line); border-radius: 12px; padding: 28px; color: var(--muted); text-align: center; }
+.next { display: flex; justify-content: center; margin-top: 26px; }
+.foot { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); max-width: 78ch; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 14px; z-index: 20; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .card { animation: none; } .progress .bar i { transition: none; } }
+
+/* ---- vibrant layer ---- */
+.hero { position: relative; overflow: hidden; border-radius: 22px; padding: 28px 22px 20px; color: #fff;
+  background: linear-gradient(125deg, #0a5f78 0%, #3f4bc0 48%, #c4510b 100%); isolation: isolate; }
+.hero header { position: relative; z-index: 1; }
+.hero .eyebrow, .hero .sub { color: rgba(255,255,255,.86); }
+.hero h1 { color: #fff; }
+.blob { position: absolute; border-radius: 50%; filter: blur(42px); opacity: .45; z-index: 0; animation: drift 14s ease-in-out infinite alternate; }
+.b1 { width: 240px; height: 240px; background: #19d3a2; top: -70px; right: 8%; }
+.b2 { width: 200px; height: 200px; background: #ffb347; bottom: -80px; left: 30%; animation-delay: -5s; }
+.b3 { width: 180px; height: 180px; background: #ff5fa2; top: 20%; right: -50px; animation-delay: -9s; }
+@keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(-30px, 24px) scale(1.15); } }
+.pills { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); backdrop-filter: blur(6px); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600; }
+.pill .led { width: 9px; height: 9px; border-radius: 50%; background: #9aa; }
+.pill .led.on { background: #3ee08f; box-shadow: 0 0 0 0 rgba(62,224,143,.7); animation: ping 1.8s infinite; }
+@keyframes ping { 70% { box-shadow: 0 0 0 9px rgba(62,224,143,0); } 100% { box-shadow: 0 0 0 0 rgba(62,224,143,0); } }
+.hero .strip { position: relative; z-index: 1; margin-top: 16px; }
+.hero .tick { background: color-mix(in srgb, var(--surface) 94%, transparent); color: var(--fg); border: 0; box-shadow: 0 6px 18px -10px rgba(0,0,0,.5); transition: transform .2s; }
+.hero .tick:hover { transform: translateY(-3px); }
+.tick .row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.arr { font-size: 15px; font-weight: 700; line-height: 1; }
+.arr.up { color: var(--up); animation: bob 1.6s ease-in-out infinite; }
+.arr.down { color: var(--down); animation: bobd 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-3px); } }
+@keyframes bobd { 50% { transform: translateY(3px); } }
+.tick a { font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; }
+.tick a:hover { text-decoration: underline; }
+.stripnote { position: relative; z-index: 1; margin: 10px 0 0; font-size: 12px; color: rgba(255,255,255,.85); }
+.stale { margin-top: 14px; border: 1px solid var(--warn); background: color-mix(in srgb, var(--warn) 14%, var(--surface)); border-radius: 12px; padding: 12px 16px; font-size: 14px; }
+.tabs { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-top: 20px; }
+.tabbtn { border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 12px 8px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: transform .15s, border-color .15s, background .15s; }
+.tabbtn small { font-weight: 500; font-size: 12px; color: var(--muted); }
+.tabbtn:hover { transform: translateY(-2px); border-color: var(--cat); }
+.tabbtn[aria-pressed="true"] { background: var(--cat); border-color: var(--cat); color: #fff; }
+.tabbtn[aria-pressed="true"] small { color: rgba(255,255,255,.9); }
+.tabbtn .ic { font-size: 22px; line-height: 1.1; }
+.chip.surprise { background: linear-gradient(90deg, #3f4bc0, #c4510b); color: #fff; border-color: transparent; }
+.card { border-top: 5px solid var(--cat); transition: transform .2s, box-shadow .2s; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 16px 30px -18px var(--cat); }
+.art { background: linear-gradient(160deg, color-mix(in srgb, var(--cat) 16%, var(--art-bg)), var(--art-bg)); }
+.nums div { border-left: 3px solid var(--cat); }
+.btn.primary { background: var(--cat); border-color: var(--cat); color: #fff; }
+.section-head h2 { font-size: 32px; }
+@media (prefers-reduced-motion: reduce) { .blob, .arr, .pill .led.on { animation: none; } .card, .tabbtn, .hero .tick { transition: none; } }
+@media (max-width: 520px) { .tabs { gap: 6px; } .tabbtn { padding: 10px 4px; font-size: 13px; } .hero { padding: 22px 16px 16px; } }
+</style>
+
+<div class="wrap">
+  <div class="hero">
+    <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+    <header>
+      <p class="eyebrow" id="today"></p>
+      <h1 id="greeting">Good morning.</h1>
+      <p class="sub">Five stories per topic, each with the numbers behind it and what it could mean for India.</p>
+    </header>
+    <div class="pills" id="pills"></div>
+    <div class="strip" id="strip" aria-label="Key numbers"></div>
+    <p class="stripnote" id="stripnote"></p>
+  </div>
+  <div class="stale" id="stale" hidden></div>
+
+  <div class="tabs" id="tabs" role="group" aria-label="Choose a topic"></div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="name">Your name</label>
+      <input id="name" type="text" autocomplete="given-name" maxlength="40" placeholder="Type your name">
+    </div>
+    <input type="hidden" id="topic" value="business">
+  </div>
+
+  <div class="chips" role="group" aria-label="Filter stories">
+    <button class="chip" type="button" data-f="all" aria-pressed="true">All stories</button>
+    <button class="chip" type="button" data-f="high" aria-pressed="false">High India impact</button>
+    <button class="chip" type="button" data-f="saved" aria-pressed="false">Saved</button>
+    <button class="chip surprise" type="button" id="surprise">Surprise me</button>
+  </div>
+
+  <div class="section-head">
+    <h2 id="topic-title"><span class="dot"></span><span id="topic-label">Business news</span></h2>
+    <span class="asof" id="asof"></span>
+  </div>
+  <div class="progress" id="progress"><div class="bar"><i id="bar"></i></div><span id="ptext"></span></div>
+  <section class="list" id="list" style="margin-top:16px" aria-live="polite"></section>
+  <div class="next"><button class="btn primary" id="next" type="button"></button></div>
+
+  <p class="foot">Stories are an edition of reports from 21 to 24 Oct 2026 (see the banner above if it is out of date), summarised from the linked outlets; figures are as those outlets reported them. The numbers at the top are the last reported closing figures, not live ticks; use “Live quote” for the current value. The “Impact on India” panels are analysis, not reporting, and are marked as such. The pictures are charts and drawings built from the reported numbers, not photographs. Use “See photos” for real pictures and the source links for the full reports.</p>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  var SNAPSHOT = '24 Oct 2026', SNAPSHOT_ISO = '2026-10-24';
+
+  var NEWS = {
+    business: { label: 'Business news', color: 'var(--biz)', stories: [
+      { id: 'b1', level: 'Medium', date: 'Fri 23 Oct', tag: 'Markets · US',
+        title: 'Dow sheds 653 points as the tech sell-off spreads and oil climbs',
+        summary: 'The Dow fell 652.82 points (1.23%) to 52,215.16, the S&P 500 lost 0.52% to 7,623.68 and the Nasdaq Composite slipped 0.21% to 25,955.34. The S&P and Nasdaq fell for a second straight week, while the Dow finished the week higher.',
+        nums: [{ n: '−1.23%', l: 'Dow Jones' }, { n: '−0.52%', l: 'S&P 500' }, { n: '−0.21%', l: 'Nasdaq Composite' }],
+        what: [
+          'Selling spread beyond the AI trade, following a steep Thursday sell-off in chip and other tech stocks. Investors are worried about AI financing costs and a possible slowdown in capital spending.',
+          'Rising oil weighed on sentiment, and airline stocks including United, Delta and American fell on the prospect of higher fuel costs.',
+          'Cybersecurity stocks were a bright spot: SailPoint, Cloudflare and Palo Alto Networks each rose more than 7%.',
+          'Investors are looking ahead to the Federal Reserve’s meeting on 28 October, where rates are widely expected to be held steady.'],
+        why: 'Wall Street’s mood sets the tone for global tech stocks, and a second weekly fall in the S&P and Nasdaq shows the AI-spending worry has not faded.',
+        india: 'A large share of Indian IT-services revenue comes from US clients, so weak US tech sentiment and any slowdown in AI spending could, over time, affect deal flow. The Fed’s expected hold on 28 October is a near-term event for Indian markets too. This is analysis; no direct hit to Indian companies is reported in these sources.',
+        sources: [{ n: 'Yahoo Finance live blog', u: 'https://finance.yahoo.com/markets/live/stock-market-today-friday-october-23-dow-sp-500-nasdaq-tesla-meta-093000521.html' }, { n: 'TheStreet', u: 'https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-oct-23-2026' }],
+        q: 'Wall Street Dow falls tech sell-off oil October 23 2026',
+        art: { type: 'hbars', div: true, max: 1.6, title: 'Friday 23 Oct, % change', rows: [
+          { l: 'Dow Jones', v: -1.23, t: '−1.23%' }, { l: 'S&P 500', v: -0.52, t: '−0.52%' }, { l: 'Nasdaq', v: -0.21, t: '−0.21%' }] } },
+      { id: 'b2', level: 'High', date: 'Fri 23 Oct', tag: 'Oil · Energy',
+        title: 'Brent settles at $116.72, a six-month high, as Saudi attacks mount',
+        summary: 'Brent crude settled at $116.72 a barrel, its highest in six months and a third straight weekly gain; US crude closed just above $103. Brent has risen about 12% since 1 October on a closing basis.',
+        nums: [{ n: '$116.72', l: 'Brent settle, Fri' }, { n: '≈ +12%', l: 'Brent since 1 Oct (closes)' }, { n: '41%', l: 'Hormuz flow below pre-war (Kpler)' }],
+        what: [
+          'On 21 Oct Saudi air defences intercepted a drone aimed at a processing plant at the Shaybah field; debris killed two contract workers. The Energy Ministry says operations were not affected. A Houthi attack near the Dhahran airport reportedly killed two people.',
+          'Fears of escalation also lifted prices: TheStreet cites reports that the US and Israel are considering new strikes on Iran after the 3 November US midterms, and that Iran has warned it would hit Gulf energy infrastructure.',
+          'Kpler estimates Hormuz flows averaged about 10.2 million barrels a day in the week to 17 Oct, 41% below the pre-war 17.3 million.',
+          'For context, Brent settled at $72.48 on 27 Feb, the day before the war began, and peaked at $126.41 on 30 Apr (Al Jazeera).'],
+        why: 'Oil at this level feeds into fuel, freight and food prices worldwide and keeps central banks cautious.',
+        india: 'India is a major crude importer. Earlier reporting put its import bill at $15.4 billion in September (up 46% on a year earlier) with the Indian basket averaging $121.25 so far in October, and Gulf crude at about 54% of imports. If Brent stays this high, expect a wider current-account deficit, a weaker rupee (it slid from 94.78 to about 95.15 per dollar on Friday) and higher fuel and input costs. This is analysis, not reporting.',
+        sources: [{ n: 'Yahoo Finance live blog', u: 'https://finance.yahoo.com/markets/live/stock-market-today-friday-october-23-dow-sp-500-nasdaq-tesla-meta-093000521.html' }, { n: 'Energy News Beat', u: 'https://energynewsbeat.co/crude-oil/brent-tops-114-as-houthi-attacks-reach-saudi-oil-and-aramco-clears-its-headquarters/' }, { n: 'Al Jazeera explainer', u: 'https://www.aljazeera.com/news/2026/10/23/us-iran-war-then-and-now-how-the-landscape-has-changed-since-february' }, { n: 'Oilprice.com (India bill)', u: 'https://oilprice.com/Latest-Energy-News/World-News/Indias-Crude-Oil-Import-Bill-Soars-46-as-Middle-East-Crisis-Drives-Up-Prices.html' }],
+        q: 'Brent crude oil price six-month high Saudi attacks',
+        art: { type: 'vbars', title: 'Brent settle, $ a barrel', unit: '$', cols: [
+          { l: 'Feb 27', v: 72.48, t: '72' }, { l: 'Apr 30', v: 126.41, t: '126' }, { l: 'Oct 16', v: 109.86, t: '110' }, { l: 'Oct 22', v: 113.17, t: '113' }, { l: 'Oct 23', v: 116.72, t: '117', hl: true }],
+          min: 0, side: [{ n: '41%', c: 'Hormuz flow below\npre-war (Kpler)' }, { n: '≈ +12%', c: 'Brent since\n1 Oct (closes)' }] } },
+      { id: 'b3', level: 'High', date: 'Fri 23 Oct', tag: 'Markets · India',
+        title: 'Sensex and Nifty fall again as crude hits $114 and the rupee weakens',
+        summary: 'The Sensex slipped 125.56 points (0.17%) to 73,123.83 and the Nifty 50 fell 87.65 points (0.39%) to 22,600. Mid and small caps took the sharper hit, and the rupee weakened from 94.78 to about 95.15 per dollar.',
+        nums: [{ n: '73,123.83', l: 'Sensex close' }, { n: '22,600', l: 'Nifty 50 close' }, { n: '≈ ₹95.15', l: 'per US dollar' }],
+        what: [
+          'Selling hit almost every sector: the Nifty Metal index fell 2.98% and the Nifty PSU Bank index 2.52%.',
+          'Reasons cited: rising crude on Middle East tensions and tanker strikes, a global equity sell-off led by AI worries, and a rupee under pressure from oil import costs.',
+          'Mid and small caps corrected harder than the Nifty (Midcap 100 −2.21%, Smallcap 100 −2.94%, per Business Standard). Analyst Vinod Nair attributed this to valuation worries and the unwinding of leveraged positions.',
+          'Indian markets are closed on Saturday; the next session is Monday 26 Oct.'],
+        why: 'When crude, the rupee and global tech all weaken together, Indian investors face pressure from several sides at once.',
+        india: 'This is India’s own market, so the effect is direct. Oil is the thread linking this story to the Brent story above: a higher crude bill tends to weaken the rupee and squeeze margins for fuel-heavy sectors. Watch Brent and Monday’s US-market cues. This is analysis, not a forecast.',
+        sources: [{ n: 'The Tribune', u: 'https://www.tribuneindia.com/news/bse/sensex-nifty-extend-losses-as-crude-surges-to-usd-114-all-sectors-close-in-red' }, { n: 'Business Standard', u: 'https://www.business-standard.com/markets/news/stock-market-live-october-23-nse-bse-sensex-today-nifty50-gift-nifty-crude-oil-prices-jio-ipo-q2-results-today-126102300078_1.html' }],
+        q: 'Sensex Nifty close fall crude oil rupee',
+        art: { type: 'hbars', div: true, max: 3.5, title: 'Friday 23 Oct, % change', rows: [
+          { l: 'Sensex', v: -0.17, t: '−0.17%' }, { l: 'Nifty 50', v: -0.39, t: '−0.39%' }, { l: 'Midcap 100', v: -2.21, t: '−2.21%' },
+          { l: 'Smallcap 100', v: -2.94, t: '−2.94%' }, { l: 'Nifty Metal', v: -2.98, t: '−2.98%' }, { l: 'PSU Bank', v: -2.52, t: '−2.52%' }] } },
+      { id: 'b4', level: 'High', date: 'Fri 23 Oct · final day', tag: 'IPO · India',
+        title: 'Jio’s record IPO ends at 22.19x, led by institutions',
+        summary: 'Jio Platforms’ roughly ₹30,200 crore issue closed with 22.19 times overall subscription, with 438.26 crore shares bid against 19.75 crore on offer. Institutions were far more eager than retail: QIBs bid 70.55x, retail 2.72x.',
+        nums: [{ n: '22.19x', l: 'overall subscription' }, { n: '70.55x', l: 'QIB portion' }, { n: '2.72x', l: 'retail portion' }],
+        what: [
+          'Category split: QIBs 70.55x, non-institutional investors 14.00x, retail 2.72x (23.11 crore shares bid vs 7.60 crore offered).',
+          'The issue is entirely fresh shares (27 crore), with the price band topping out at ₹1,119 a share. The grey-market premium was ₹242 per Investorgain (about 21.6%), an unofficial indicator.',
+          'Allotment is expected by 26 Oct and listing on 28 Oct on BSE and NSE.',
+          'For scale, the previous biggest issues: Hyundai India ₹27,870 crore, NSE ₹22,562 crore, LIC ₹20,557 crore, Paytm ₹18,300 crore (earlier reports).'],
+        why: 'A record IPO clearing this comfortably is a test of appetite for very large listings while markets are falling.',
+        india: 'The effect is direct. Day-one demand was 3.04x with retail at 0.73x, so retail demand picked up over three days but remains far below institutional demand. Listing performance on 28 Oct is the thing to watch, and grey-market premiums are not guarantees. This is analysis; check final figures on the NSE and BSE websites.',
+        sources: [{ n: 'India TV', u: 'https://www.indiatvnews.com/business/news/jio-platforms-ipo-subscription-soars-on-final-day-of-bidding-qibs-draw-massive-demand-check-jio-gmp-allotment-listing-date-other-details-2026-10-23-1057739' }, { n: 'HDFC Sky', u: 'https://hdfcsky.com/news/jio-ipo-subscribed-22-19x-on-final-day' }, { n: 'Upstox', u: 'https://upstox.com/news/market-news/ipo/jio-platforms-ipo-day-3-check-subscription-status-allotment-date-and-steps/article-202265/' }],
+        q: 'Jio Platforms IPO subscription final day QIB',
+        art: { type: 'hbars', title: 'Jio IPO subscription, times', max: 78, rows: [
+          { l: 'QIB', v: 70.55, t: '70.55x', c: 'var(--biz)' }, { l: 'Overall', v: 22.19, t: '22.19x' }, { l: 'Non-institutional', v: 14.0, t: '14.00x' }, { l: 'Retail', v: 2.72, t: '2.72x' }] } },
+      { id: 'b5', level: 'Medium', date: '22–23 Oct', tag: 'Energy · Gulf',
+        title: 'Aramco asks Dhahran HQ staff to work remotely; Saudi stocks fall 2.5%',
+        summary: 'Aramco told staff to leave its Dhahran headquarters and work from home, according to Reuters sources cited by Energy News Beat, and Saudi stocks fell 2.5% after the report. Aramco did not comment.',
+        nums: [{ n: '−2.5%', l: 'Saudi stocks after report' }, { n: '7 mb/d', l: 'East-West pipeline capacity' }, { n: '10 mb/d', l: 'capacity Aramco is studying' }],
+        what: [
+          'Gulf News reported that most staff had already been working remotely since a Houthi strike on the building the previous week.',
+          'The East-West pipeline to the Red Sea can carry 7 million barrels a day, up from about 2 million. CEO Amin Nasser says Aramco is studying 10 million. These are capacity figures, not current flows.',
+          'The Houthis say they struck Aramco sites at Yanbu, a Red Sea export port. Saudi Arabia has not confirmed this.'],
+        why: 'Aramco is the world’s largest oil exporter, so threats to its operations and export routes move oil prices and Gulf markets quickly.',
+        india: 'India buys a large share of its crude from the Gulf, so attacks on Saudi facilities raise supply and price risk. The reports here are single-sourced and partly unconfirmed, so treat this as a signal to watch, not a settled supply loss. This is analysis.',
+        sources: [{ n: 'Energy News Beat', u: 'https://energynewsbeat.co/crude-oil/brent-tops-114-as-houthi-attacks-reach-saudi-oil-and-aramco-clears-its-headquarters/' }],
+        q: 'Aramco Dhahran headquarters staff remote Houthi attack',
+        art: { type: 'stats', title: 'Saudi oil, what was reported', tiles: [
+          { n: '−2.5%', c: 'Saudi stocks after\nthe Aramco report' }, { n: '7 mb/d', c: 'East-West pipeline\ncapacity' }, { n: '2', c: 'contract workers killed\nat Shaybah, 21 Oct' }, { n: '41%', c: 'Hormuz flow below\npre-war (Kpler)' }] } }
+    ] },
+
+    global: { label: 'Global news', color: 'var(--glob)', stories: [
+      { id: 'g1', level: 'High', date: '22–23 Oct', tag: 'Middle East',
+        title: 'Iran claims seven ships hit near Hormuz; Trump calls it fake and hints at new strikes',
+        summary: 'Iran’s Revolutionary Guard says it struck four ships and that three more hit mines near the Strait of Hormuz. President Trump calls the claims fake, and no independent confirmation of the seven-ship total was found.',
+        nums: [{ n: '7', l: 'ships claimed hit (disputed)' }, { n: '≈1 in 5', l: 'of world oil and LNG normally passes Hormuz' }, { n: '$126.41', l: 'Brent peak, 30 Apr' }],
+        what: [
+          'Iran’s Revolutionary Guard, via the Tasnim agency, says four ships were struck and three hit mines. Trump calls these claims fake; the seven-ship total is unconfirmed.',
+          'Al Jazeera says traffic through the strait is severely disrupted, Iran continues to threaten shipping, and the US maintains a blockade of Iranian ports.',
+          'Analysts quoted by Al Jazeera consider a US attack before the 3 November midterms unlikely, but sabre-rattling on both sides has raised fears of renewed fighting. Israel locked down the West Bank on Friday.',
+          'The war began on 28 February when the US and Israel struck Iran. The IEA has warned supply constraints could last into 2027.'],
+        why: 'About a fifth of the world’s oil and gas normally passes through the strait, so every incident or threat moves energy prices.',
+        india: 'Earlier reporting put Gulf crude at about 54% of India’s imports in September. With Brent at $116.72, a renewed escalation would raise India’s import costs, shipping and insurance, and put pressure on fuel prices and the rupee. This is analysis, not reporting.',
+        sources: [{ n: 'Al Jazeera explainer', u: 'https://www.aljazeera.com/news/2026/10/23/us-iran-war-then-and-now-how-the-landscape-has-changed-since-february' }, { n: 'Al Jazeera live blog', u: 'https://www.aljazeera.com/news/liveblog/2026/10/23/trump-hints-new-strikes-says-us-knocked-hell-out-of-iran' }, { n: 'Energy News Beat', u: 'https://energynewsbeat.co/crude-oil/brent-tops-114-as-houthi-attacks-reach-saudi-oil-and-aramco-clears-its-headquarters/' }],
+        q: 'Strait of Hormuz IRGC ships mines tanker Trump Iran strikes',
+        art: { type: 'hormuz' } },
+      { id: 'g2', level: 'Medium', date: 'Fri 23 Oct', tag: 'Europe · Energy',
+        title: 'Europe enters winter with record-low gas reserves, IEA chief warns',
+        summary: 'EU gas storage is about 72% full against a usual 90% at this time of year. IEA head Fatih Birol says Europe cannot absorb further supply shocks and that “life will not be easy for Europe this year and also next year”.',
+        nums: [{ n: '72%', l: 'EU gas storage (usual 90%)' }, { n: '≈ +140%', l: 'gas prices since February' }, { n: '≈ 1/10', l: 'of Europe’s LNG came via Hormuz pre-war' }],
+        what: [
+          'Analysts say the storage shortfall equals the energy needed to power 10 to 12 million homes.',
+          'Iranian attacks on vessels have sharply cut LNG imports, and Europe competes with Asia for gas. Birol says LNG costs may stay high even if peace returns to the Gulf.',
+          'Ukrainian attacks on Russian refineries have halted about a third of Russian diesel deliveries, adding to a looming diesel shortage. EU energy ministers are reportedly considering asking households and businesses to cut consumption.',
+          'Birol says both the Hormuz and Bab al-Mandeb straits need to reopen soon or there will be little buffer left.'],
+        why: 'A cold winter on top of low storage could push energy prices higher across the world, not just in Europe.',
+        india: 'Europe and Asia compete for the same LNG cargoes, which can raise gas costs for Asian importers such as India (general background, not stated in the source). Higher European diesel demand can also keep fuel prices elevated. This is analysis; the source does not mention India.',
+        sources: [{ n: 'Al Jazeera', u: 'https://www.aljazeera.com/economy/2026/10/23/eu-entering-winter-with-lowest-gas-reserves-on-record-iea-boss-warns' }],
+        q: 'Europe gas storage winter IEA Birol warning',
+        art: { type: 'hbars', title: 'EU gas storage, % full', max: 100, rows: [
+          { l: 'Now', v: 72, t: '72%', c: 'var(--glob)' }, { l: 'Usual for\nthis date', v: 90, t: '≈ 90%' }] } },
+      { id: 'g3', level: 'Low', date: 'Fri 23 Oct', tag: 'Middle East',
+        title: 'Gunmen kill at least seven at a church funeral in Jordan',
+        summary: 'Two masked gunmen attacked a Greek Orthodox church in Hamoud village, Karak governorate, killing at least seven people and wounding 34. No group has claimed responsibility.',
+        nums: [{ n: '≥ 7', l: 'killed' }, { n: '34', l: 'wounded' }, { n: '≈ 300,000', l: 'Christians in Jordan (of ≈ 11.5M)' }],
+        what: [
+          'Survivors said they heard an explosion as a funeral procession began, then the attackers entered the church and fired for several minutes.',
+          'Interior Minister Mazen al-Faraya called the attack “terrorist” and “unprecedented”. King Abdullah II vowed the harshest penalties. The UAE and UN Secretary-General António Guterres condemned it.',
+          'Such attacks are extremely rare in Jordan; in 2016 an ISIS assault in Karak killed 10 people. The search for the gunmen was ongoing.'],
+        why: 'An attack on a religious gathering in a country seen as relatively stable adds to regional security worries.',
+        india: 'No Indian casualties are reported. Indians travelling to or working in Jordan should follow official travel advisories. Wider regional tension is the indirect link to India, through oil and shipping. This is analysis.',
+        sources: [{ n: 'Al Jazeera', u: 'https://www.aljazeera.com/news/2026/10/23/at-least-seven-killed-after-gunmen-open-fire-at-church-in-jordan' }],
+        q: 'Jordan church attack Karak Hamoud gunmen',
+        art: { type: 'stats', title: 'Church attack, Karak, Jordan', tiles: [
+          { n: '≥ 7', c: 'people killed' }, { n: '34', c: 'wounded' }, { n: '27', c: 'of the wounded in\nhospital treatment' }, { n: '2', c: 'masked gunmen' }] } },
+      { id: 'g4', level: 'Low', date: 'Sun 25 Oct', tag: 'Europe · Serbia',
+        title: 'Serbia votes Sunday in a snap election as students challenge Vučić',
+        summary: 'Serbia holds a snap parliamentary election on 25 October. President Aleksandar Vučić resigned the presidency in September to lead his Progressive Party’s list as candidate for prime minister, against a student-backed list that grew out of nationwide protests.',
+        nums: [{ n: '250', l: 'National Assembly seats' }, { n: '3%', l: 'threshold for lists' }, { n: '16', l: 'killed in the 2024 Novi Sad canopy collapse' }],
+        what: [
+          'The protest movement began after a railway station canopy collapsed in Novi Sad in November 2024, killing 16 people, and grew into nationwide protests over alleged corruption.',
+          'The SNS has governed since 2012. The student list campaigns on the rule of law and ending corruption; some opposition parties are not running and back it, and others risk missing the 3% threshold.',
+          'At stake are Serbia’s stalled EU accession, Kosovo normalisation and its limited alignment with sanctions on Russia. The student list has floated an EU membership referendum within six months of taking office.',
+          'Polls close at 8 pm local time with preliminary results about two hours later. Al Jazeera’s article does not report polling figures.'],
+        why: 'The result decides whether a government that has held power for 14 years is extended or challenged.',
+        india: 'The direct effect on India is small. India–Serbia ties are modest and the source does not mention India. The main interest is political: how a student-led movement fares at the ballot box. This is analysis.',
+        sources: [{ n: 'Al Jazeera', u: 'https://www.aljazeera.com/news/2026/10/23/serbias-snap-election-whats-at-stake-and-can-students-unseat-vucic' }],
+        q: 'Serbia snap election Vucic students protest October 2026',
+        art: { type: 'stats', title: 'Serbia’s 25 October election', tiles: [
+          { n: '250', c: 'seats, one nationwide\nconstituency' }, { n: '3%', c: 'threshold for lists' }, { n: '14 yrs', c: 'SNS in government' }, { n: '16', c: 'killed in Novi Sad\ncanopy collapse, 2024' }] } },
+      { id: 'g5', level: 'Medium', date: 'Fri 23 Oct', tag: 'Ukraine · Russia',
+        title: 'White House says Melania Trump secured a local ceasefire in Oleshky',
+        summary: 'The White House says the First Lady secured a “localised” ceasefire in Russian-occupied Oleshky so about 2,000 remaining residents can leave. A Ukrainian official said it would begin on 27 October; the Kremlin said timing is still being coordinated.',
+        nums: [{ n: '≈ 2,000', l: 'residents remaining (of ≈ 24,000)' }, { n: '27 Oct', l: 'start per a Ukrainian official' }, { n: 'Nov', l: 'next talks, Abu Dhabi' }],
+        what: [
+          'The claim comes from the White House; Ukraine and Russia only confirmed that timing is still being worked out, and Al Jazeera did not independently verify it.',
+          'The Kremlin agreed to resume US-mediated talks with Ukraine next month. Zelenskyy confirmed negotiators will attend talks in Abu Dhabi in the first half of November and says any deal needs strong security guarantees and 10 years of funding for Ukraine’s army.',
+          'Al Jazeera notes recent US concessions to Moscow, including buying Russian diesel and waiving some sanctions, which the administration says aim to reduce fuel costs caused by the Iran war.'],
+        why: 'Local truces are small steps, but they show how talks are moving while the sides remain far apart.',
+        india: 'The link to India is through energy. US moves to buy Russian diesel and ease some sanctions could soften fuel prices a little. Earlier reporting put Russian crude at about 33.5% of India’s imports in September. This is analysis, not reported by the source.',
+        sources: [{ n: 'Al Jazeera', u: 'https://www.aljazeera.com/news/2026/10/23/white-house-says-melania-trump-secured-a-ceasefire-in-ukraines-oleshky' }, { n: 'Oilprice.com (India crude mix)', u: 'https://oilprice.com/Latest-Energy-News/World-News/Indias-Crude-Oil-Import-Bill-Soars-46-as-Middle-East-Crisis-Drives-Up-Prices.html' }],
+        q: 'Oleshky ceasefire Ukraine Russia Melania Trump evacuation',
+        art: { type: 'stats', title: 'Oleshky and the talks track', tiles: [
+          { n: '≈ 2,000', c: 'residents remaining' }, { n: '≈ 24,000', c: 'residents before the war' }, { n: '27 Oct', c: 'start per Ukrainian\nofficial' }, { n: 'Abu Dhabi', c: 'talks, first half\nof November' }] } }
+    ] },
+
+    sports: { label: 'Sports news', color: 'var(--sport)', stories: [
+      { id: 's1', level: 'High', date: 'Sat 24 Oct', tag: 'Cricket',
+        title: 'India lead New Zealand 1–0; Kishan out as the 2nd T20I starts at 12:30 PM IST',
+        summary: 'India lead the five-match T20I series 1–0 after chasing 226 in the opener. The second match is today at Hagley Oval, Christchurch, and Ishan Kishan is out with an adductor strain. As of this edition (about 6:35 AM IST) the match has not started.',
+        nums: [{ n: '1–0', l: 'India lead, 5-match series' }, { n: '12:30 PM', l: 'IST start today' }, { n: '20 of 32', l: 'India wins in T20Is v NZ' }],
+        what: [
+          'Kishan has a low-grade right adductor strain picked up in the first match; Kumar Kushagra has been added as cover. Reports suggest 15-year-old Vaibhav Sooryavanshi could come in, possibly opening with Abhishek Sharma and moving Sanju Samson to No. 3.',
+          'The pitch is expected to be batting-friendly, with an average first-innings score of 175 (CricTracker preview).',
+          'Remaining T20Is: 3rd on 27 Oct at Wellington, 4th on 30 Oct at Auckland (Eden Park) and 5th on 1 Nov at Hamilton, all at 12:30 PM IST. The tour continues with five ODIs from 4 Nov and two Tests from 19 Nov.',
+          'In 32 completed T20Is between the sides, India have won 20, New Zealand 11, with one tie. India beat New Zealand in the 2026 T20 World Cup final (NewsBytes).'],
+        why: 'A win today would give India a 2–0 lead with three games to play and make the series hard for New Zealand to save.',
+        india: 'The effect is direct. Kishan’s absence puts the opening combination and a possible Sooryavanshi debut in focus, and the bowling, which conceded 225 in the opener, remains the question. Check live scores for the result, which is not known as of this edition. This is analysis.',
+        sources: [{ n: 'CricTracker', u: 'https://www.crictracker.com/live-scores/nz-vs-ind-2nd-t20i-india-tour-of-new-zealand-24-oct-2026/' }, { n: 'The Hans India', u: 'https://www.thehansindia.com/sports/ishan-kishan-ruled-out-of-2nd-t20i-against-nz-1135230' }, { n: 'NewsBytes', u: 'https://www.newsbytesapp.com/news/sports/new-zealand-versus-india-2nd-t20i-preview-and-stats/story' }, { n: 'India.com schedule', u: 'https://www.india.com/sports/cricket/india-tour-of-new-zealand-2026-full-schedule-squads-match-timings-venues-live-streaming-and-key-players-8537918/' }],
+        q: 'India vs New Zealand 2nd T20I Hagley Oval Ishan Kishan ruled out',
+        art: { type: 'stats', title: 'India v NZ T20I series', tiles: [
+          { n: '1–0', c: 'India lead after\n1st T20I (22 Oct)' }, { n: '12:30 PM', c: '2nd T20I, today\nIST, Christchurch' }, { n: '3 left', c: 'after today: 27 Oct,\n30 Oct, 1 Nov' }, { n: '20 of 32', c: 'India wins v NZ\nin T20Is' }] } },
+      { id: 's2', level: 'High', date: 'Thu 22 Oct', tag: 'Cricket',
+        title: 'India chase 226 in New Zealand, their highest successful T20I chase',
+        summary: 'Chasing 226 at Hagley Oval, India won the first T20I by four wickets with two balls to spare, their highest successful T20I chase. Glenn Phillips had made an unbeaten 82 off 40 for New Zealand.',
+        nums: [{ n: '226', l: 'target chased, 1st T20I' }, { n: '4 wkts', l: 'margin, 2 balls to spare' }, { n: '82* (40)', l: 'Glenn Phillips, NZ' }],
+        what: [
+          'New Zealand made 225/4 in 20 overs: Phillips 82* off 40, Finn Allen 45 off 24 and Bevon Jacobs 31 off 16.',
+          'India’s chase was built on Sanju Samson’s 67 off 33, Shreyas Iyer’s 42 off 28 and Naman Dhir’s unbeaten 42 off 15. Mitchell Santner was New Zealand’s best bowler with 2/39.',
+          'SportsTak reports India have not lost a T20I in New Zealand in seven years, and notes India’s bowling troubles continued.',
+          'Series now 1–0 to India with four matches left; see the story above for today’s second match.'],
+        why: 'Chasing 226 shows how deep India’s batting is, while conceding 225 keeps the bowling question open.',
+        india: 'The effect is direct. The record chase gives India early control of the series, and the batting depth from Samson to Dhir is a clear positive. Leaking 225 is the concern to watch (analysis, not reported).',
+        sources: [{ n: 'SportsTak', u: 'https://thesportstak.com/cricket/india-tour-of-new-zealand-2026/story/india-pull-off-record-breaking-chase-against-new-zealand-with-four-wicket-win-in-1st-t20i-abste-3554985-2026-10-22' }, { n: 'Sportscape', u: 'https://www.sportscapemagazine.com/blog/nz-vs-ind-1st-t20i-india-beat-new-zealand-by-4-wickets-to-record-their-highest-successful-run-chase-in-t20is' }, { n: 'Olympics.com report', u: 'https://www.olympics.com/en/news/new-zealand-vs-india-t20-cricket-2026-match-1-report' }],
+        q: 'India New Zealand 1st T20I Hagley Oval Sanju Samson Naman Dhir',
+        art: { type: 'hbars', title: 'Top scores, 1st T20I (runs)', max: 90, rows: [
+          { l: 'G. Phillips (NZ)\n40 balls', v: 82, t: '82*', c: 'var(--sport)' }, { l: 'Sanju Samson\n33 balls', v: 67, t: '67' }, { l: 'Finn Allen (NZ)\n24 balls', v: 45, t: '45' },
+          { l: 'Shreyas Iyer\n28 balls', v: 42, t: '42' }, { l: 'Naman Dhir\n15 balls', v: 42, t: '42*' }] } },
+      { id: 's3', level: 'High', date: '19–24 Oct', tag: 'Para sport',
+        title: 'India finish the Asian Para Games with a record 114 medals',
+        summary: 'India ended on 30 gold, 35 silver and 49 bronze, fourth in the standings, beating their previous best of 108 from Hangzhou. Para-athletics gave 65 medals, and para-swimming rose from one medal to 11.',
+        nums: [{ n: '114', l: 'medals: 30 gold, 35 silver, 49 bronze' }, { n: '108', l: 'previous best, Hangzhou' }, { n: '4th', l: 'final standing' }],
+        what: [
+          'The earlier record of 108 was reduced from an initial 111 after three medals were removed over doping cases.',
+          'Para-athletics produced 65 medals, 22 of them gold. Medals were won over five days, 19 to 23 Oct, with the closing ceremony on Saturday in Nagoya.',
+          'Sheetal Devi won gold in the women’s compound and the compound mixed team event.'],
+        why: 'A record haul, with a jump in swimming medals, shows depth across more sports than before.',
+        india: 'The effect is direct and national. Results like this tend to raise the profile, funding and sponsorship interest in para sport (a general pattern, not measured here).',
+        sources: [{ n: 'India TV', u: 'https://www.indiatvnews.com/sports/other/india-finishes-asian-para-games-2026-with-record-medal-tally-check-full-list-of-winners-2026-10-23-1057759' }, { n: 'Outlook India', u: 'https://www.outlookindia.com/sports/others/asian-para-games-2026-india-medal-tally-full-list' }],
+        q: 'India Asian Para Games 2026 record 114 medals Nagoya',
+        art: { type: 'waffle', title: '114 medals · 4th place · record', parts: [['#d9a516', 30, '30 gold'], ['#98a4ad', 35, '35 silver'], ['#b8733a', 49, '49 bronze']] } },
+      { id: 's4', level: 'High', date: '20–23 Oct', tag: 'Para sport',
+        title: 'Para Games stars: Soorma, Gavit, Simran, Antil and Sheetal Devi',
+        summary: 'Pranav Soorma won golds in discus and club throw, Dilip Gavit took the 100 m and 400 m T47, and Simran won the 100 m and 200 m T12. Sumit Antil won javelin gold, and Mona Agarwal won two rifle golds.',
+        nums: [{ n: '65', l: 'para-athletics medals (22 gold)' }, { n: '1 → 11', l: 'para-swimming medals' }, { n: '24.80 s', l: 'Simran, 200 m T12 (Games record)' }],
+        what: [
+          'Soorma won gold in discus F51/F52/F53 and club throw F51. News On AIR earlier reported his 11.66 m in the F51 class as an Asian record.',
+          'Simran’s 24.80 s in the 200 m T12 and Deepthi Jeevanji’s 56.36 s in the 400 m T20 were reported as Games records on 20 Oct (News On AIR).',
+          'Mona Agarwal won gold in the 10 m air rifle standing SH1 and the 50 m rifle 3 positions; Sumit Antil won the men’s javelin (F42–F44/F61–F64).'],
+        why: 'Records and multiple golds by single athletes point to peak performance rather than one-off luck.',
+        india: 'The effect is direct. These are Indian athletes, and records tend to strengthen the case for more investment in para athletics, where India’s contingent is largest (analysis, not reported).',
+        sources: [{ n: 'India TV', u: 'https://www.indiatvnews.com/sports/other/india-finishes-asian-para-games-2026-with-record-medal-tally-check-full-list-of-winners-2026-10-23-1057759' }, { n: 'News On AIR', u: 'https://newsonair.gov.in/asian-para-games-2026-india-wins-26-medals-including-six-gold-simran-and-deepthi-set-new-games-records/' }],
+        q: 'Pranav Soorma Sheetal Devi Simran Asian Para Games gold',
+        art: { type: 'stats', title: 'Para Games highlights', tiles: [
+          { n: '65', c: 'para-athletics medals\n22 gold' }, { n: '1 → 11', c: 'para-swimming\nmedals' }, { n: '24.80 s', c: 'Simran, 200 m T12\nGames record' }, { n: '2 golds', c: 'each: Soorma, Gavit,\nSimran, Agarwal' }] } },
+      { id: 's5', level: 'High', date: 'Fri 23 Oct', tag: 'Kabaddi',
+        title: 'India win Commonwealth Kabaddi openers: men 46–26 England, women 73–13 Malaysia',
+        summary: 'India’s men beat England 46–26 (23–9 at half-time) and the women beat Malaysia 73–13 (30–11 at half-time) in the first Commonwealth Kabaddi Championship matches on Friday.',
+        nums: [{ n: '46–26', l: 'India men v England' }, { n: '73–13', l: 'India women v Malaysia' }, { n: '23–31 Oct', l: 'tournament dates' }],
+        what: [
+          'The matches were played on Friday 23 Oct at the Veer Savarkar stadium in Ahmedabad.',
+          'The 23-team, 13-nation event runs from 23 to 31 October, with semifinals on 30 Oct and finals on 31 Oct (earlier Business Standard preview).',
+          'The Tribune report did not list the next fixtures.'],
+        why: 'A first edition sets the benchmark for how seriously the sport is taken on a Commonwealth stage.',
+        india: 'The effect is direct. Kabaddi is closely identified with India, and two big opening wins start the first edition well. A strong showing could help the sport’s push for wider international recognition (analysis, not reported).',
+        sources: [{ n: 'The Tribune', u: 'https://www.tribuneindia.com/news/sports/india-mens-womens-teams-begin-commonwealth-kabaddi-championship-with-commanding-wins' }, { n: 'Business Standard (preview)', u: 'https://www.business-standard.com/amp/sports/other-sports-news/india-to-kick-off-commonwealth-kabaddi-championship-campaign-against-eng-126102201529_1.html' }],
+        q: 'Commonwealth Kabaddi Championship India England Malaysia win',
+        art: { type: 'hbars', title: 'Opening matches, points', max: 78, rows: [
+          { l: 'India women', v: 73, t: '73', c: 'var(--sport)' }, { l: 'Malaysia', v: 13, t: '13' }, { l: 'India men', v: 46, t: '46', c: 'var(--sport)' }, { l: 'England', v: 26, t: '26' }] } }
+    ] }
+  };
+
+  var Q = function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); };
+  var STRIP = [
+    { n: '$116.72', l: 'Brent crude, settle Fri 23 Oct', d: '+3.1%', dir: 'up', u: Q('brent crude oil price') },
+    { n: '73,123.83', l: 'Sensex, close Fri 23 Oct', d: '−0.17%', dir: 'down', u: Q('sensex live') },
+    { n: '22,600', l: 'Nifty 50, close Fri 23 Oct', d: '−0.39%', dir: 'down', u: Q('nifty 50 live') },
+    { n: '25,955.34', l: 'Nasdaq, close Fri 23 Oct', d: '−0.21%', dir: 'down', u: Q('nasdaq composite live') },
+    { n: '22.19x', l: 'Jio IPO, final subscription', d: 'listing 28 Oct', dir: '', u: Q('jio platforms ipo allotment status') }
+  ];
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---------- storage (optional per-viewer convenience) ----------
+  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var saved = lsGet('nd2-saved') || {};
+  var opened = lsGet('nd2-open') || {};
+  var filter = 'all';
+  var firstShow = {};   // first story per topic opens by default the first time it is shown
+
+  // ---------- helpers ----------
+  function h(tag, props, kids) {
+    var e = document.createElement(tag);
+    for (var k in (props || {})) {
+      if (k === 'text') e.textContent = props[k];
+      else if (k === 'class') e.className = props[k];
+      else e.setAttribute(k, props[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function toast(msg) {
+    var t = $('toast'); t.textContent = msg; t.hidden = false;
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, 1800);
+  }
+
+  // ---------- greeting ----------
+  function part(hr) {
+    if (hr >= 5 && hr < 12) return 'Good morning';
+    if (hr >= 12 && hr < 17) return 'Good afternoon';
+    if (hr >= 17 && hr < 21) return 'Good evening';
+    return 'Good night';
+  }
+  function renderGreeting() {
+    var now = new Date(), name = $('name').value.trim();
+    $('greeting').textContent = part(now.getHours()) + (name ? ', ' + name + '.' : '.');
+    $('today').textContent = now.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  function renderStrip() {
+    var st = $('strip'); st.textContent = '';
+    STRIP.forEach(function (t) {
+      var row = h('div', { class: 'row' }, [h('b', { text: t.n })]);
+      if (t.dir) row.appendChild(h('span', { class: 'arr ' + t.dir, 'aria-label': t.dir === 'up' ? 'up' : 'down', text: t.dir === 'up' ? '▲' : '▼' }));
+      var chg = h('i', { class: t.dir === 'up' ? 'pos' : t.dir === 'down' ? 'neg' : '', text: t.d });
+      row.appendChild(chg);
+      st.appendChild(h('div', { class: 'tick' }, [row, h('span', { text: t.l }), h('div', {}, [h('a', { href: t.u, target: '_blank', rel: 'noopener noreferrer', text: 'Live quote ↗' })])]));
+    });
+    $('stripnote').textContent = 'Last reported closing figures from the ' + SNAPSHOT + ' edition, not live ticks. Tap “Live quote” for the current value.';
+  }
+
+  // ---------- IST clock, NSE hours, edition age, streak ----------
+  function ist() {
+    var p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hour12: false }).formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+    return { iso: p.year + '-' + p.month + '-' + p.day, mins: (+p.hour % 24) * 60 + (+p.minute), wk: p.weekday };
+  }
+  function renderPills() {
+    var t = ist(), wd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(t.wk) > -1, open = wd && t.mins >= 555 && t.mins <= 930;
+    var box = $('pills'); box.textContent = '';
+    box.appendChild(h('span', { class: 'pill' }, [h('i', { class: 'led' + (open ? ' on' : '') }), open ? 'NSE trading hours now' : 'NSE closed (hours 9:15–15:30 IST, Mon–Fri)']));
+    var days = Math.round((Date.parse(t.iso) - Date.parse(SNAPSHOT_ISO)) / 86400000);
+    box.appendChild(h('span', { class: 'pill', text: 'Edition: ' + SNAPSHOT }));
+    var stk = streak(t.iso);
+    if (stk > 0) box.appendChild(h('span', { class: 'pill', text: '🔥 ' + stk + '-day streak' }));
+    var s2 = $('stale');
+    if (days >= 1) { s2.hidden = false; s2.textContent = 'This edition is from ' + SNAPSHOT + ', ' + days + ' day' + (days > 1 ? 's' : '') + ' ago. A fresh edition is meant to be published each morning; reload the page later, or ask Claude to refresh it now.'; }
+    else s2.hidden = true;
+  }
+  function streak(today) {
+    var r = lsGet('nd2-streak') || { last: '', n: 0 };
+    if (r.last !== today) {
+      var y = new Date(Date.parse(today) - 86400000).toISOString().slice(0, 10);
+      r = { last: today, n: r.last === y ? r.n + 1 : 1 }; lsSet('nd2-streak', r);
+    }
+    return r.n;
+  }
+  function renderTabs() {
+    var box = $('tabs'), cur = $('topic').value; box.textContent = '';
+    var ic = { business: '📈', global: '🌍', sports: '🏆' };
+    topicKeys().forEach(function (k) {
+      var b = h('button', { class: 'tabbtn', type: 'button', 'aria-pressed': String(k === cur), style: '--cat:' + NEWS[k].color }, [h('span', { class: 'ic', text: ic[k] }), NEWS[k].label.replace(' news', ''), h('small', { text: NEWS[k].stories.length + ' stories' })]);
+      b.addEventListener('click', function () { $('topic').value = k; lsSet('nd2-topic', k); renderNews(); });
+      box.appendChild(b);
+    });
+  }
+  function surprise() {
+    var all = []; topicKeys().forEach(function (k) { NEWS[k].stories.forEach(function (s) { all.push([k, s]); }); });
+    var un = all.filter(function (a) { return !opened[a[1].id]; }), pool = un.length ? un : all, p = pool[Math.floor(Math.random() * pool.length)];
+    filter = 'all'; Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'), function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-f') === 'all')); });
+    $('topic').value = p[0]; lsSet('nd2-topic', p[0]); opened[p[1].id] = 1; lsSet('nd2-open', opened); renderNews();
+    var n = document.getElementById('card-' + p[1].id), rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (n) n.scrollIntoView({ behavior: rm ? 'auto' : 'smooth', block: 'center' });
+  }
+
+  // ---------- chart drawing (SVG built from the reported numbers) ----------
+  function el(tag, a) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in a) { if (k === 'fill' || k === 'stroke') e.style.setProperty(k, a[k]); else e.setAttribute(k, a[k]); }
+    return e;
+  }
+  var FG = 'var(--fg)', MU = 'var(--muted)', DN = 'var(--down)', UP = 'var(--up)', FI = 'var(--fire)', SF = 'var(--surface)', LN = 'var(--line)', AC = 'var(--accent)';
+  function add(svg, tag, a) { var e = el(tag, a); svg.appendChild(e); return e; }
+  function txt(svg, x, y, s, size, col, anchor, weight) {
+    var lines = String(s).split('\n'), t = add(svg, 'text', { x: x, y: y, 'text-anchor': anchor || 'start', 'font-size': size, 'font-weight': weight || 600, fill: col || FG });
+    t.style.fontFamily = 'var(--font-ui)';
+    lines.forEach(function (ln, i) { var ts = document.createElementNS(NS, 'tspan'); ts.setAttribute('x', x); ts.setAttribute('dy', i ? size * 1.15 : 0); ts.textContent = ln; t.appendChild(ts); });
+    return t;
+  }
+  function title(svg, s) { txt(svg, 14, 22, s.toUpperCase(), 10, MU, 'start', 700).setAttribute('letter-spacing', '0.8'); }
+  function person(svg, x, y, s, col) {
+    add(svg, 'circle', { cx: x, cy: y, r: 6 * s, fill: col });
+    add(svg, 'path', { d: 'M' + (x - 10 * s) + ' ' + (y + 32 * s) + ' q0 -19 ' + (10 * s) + ' -19 q' + (10 * s) + ' 0 ' + (10 * s) + ' 19 z', fill: col });
+  }
+
+  function hbars(svg, a) {
+    title(svg, a.title);
+    var n = a.rows.length, top = 36, bottom = 192, rowH = Math.min(36, (bottom - top) / n), barH = Math.min(18, rowH * 0.58);
+    var x0 = 118, xr = 348, zero = a.div ? 238 : x0, scale = a.div ? 78 / a.max : (xr - x0 - 56) / a.max;
+    if (a.div) add(svg, 'line', { x1: zero, y1: top - 4, x2: zero, y2: bottom, stroke: MU, 'stroke-width': 1.5, opacity: 0.6 });
+    a.rows.forEach(function (r, i) {
+      var cy = top + rowH * i + rowH / 2, w = Math.abs(r.v) * scale;
+      txt(svg, 14, cy + (String(r.l).indexOf('\n') > -1 ? -3 : 4), r.l, 10.5, FG, 'start', 600);
+      var col = r.c || (a.div ? (r.v < 0 ? DN : UP) : AC);
+      if (r.textOnly) { txt(svg, zero + 8, cy + 4, r.t, 11.5, r.c || FG, 'start', 700); return; }
+      if (a.div && r.v < 0) { add(svg, 'rect', { x: zero - w, y: cy - barH / 2, width: w, height: barH, rx: 3, fill: col }); txt(svg, zero - w - 5, cy + 4, r.t, 11.5, FG, 'end', 700); }
+      else { add(svg, 'rect', { x: zero, y: cy - barH / 2, width: Math.max(w, 2), height: barH, rx: 3, fill: col }); txt(svg, zero + Math.max(w, 2) + 5, cy + 4, r.t, 11.5, FG, 'start', 700); }
+    });
+  }
+
+  function sideTiles(svg, tiles, x, w) {
+    tiles.forEach(function (t, i) {
+      var y = 40 + i * 80;
+      add(svg, 'rect', { x: x, y: y, width: w, height: 70, rx: 8, fill: SF });
+      txt(svg, x + w / 2, y + 30, t.n, 20, FG, 'middle', 700);
+      txt(svg, x + w / 2, y + 48, t.c, 9.5, MU, 'middle', 600);
+    });
+  }
+  function vbars(svg, a) {
+    title(svg, a.title);
+    var hasSide = !!a.side, left = 26, right = hasSide ? 222 : 336, n = a.cols.length, slot = (right - left) / n, bw = Math.min(54, slot * 0.62);
+    var base = 170, topY = 54, maxH = base - topY, min = a.min || 0, max = Math.max.apply(null, a.cols.map(function (c) { return c.v; }));
+    add(svg, 'line', { x1: left - 8, y1: base, x2: right + 4, y2: base, stroke: MU, 'stroke-width': 1.5, opacity: 0.6 });
+    a.cols.forEach(function (c, i) {
+      var hgt = Math.max(6, ((c.v - min) / (max - min || 1)) * maxH * 0.92 + maxH * 0.08), cx = left + slot * i + slot / 2;
+      add(svg, 'rect', { x: cx - bw / 2, y: base - hgt, width: bw, height: hgt, rx: 3, fill: c.hl ? FI : AC, opacity: c.hl ? 1 : 0.85 });
+      txt(svg, cx, base - hgt - 6, c.t, 12, FG, 'middle', 700);
+      txt(svg, cx, base + 14, c.l, 10, MU, 'middle', 600);
+    });
+    if (min) txt(svg, 14, 196, 'Axis starts at ' + a.unit + min + ', so bar heights exaggerate differences', 8.5, MU, 'start', 500);
+    if (hasSide) sideTiles(svg, a.side, 236, 112);
+  }
+
+  function stats(svg, a) {
+    title(svg, a.title);
+    a.tiles.forEach(function (t, i) {
+      var x = 14 + (i % 2) * 170, y = 36 + Math.floor(i / 2) * 78;
+      add(svg, 'rect', { x: x, y: y, width: 162, height: 70, rx: 8, fill: SF });
+      txt(svg, x + 12, y + 32, t.n, 22, FG, 'start', 700);
+      txt(svg, x + 12, y + 48, t.c, 9.5, MU, 'start', 600);
+    });
+  }
+
+  function waffle(svg, a) {
+    title(svg, a.title);
+    var i = 0;
+    a.parts.forEach(function (c) {
+      for (var k = 0; k < c[1]; k++, i++) {
+        var col = Math.floor(i / 6), row = i % 6;
+        add(svg, 'circle', { cx: 24 + col * 17, cy: 50 + row * 19, r: 7, fill: c[0] });
+      }
+    });
+    a.parts.forEach(function (l, j) {
+      var x = [14, 130, 250][j];
+      add(svg, 'circle', { cx: x + 5, cy: 180, r: 5, fill: l[0] }); txt(svg, x + 15, 184, l[2], 11, FG, 'start', 700);
+    });
+  }
+
+  function hormuz(svg) {
+    title(svg, 'Claimed by Iran’s IRGC, disputed');
+    for (var i = 0; i < 7; i++) {
+      var x = 18 + i * 47, col = i < 4 ? FI : DN;
+      add(svg, 'path', { d: 'M' + x + ' 70 h34 l-6 11 h-22 z', fill: FG });
+      add(svg, 'rect', { x: x + 20, y: 60, width: 9, height: 10, fill: FG });
+      add(svg, 'path', { d: 'M' + (x + 8) + ' 68 q-5 -9 1 -16 q1 5 5 5 q0 -6 5 -10 q4 9 -1 15 q4 -1 5 -5 q5 7 -2 11 z', fill: col });
+    }
+    txt(svg, 14, 100, '7 ships claimed hit: 4 struck, 3 on mines\nNot independently confirmed; Trump calls it fake', 10.5, FG, 'start', 700);
+    for (var j = 0; j < 5; j++) add(svg, 'rect', { x: 14 + j * 64, y: 118, width: 58, height: 24, rx: 4, fill: j === 0 ? AC : 'none', stroke: AC, 'stroke-width': 2 });
+    txt(svg, 14, 164, 'About 1 in 5 barrels of world oil and gas passes\nthrough the strait in peacetime', 10.5, FG, 'start', 600);
+    txt(svg, 346, 192, 'Brent $116.72', 12, FI, 'end', 700);
+  }
+
+  var DRAW = { hbars: hbars, vbars: vbars, stats: stats, waffle: waffle, hormuz: hormuz };
+  function art(story) {
+    var svg = el('svg', { viewBox: '0 0 360 202', role: 'img', 'aria-label': 'Chart for: ' + story.title });
+    (DRAW[story.art.type])(svg, story.art);
+    return svg;
+  }
+
+  // ---------- cards ----------
+  function lvl(level) {
+    var seg = h('span', { class: 'seg' }, [h('i'), h('i'), h('i')]);
+    var e = h('span', { class: 'lvl', 'data-l': level, title: 'Expected impact on India (analysis)' }, [seg, 'India impact: ' + level]);
+    return e;
+  }
+  function photoUrl(q) { return 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(q); }
+
+  function card(story, cat, idx) {
+    var isOpen = !!opened[story.id];
+    var c = h('article', { class: 'card', id: 'card-' + story.id, style: '--i:' + idx });
+    var figure = h('div', { class: 'art' }, [art(story), h('em', { text: 'Chart from reported numbers' })]);
+    var main = h('div', { class: 'main' });
+    main.appendChild(h('div', { class: 'meta' }, [h('span', { class: 'tag', text: story.tag }), h('span', { text: story.date }), lvl(story.level)]));
+    main.appendChild(h('h3', { text: story.title }));
+    main.appendChild(h('p', { class: 'sum', text: story.summary }));
+    var nums = h('div', { class: 'nums' });
+    story.nums.forEach(function (n) { nums.appendChild(h('div', {}, [h('b', { text: n.n }), h('span', { text: n.l })])); });
+    main.appendChild(nums);
+
+    var depth = h('div', { class: 'depth' });
+    depth.hidden = !isOpen;
+    var left = h('div');
+    left.appendChild(h('h4', { text: 'What happened' }));
+    var ul = h('ul'); story.what.forEach(function (w) { ul.appendChild(h('li', { text: w })); }); left.appendChild(ul);
+    left.appendChild(h('h4', { text: 'Why it matters', style: 'margin-top:16px' }));
+    left.appendChild(h('p', { text: story.why }));
+    var right = h('div', { style: 'display:grid;gap:16px;align-content:start' });
+    var ind = h('div', { class: 'india', 'data-l': story.level }, [h('h4', {}, ['Impact on India ', lvl(story.level)]), h('p', { text: story.india }), h('small', { text: 'Analysis, not reporting. Based on the figures in these sources.' })]);
+    var src = h('div', { class: 'src' }, [h('span', { text: 'Sources:' })]);
+    story.sources.forEach(function (s) { src.appendChild(h('a', { href: s.u, target: '_blank', rel: 'noopener noreferrer', text: s.n })); });
+    src.appendChild(h('span', { text: 'Photos:' }));
+    src.appendChild(h('a', { href: photoUrl(story.q), target: '_blank', rel: 'noopener noreferrer', text: 'See photos' }));
+    right.appendChild(ind); right.appendChild(src);
+    depth.appendChild(left); depth.appendChild(right);
+
+    var toggle = h('button', { class: 'btn primary', type: 'button', 'aria-expanded': String(isOpen), text: isOpen ? 'Hide depth' : 'Read the depth' });
+    var save = h('button', { class: 'btn', type: 'button', 'aria-pressed': String(!!saved[story.id]), text: saved[story.id] ? '★ Saved' : '☆ Save' });
+    var copy = h('button', { class: 'btn', type: 'button', text: 'Copy summary' });
+    toggle.addEventListener('click', function () {
+      var now = depth.hidden; depth.hidden = !now;
+      toggle.setAttribute('aria-expanded', String(now)); toggle.textContent = now ? 'Hide depth' : 'Read the depth';
+      if (now) opened[story.id] = 1; else delete opened[story.id];
+      lsSet('nd2-open', opened); renderProgress();
+    });
+    save.addEventListener('click', function () {
+      if (saved[story.id]) delete saved[story.id]; else saved[story.id] = 1;
+      lsSet('nd2-saved', saved);
+      save.setAttribute('aria-pressed', String(!!saved[story.id])); save.textContent = saved[story.id] ? '★ Saved' : '☆ Save';
+      toast(saved[story.id] ? 'Saved to your list' : 'Removed from your list');
+      if (filter === 'saved') renderNews();
+    });
+    copy.addEventListener('click', function () {
+      var t = story.title + '\n' + story.summary + '\nImpact on India (' + story.level + '): ' + story.india;
+      var done = function () { toast('Summary copied'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, function () { toast('Copy is not available here'); });
+      else toast('Copy is not available here');
+    });
+    main.appendChild(h('div', { class: 'actions' }, [toggle, save, copy]));
+
+    c.appendChild(figure); c.appendChild(main); c.appendChild(depth);
+    return c;
+  }
+
+  function topicKeys() { return Object.keys(NEWS); }
+  function renderProgress() {
+    var key = $('topic').value, cat = NEWS[key];
+    var n = cat.stories.filter(function (s) { return opened[s.id]; }).length;
+    $('bar').style.width = (n / cat.stories.length * 100) + '%';
+    $('ptext').textContent = n === cat.stories.length ? 'You have opened all ' + n + ' stories in this topic.' : n + ' of ' + cat.stories.length + ' stories opened';
+  }
+  function renderNews() {
+    renderTabs();
+    var key = $('topic').value, cat = NEWS[key], list = $('list');
+    list.textContent = '';
+    document.querySelector('.progress').style.setProperty('--cat', cat.color);
+    $('topic-title').style.setProperty('--cat', cat.color);
+    $('topic-label').textContent = cat.label;
+    $('asof').textContent = cat.stories.length + ' stories · snapshot ' + SNAPSHOT;
+    var stories = cat.stories.filter(function (s) {
+      return filter === 'all' || (filter === 'high' && s.level === 'High') || (filter === 'saved' && saved[s.id]);
+    });
+    if (!stories.length) {
+      list.appendChild(h('div', { class: 'empty', text: filter === 'saved' ? 'Nothing saved in this topic yet. Press “Save” on a story to keep it here.' : 'No stories match this filter.' }));
+    }
+    stories.forEach(function (s, i) {
+      var node = card(s, cat, i);
+      node.style.setProperty('--cat', cat.color);
+      list.appendChild(node);
+    });
+    var idx = topicKeys().indexOf(key), nextKey = topicKeys()[(idx + 1) % topicKeys().length];
+    $('next').style.setProperty('--cat', NEWS[nextKey].color);
+    $('next').textContent = 'Next: ' + NEWS[nextKey].label + ' →';
+    $('next').onclick = function () { $('topic').value = nextKey; lsSet('nd2-topic', nextKey); renderNews(); window.scrollTo(0, 0); };
+    renderProgress();
+  }
+
+  // first story open the first time, so the page shows depth immediately
+  if (!lsGet('nd2-seen')) { opened.b1 = 1; opened.g1 = 1; opened.s1 = 1; lsSet('nd2-open', opened); lsSet('nd2-seen', 1); }
+
+  var sn = lsGet('nd2-name'); if (sn) $('name').value = sn;
+  var st = lsGet('nd2-topic'); if (st && NEWS[st]) $('topic').value = st;
+  $('name').addEventListener('input', function () { lsSet('nd2-name', $('name').value); renderGreeting(); });
+  $('topic').addEventListener('change', function () { lsSet('nd2-topic', $('topic').value); renderNews(); });
+  Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'), function (b) {
+    b.addEventListener('click', function () {
+      filter = b.getAttribute('data-f');
+      Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'), function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      renderNews();
+    });
+  });
+
+  $('surprise').addEventListener('click', surprise);
+  renderGreeting(); renderStrip(); renderPills(); renderNews();
+  setInterval(function () { renderGreeting(); renderPills(); }, 60000);
+})();
+</script>
+
+</body></html>
