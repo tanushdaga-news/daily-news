@@ -1,5 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Personalized News Digest</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><title>Khabar Kadak</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap');
@@ -13,7 +12,7 @@
   --muted: #55696f;
   --line: #d6dee1;
   --accent: #0b6e8a;
-  --biz: #0f7a5c;
+  --biz: #0f7a5c; --tech: #0b6bcb; --ent: #c2308a;
   --glob: #4b57c4;
   --sport: #d4600f;
   --art-bg: #e9eff1;
@@ -28,14 +27,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0e1a20; --surface: #15262e; --fg: #e8f0f2; --muted: #93a8af; --line: #26404a;
-    --accent: #4fb8d6; --biz: #4cc9a0; --glob: #8d98f0; --sport: #f09a5a; --art-bg: #1b313a;
+    --accent: #4fb8d6; --biz: #4cc9a0; --tech: #5aa9f0; --ent: #f070b8; --glob: #8d98f0; --sport: #f09a5a; --art-bg: #1b313a;
     --down: #ff8a7a; --up: #4cc9a0; --fire: #ffb067; --warn: #f0b84a; --tint: #1a3039;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0e1a20; --surface: #15262e; --fg: #e8f0f2; --muted: #93a8af; --line: #26404a;
-  --accent: #4fb8d6; --biz: #4cc9a0; --glob: #8d98f0; --sport: #f09a5a; --art-bg: #1b313a;
+  --accent: #4fb8d6; --biz: #4cc9a0; --tech: #5aa9f0; --ent: #f070b8; --glob: #8d98f0; --sport: #f09a5a; --art-bg: #1b313a;
   --down: #ff8a7a; --up: #4cc9a0; --fire: #ffb067; --warn: #f0b84a; --tint: #1a3039;
   color-scheme: dark;
 }
@@ -230,15 +229,35 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
 @keyframes fade { from { opacity: 0; } }
 @keyframes wob { 50% { transform: rotate(-7deg) scale(1.08); } }
 @media (prefers-reduced-motion: reduce) { .memoji, .mbox, .modal, .qcard { animation: none; } .confetti { display: none; } .qopt { transition: none; } }
+
+.tabs { display: flex; flex-wrap: wrap; }
+.tabbtn { flex: 1 1 88px; min-width: 0; }
+.cats { margin-top: 18px; }
+.cats h2 { font-size: 14px; margin: 0 0 8px; letter-spacing: .02em; }
+.cats .row { display: flex; flex-wrap: wrap; gap: 8px; }
+.catbtn { border: 2px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 700; cursor: pointer; color: var(--fg); }
+.catbtn[aria-pressed="true"] { background: var(--cat); border-color: var(--cat); color: #fff; }
+.cats small { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+.brand { font-family: var(--font-ui, inherit); font-weight: 800; font-size: 15px; letter-spacing: .04em; margin: 0 0 4px; }
+.brand span { font-weight: 500; opacity: .85; }
+.about { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-top: 16px; }
+.about h2 { margin: 0 0 6px; font-size: 22px; }
+.about h3 { margin: 22px 0 6px; font-size: 16px; }
+.about p, .about li { line-height: 1.55; font-size: 15px; }
+.about ul, .about ol { padding-left: 20px; margin: 6px 0; }
+.about a { color: var(--accent); }
+.about .note { background: var(--tint, #eef4f6); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+.btn.link { text-decoration: none; display: inline-block; color: var(--fg); }
 </style>
 
 <div class="wrap">
   <div class="hero">
     <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
     <header>
+      <p class="brand">🗞️ KHABAR KADAK <span>· news with the numbers, and what it means for India</span></p>
       <p class="eyebrow" id="today"></p>
       <h1 id="greeting">Good morning.</h1>
-      <p class="sub">Five stories per topic, each with the numbers behind it and what it could mean for India.</p>
+      <p class="sub">Pick your categories. Five stories each, with the numbers behind them and what they could mean for India.</p>
     </header>
     <div class="pills" id="pills"></div>
     <div class="strip" id="strip" aria-label="Key numbers"></div>
@@ -246,6 +265,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   </div>
   <div class="stale" id="stale" hidden></div>
 
+  <div class="cats" id="cats"></div>
   <div class="tabs" id="tabs" role="group" aria-label="Choose a topic"></div>
 
   <div class="controls">
@@ -271,8 +291,9 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   <section class="list" id="list" style="margin-top:16px" aria-live="polite"></section>
   <div class="next" id="nextwrap"><button class="btn primary" id="next" type="button"></button></div>
   <section id="quizbox" hidden></section>
+  <section id="aboutbox" hidden></section>
 
-  <p class="foot">Stories are an edition of reports from 23 to 26 Oct 2026 (see the banner above if it is out of date), summarised from the linked outlets; figures are as those outlets reported them. The numbers at the top are the last reported closing figures, not live ticks; use “Live quote” for the current value. The “Impact on India” panels are analysis, not reporting, and are marked as such. The pictures are charts and drawings built from the reported numbers, not photographs. Use “See photos” for real pictures and the source links for the full reports. Your streak grows by one day when you open the full depth of all 15 stories in an edition; missing a whole day resets it.</p>
+  <p class="foot">Stories are an edition of reports from 23 to 26 Oct 2026 (see the banner above if it is out of date), summarised from the linked outlets; figures are as those outlets reported them. The numbers at the top are the last reported closing figures, not live ticks. The “Impact on India” panels are analysis, not reporting, and are marked as such. The pictures are charts built from reported numbers, not photographs. Your streak grows by one day when you open the full depth of every story in the categories you have selected; missing a whole day resets it. See the About tab for how stories are checked and what that does and does not guarantee.</p>
 </div>
 <div class="modal" id="modal" hidden></div>
 <div class="toast" id="toast" hidden></div>
@@ -362,6 +383,377 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
           { n: '28 Oct', c: 'US Fed decision' }, { n: '29 Oct', c: 'ECB decision' }, { n: '30 Oct', c: 'Bank of Japan decision' }, { n: '21,700', c: 'Nifty level if 22,200\nsupport breaks (Religare)' }] } }
     ] },
 
+tech: { label: "Tech news", short: "Tech", color: "var(--tech)", stories: [
+ {
+  "id": "t1",
+  "level": "Medium",
+  "date": "Wed 21 Oct",
+  "tag": "AI · Finance",
+  "title": "Anthropic reports an $80bn first-half loss, mostly accounting charges, as its IPO nears",
+  "summary": "Anthropic’s draft IPO papers show a net loss of more than $80 billion for the six months to 30 June 2026, the Wall Street Journal reports. About $72 billion of it is accounting charges tied to convertible notes, and revenue rose to $16.3 billion from $1.1 billion a year earlier.",
+  "nums": [
+   {
+    "n": ">$80bn",
+    "l": "H1 2026 net loss (WSJ)"
+   },
+   {
+    "n": "$72bn",
+    "l": "of it accounting charges"
+   },
+   {
+    "n": "$16.3bn",
+    "l": "H1 revenue, from $1.1bn"
+   }
+  ],
+  "what": [
+   "Business Today’s headline puts the loss at $80.7 billion, a six-fold jump; Al Jazeera says the same period last year was a $13 billion loss.",
+   "The main cause is about $72 billion of charges from changes in the value of convertible notes and other financial instruments, not day-to-day spending.",
+   "AI infrastructure spending almost quadrupled to nearly $9 billion, and Anthropic may spend up to $750 billion on computing capacity in coming years, including deals under discussion.",
+   "Reuters reports investors discussed a valuation of about $1.5 trillion at last week’s investor day, down from roughly $2 trillion expected for a November share sale. Anthropic did not comment and the report could not be immediately verified."
+  ],
+  "why": "It shows how much cash AI labs burn, and how much an IPO valuation now depends on future computing bills.",
+  "india": "Indian IT-services firms and startups build on models from labs like Anthropic, so these labs’ finances and pricing can reach India through API costs and partnerships. No direct Indian effect is reported. This is analysis.",
+  "sources": [
+   {
+    "n": "Al Jazeera (WSJ report)",
+    "u": "https://www.aljazeera.com/economy/2026/10/21/anthropic-posts-80bn-loss-in-first-half-of-2026-wsj"
+   },
+   {
+    "n": "Business Today",
+    "u": "https://www.businesstoday.in/markets/ipo-corner/story/anthropic-ipo-net-loss-jumps-6x-to-80-7-billion-in-h1-2026-what-you-should-know-562764-2026-10-21"
+   }
+  ],
+  "q": "Anthropic IPO prospectus net loss first half 2026",
+  "art": {
+   "type": "hbars",
+   "title": "Anthropic H1 2026, $ billion",
+   "max": 85,
+   "rows": [
+    {
+     "l": "Net loss",
+     "v": 80.7,
+     "t": "$80bn+",
+     "c": "var(--down)"
+    },
+    {
+     "l": "Accounting\ncharges",
+     "v": 72,
+     "t": "≈ $72bn"
+    },
+    {
+     "l": "H1 revenue",
+     "v": 16.3,
+     "t": "$16.3bn",
+     "c": "var(--up)"
+    },
+    {
+     "l": "AI infra\nspend",
+     "v": 9,
+     "t": "≈ $9bn"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "Why was Anthropic’s reported first-half 2026 net loss so large?",
+   "o": [
+    "Mostly accounting charges on convertible notes and similar instruments",
+    "Because its revenue fell sharply",
+    "A one-off court fine",
+    "Selling its data centres at a loss"
+   ],
+   "a": 0,
+   "e": "About $72bn of the loss was accounting charges; revenue actually rose to $16.3bn."
+  }
+ },
+ {
+  "id": "t2",
+  "level": "Medium",
+  "date": "Wed 28 – Thu 29 Oct",
+  "tag": "Big Tech earnings",
+  "title": "Microsoft, Alphabet and Amazon report this week: what Wall Street is watching",
+  "summary": "Microsoft and Alphabet report after the US close on Wednesday 28 Oct and Amazon on Thursday 29 Oct. The results follow a sell-off in tech and chip stocks on 22–23 Oct driven by worries about AI spending.",
+  "nums": [
+   {
+    "n": "$4.71",
+    "l": "Microsoft EPS consensus (yr ago $4.13)"
+   },
+   {
+    "n": "$2.94",
+    "l": "Alphabet EPS consensus (yr ago $2.87)"
+   },
+   {
+    "n": "$2.01",
+    "l": "Amazon EPS consensus (yr ago $1.95)"
+   }
+  ],
+  "what": [
+   "Microsoft reports on Wed 28 Oct (call 5:30 p.m. ET). Consensus EPS is $4.71 against $4.13 a year ago, and the company’s own revenue forecast was $89.85–90.95 billion.",
+   "Alphabet reports on Wed 28 Oct (call 4:30 p.m. ET). Consensus EPS is $2.94 against $2.87; it gives no quarterly revenue forecast.",
+   "Amazon reports on Thu 29 Oct (call 5:00 p.m. ET). Consensus EPS is $2.01 against $1.95, and it guided net sales of $197–202 billion. In July it said it expects about $220 billion of capex in 2026, up from a $200 billion plan announced in February.",
+   "Apple reports on Mon 2 Nov, outside this week. Meta, Tesla and Netflix have already reported."
+  ],
+  "why": "Capex and cloud-growth numbers will show whether the AI spending boom is paying off, which sets the mood for global tech stocks.",
+  "india": "Microsoft, Alphabet and Amazon are large buyers of Indian IT services and run big cloud and engineering centres in India. Strong cloud results support demand for Indian IT and data-centre firms, while cuts to AI spending would be a warning sign. This is analysis, not reported.",
+  "sources": [
+   {
+    "n": "StockTitan earnings calendar",
+    "u": "https://www.stocktitan.net/articles/earnings-calendar-week-of-october-26-2026"
+   },
+   {
+    "n": "Tech Insider (dates)",
+    "u": "https://tech-insider.org/big-tech-earnings-oct-28-29-copilot-kiro-gemini-code-assist-2026/"
+   },
+   {
+    "n": "Let’s Data Science (Amazon July results)",
+    "u": "https://letsdatascience.com/news/aws-revenue-growth-outruns-available-ai-capacity-b0361d90"
+   }
+  ],
+  "q": "Microsoft Alphabet Amazon earnings October 28 29 2026",
+  "art": {
+   "type": "stats",
+   "title": "Earnings calendar, 28–29 Oct",
+   "tiles": [
+    {
+     "n": "Wed 28",
+     "c": "Microsoft + Alphabet\nafter the US close"
+    },
+    {
+     "n": "Thu 29",
+     "c": "Amazon\nafter the US close"
+    },
+    {
+     "n": "$220bn",
+     "c": "Amazon 2026 capex\nplan (July)"
+    },
+    {
+     "n": "Mon 2 Nov",
+     "c": "Apple reports\nnext week"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "On which day does Amazon report its quarterly earnings this week?",
+   "o": [
+    "Tuesday 27 Oct",
+    "Wednesday 28 Oct",
+    "Thursday 29 Oct",
+    "Monday 2 Nov"
+   ],
+   "a": 2,
+   "e": "Microsoft and Alphabet report on Wednesday 28 Oct; Apple on Monday 2 Nov."
+  }
+ },
+ {
+  "id": "t3",
+  "level": "Medium",
+  "date": "Wed 14 Oct",
+  "tag": "AI · Law",
+  "title": "Eight US states sue OpenAI, saying ChatGPT harms children and deceives adults",
+  "summary": "At least eight states have sued OpenAI, alleging ChatGPT broke consumer-protection laws. The AP names seven that filed separate suits on Wednesday 14 Oct: Arizona, Arkansas, Idaho, Kansas, Montana, Nebraska and West Virginia. OpenAI says it has safety protections for children and wants industry-wide rules.",
+  "nums": [
+   {
+    "n": "8+",
+    "l": "US states suing"
+   },
+   {
+    "n": "≈ half",
+    "l": "US chatbot market share, per the states"
+   },
+   {
+    "n": "13+",
+    "l": "ChatGPT minimum age (under 18 need consent)"
+   }
+  ],
+  "what": [
+   "The states say ChatGPT gives dangerous medical advice, encourages paranoia, can coach people toward suicide or harming others, and appears agreeable to vulnerable teenagers.",
+   "Arizona’s suit says it encourages teens to share personal information and sometimes discourages them from telling parents, authorities or friends.",
+   "OpenAI says nearly nine in 10 teen users use it for learning or productivity and that teens average under 15 minutes a day. Common Sense Media questioned those statistics and found ChatGPT could not or did not detect when a user was a child.",
+   "For context the AP notes that in August Meta agreed to an $18 billion settlement over teen social-media addiction and child-safety claims."
+  ],
+  "why": "A wave of state suits can force changes in how chatbots treat minors and sets legal risk for every AI company.",
+  "india": "Many students and young people in India use ChatGPT. India’s Digital Personal Data Protection Act requires parental consent for children’s data (general background, not in the source), so similar child-safety questions could reach Indian regulators. This is analysis.",
+  "sources": [
+   {
+    "n": "AP via WLOX",
+    "u": "https://www.wlox.com/2026/10/15/states-sue-ai-giant-openai-saying-chatgpt-is-hurting-children-deceiving-adults/"
+   }
+  ],
+  "q": "states sue OpenAI ChatGPT children consumer protection",
+  "art": {
+   "type": "stats",
+   "title": "States v. OpenAI, per the AP",
+   "tiles": [
+    {
+     "n": "8+",
+     "c": "states suing"
+    },
+    {
+     "n": "7",
+     "c": "named by the AP:\nAZ AR ID KS MT NE WV"
+    },
+    {
+     "n": "$18bn",
+     "c": "Meta teen-safety\nsettlement (Aug)"
+    },
+    {
+     "n": "<15 min",
+     "c": "teen use a day,\nper OpenAI"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "What are the states mainly accusing OpenAI of?",
+   "o": [
+    "Breaking consumer-protection laws by harming children and deceiving adults",
+    "Avoiding US taxes",
+    "Copying a rival’s source code",
+    "Missing a product launch date"
+   ],
+   "a": 0,
+   "e": "At least eight states filed suits in mid-October."
+  }
+ },
+ {
+  "id": "t4",
+  "level": "High",
+  "date": "Fri 23 Oct",
+  "tag": "AI · India",
+  "title": "AI firms line up for India’s IPO market: Fractal Analytics eyes ₹4,900 crore",
+  "summary": "Fractal Analytics has regulatory approval for a proposed ₹4,900 crore IPO, and Transline Technologies, an AI-surveillance and biometrics firm, is preparing a share sale, Business Today reports. Both come as Jio Platforms’ record issue draws heavy demand.",
+  "nums": [
+   {
+    "n": "₹4,900 cr",
+    "l": "Fractal proposed IPO size"
+   },
+   {
+    "n": "₹1,279.3 cr",
+    "l": "Fractal fresh issue"
+   },
+   {
+    "n": "₹10,372 cr",
+    "l": "IndiaAI Mission outlay (5 years)"
+   }
+  ],
+  "what": [
+   "Fractal’s proposed IPO is a fresh issue of up to ₹1,279.3 crore plus an offer for sale of up to ₹3,620.7 crore. It filed draft papers with SEBI in August 2025 and has since received approval; no opening date is given.",
+   "Transline Technologies (founded 2001, New Delhi) received SEBI observations on 22 January 2026 and plans an offer for sale of up to 16.2 million shares. There is no fresh issue, so the company itself raises no new capital.",
+   "Business Today gives no valuations for either company and no price band or subscription dates.",
+   "Background in the article: the IndiaAI Mission was approved in March 2024 with an outlay of about ₹10,372 crore over five years."
+  ],
+  "why": "Listings give investors a way to back Indian AI firms and show how much appetite there is for AI businesses at home.",
+  "india": "This is an India-first story. Strong demand for Jio’s IPO could encourage more tech and AI listings, but without valuations or dates it is too early to say how these issues will be priced. Check SEBI and exchange notices for dates. This is analysis.",
+  "sources": [
+   {
+    "n": "Business Today",
+    "u": "https://www.businesstoday.in/markets/ipo-corner/story/ai-push-puts-tech-companies-in-ipo-spotlight-563251-2026-10-23"
+   }
+  ],
+  "q": "Fractal Analytics IPO SEBI approval 4900 crore Transline Technologies",
+  "art": {
+   "type": "hbars",
+   "title": "Fractal proposed IPO, ₹ crore",
+   "max": 5400,
+   "rows": [
+    {
+     "l": "Total\nproposed",
+     "v": 4900,
+     "t": "4,900",
+     "c": "var(--tech)"
+    },
+    {
+     "l": "Offer for sale",
+     "v": 3620.7,
+     "t": "3,620.7"
+    },
+    {
+     "l": "Fresh issue",
+     "v": 1279.3,
+     "t": "1,279.3"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "How big is Fractal Analytics’ proposed IPO?",
+   "o": [
+    "₹490 crore",
+    "₹1,279 crore",
+    "₹4,900 crore",
+    "₹30,213 crore"
+   ],
+   "a": 2,
+   "e": "₹30,213 crore is the size of Jio Platforms’ IPO."
+  }
+ },
+ {
+  "id": "t5",
+  "level": "Low",
+  "date": "Wed 21 Oct",
+  "tag": "Data centres",
+  "title": "Amazon drops a 120-acre data-centre plan in Virginia and shifts to housing",
+  "summary": "Amazon has withdrawn its plan for a data centre on the former George Washington University campus in Ashburn, Loudoun County, a site it bought for $427 million in February. The site will be rezoned for mostly housing, with data centres banned.",
+  "nums": [
+   {
+    "n": "$427M",
+    "l": "price paid in February"
+   },
+   {
+    "n": "120 acres",
+    "l": "site size"
+   },
+   {
+    "n": "$65M",
+    "l": "value of 25 acres given to the county"
+   }
+  ],
+  "what": [
+   "Amazon said it views the site’s legal development potential differently from the county but chose to avoid costly litigation. The county board chair spoke of a likely disagreement.",
+   "Under the deal Amazon gives 25 acres, valued at $65 million, for a community arts and sports centre, adds $5 million to the county housing fund, and cannot sue to pursue a data centre there.",
+   "Loudoun County ended by-right zoning for data centres last year and is installing a year-long pause on approvals, with a final vote expected next month."
+  ],
+  "why": "It shows local opposition and land-use rules are now a real limit on how fast the AI data-centre boom can spread.",
+  "india": "India is also adding data-centre capacity, where land, power and water are similar constraints (general background). This story carries no direct India effect; it is a signal about the global cost of building AI infrastructure. This is analysis.",
+  "sources": [
+   {
+    "n": "Bisnow",
+    "u": "https://www.bisnow.com/news/national/data-center-development/amazon-ditches-ashburn-data-center-plans-mixed-use-development"
+   }
+  ],
+  "q": "Amazon Ashburn data center plan withdrawn Loudoun County",
+  "art": {
+   "type": "stats",
+   "title": "Amazon’s Ashburn site",
+   "tiles": [
+    {
+     "n": "$427M",
+     "c": "paid, February"
+    },
+    {
+     "n": "120 acres",
+     "c": "Loudoun County site"
+    },
+    {
+     "n": "$65M",
+     "c": "25 acres given\nto the county"
+    },
+    {
+     "n": "$5M",
+     "c": "added to the county\nhousing fund"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "What will replace Amazon’s planned data centre at the Ashburn site?",
+   "o": [
+    "A bigger data centre",
+    "Mainly housing, with data centres banned",
+    "A chip factory",
+    "Nothing, the land stays empty"
+   ],
+   "a": 1,
+   "e": "The site will be rezoned for mixed use with housing predominant."
+  }
+ }
+] },
     global: { label: 'Global news', color: 'var(--glob)', stories: [
       { id: 'g1', quiz: {"q": "Which two countries are named among the mediators in the indirect US–Iran talks?", "o": ["Pakistan and Qatar", "Turkey and Egypt", "India and Oman", "China and Russia"], "a": 0, "e": "Iran’s foreign minister said talks via mediators including Pakistan and Qatar continue."}, level: 'High', date: '21–26 Oct', tag: 'Middle East',
         title: 'Iran–US talks continue through mediators as Hormuz claims and Houthi strikes mount',
@@ -514,7 +906,389 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
         sources: [{ n: 'India TV', u: 'https://www.indiatvnews.com/sports/other/india-finishes-asian-para-games-2026-with-record-medal-tally-check-full-list-of-winners-2026-10-23-1057759' }, { n: 'Outlook India', u: 'https://www.outlookindia.com/sports/others/asian-para-games-2026-india-medal-tally-full-list' }],
         q: 'India Asian Para Games 2026 record 114 medals Nagoya',
         art: { type: 'waffle', title: '114 medals · 4th place · record', parts: [['#d9a516', 30, '30 gold'], ['#98a4ad', 35, '35 silver'], ['#b8733a', 49, '49 bronze']] } }
-    ] }
+    ] },
+entertainment: { label: "Entertainment news", short: "Entertainment", color: "var(--ent)", stories: [
+ {
+  "id": "e1",
+  "level": "Low",
+  "date": "Fri 23 – Sun 25 Oct",
+  "tag": "Hollywood",
+  "title": "Clayface tops the US box office with $24 million as A24’s You Can See Everything keeps climbing",
+  "summary": "Warner Bros’ Clayface opened to $24.0 million in the US and about $43 million worldwide, ahead of A24’s You Can See Everything, which rose 25% to $19.5 million. Laika’s Wildwood opened third with $11.6 million.",
+  "nums": [
+   {
+    "n": "$24.0M",
+    "l": "Clayface, US opening"
+   },
+   {
+    "n": "$43M",
+    "l": "Clayface, global opening"
+   },
+   {
+    "n": "+25%",
+    "l": "You Can See Everything, week 2"
+   }
+  ],
+  "what": [
+   "Clayface opened in 3,458 theatres. The reported budget is $30–44 million, and the source says it was never marketed for a broad audience.",
+   "You Can See Everything was the only top-10 film to grow week over week. On 2,655 theatres it averaged about $7,345 a theatre, the highest of the top two (calculated from the weekend chart).",
+   "Street Fighter fell 72% to $8.6 million, and Wicker earned $5.7 million. The source does not say whether the weekend figures are actuals or estimates.",
+   "Analysts quoted project You Can See Everything could reach almost $90 million worldwide; that is a forecast, not a result."
+  ],
+  "why": "Mid-budget films finding an audience while a big franchise title drops 72% shows how unpredictable the box office is.",
+  "india": "The direct effect on India is small: Hollywood releases compete with Indian films for screens and attention, but these are US figures. This is analysis.",
+  "sources": [
+   {
+    "n": "Awards Radar (Box Office Mojo chart)",
+    "u": "https://awardsradar.com/2026/10/25/box-office-report-week-of-october-25/"
+   }
+  ],
+  "q": "Clayface box office opening weekend You Can See Everything",
+  "art": {
+   "type": "hbars",
+   "title": "US weekend box office, $ million",
+   "max": 27,
+   "rows": [
+    {
+     "l": "Clayface",
+     "v": 24.0,
+     "t": "24.0",
+     "c": "var(--ent)"
+    },
+    {
+     "l": "You Can See\nEverything",
+     "v": 19.5,
+     "t": "19.5"
+    },
+    {
+     "l": "Wildwood",
+     "v": 11.6,
+     "t": "11.6"
+    },
+    {
+     "l": "Street Fighter",
+     "v": 8.6,
+     "t": "8.6"
+    },
+    {
+     "l": "Wicker",
+     "v": 5.7,
+     "t": "5.7"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "Which film topped the US box office on the weekend of 23–25 Oct 2026?",
+   "o": [
+    "Clayface",
+    "Wildwood",
+    "Street Fighter",
+    "Verity"
+   ],
+   "a": 0,
+   "e": "Clayface opened to $24.0 million."
+  }
+ },
+ {
+  "id": "e2",
+  "level": "High",
+  "date": "Opens Thu 5 Nov",
+  "tag": "Bollywood",
+  "title": "Ramayana Part 1 is set for 5 November, with advance bookings opening on Dussehra",
+  "summary": "Nitesh Tiwari’s Ramayana Part 1, with Ranbir Kapoor as Rama, Sai Pallavi as Sita and Yash as Ravana, is set to release worldwide on 5 November in Hindi, Tamil, Telugu, Kannada and Malayalam, including IMAX. Earlier reports had given other dates.",
+  "nums": [
+   {
+    "n": "5 Nov",
+    "l": "worldwide release"
+   },
+   {
+    "n": "5",
+    "l": "languages, plus IMAX"
+   },
+   {
+    "n": "Diwali 2027",
+    "l": "Part 2 scheduled"
+   }
+  ],
+  "what": [
+   "The makers announced the date on social media on Sunday 11 Oct. Earlier reports had said 6 November overseas and 8 November in India, Sony’s international trailer listed 6 November, and Pinkvilla reported paid previews in India on 4 November.",
+   "The cast also includes Sunny Deol (Hanuman), Ravie Dubey (Lakshman), Arun Govil, Lara Dutta, Rakul Preet Singh, Vivek Oberoi and Kunal Kapoor.",
+   "It is backed by Namit Malhotra’s Prime Focus Studios, with DNEG and Yash’s Monster Mind Creations. Outlook gives no budget figure.",
+   "Part 2 is scheduled for Diwali 2027, according to Outlook."
+  ],
+  "why": "A large mythological release just before Diwali will shape screen counts and footfall for the festive season.",
+  "india": "The effect is direct and large: an event film in five Indian languages ahead of Diwali is likely to dominate screens, and the earlier date confusion shows how closely theatres and rivals watch it. This is analysis.",
+  "sources": [
+   {
+    "n": "Outlook India",
+    "u": "https://www.outlookindia.com/art-entertainment/ramayana-part-1-to-release-worldwide-on-november-5"
+   }
+  ],
+  "q": "Ramayana Part 1 release date 5 November Ranbir Kapoor Yash",
+  "art": {
+   "type": "stats",
+   "title": "Ramayana Part 1, key dates",
+   "tiles": [
+    {
+     "n": "5 Nov",
+     "c": "worldwide release"
+    },
+    {
+     "n": "4 Nov",
+     "c": "paid previews in India\n(per Pinkvilla)"
+    },
+    {
+     "n": "5",
+     "c": "languages, plus\nIMAX"
+    },
+    {
+     "n": "2027",
+     "c": "Part 2 target:\nDiwali"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "On what date is Ramayana Part 1 set for its worldwide release?",
+   "o": [
+    "20 October",
+    "5 November",
+    "8 November",
+    "Diwali 2027"
+   ],
+   "a": 1,
+   "e": "Earlier reports had said 6 and 8 November; the makers announced 5 November."
+  }
+ },
+ {
+  "id": "e3",
+  "level": "Medium",
+  "date": "Since Fri 2 Oct",
+  "tag": "Box office",
+  "title": "Drishyam 3: The Conclusion crosses ₹570 crore worldwide and tops earlier records",
+  "summary": "Sacnilk lists Drishyam 3: The Conclusion at ₹441.95 crore India gross and ₹572.45 crore worldwide, with a rounded Hindi net of about ₹369 crore. By day 8 The Week said its worldwide total had already passed Drishyam 2’s whole run.",
+  "nums": [
+   {
+    "n": "₹572.45 cr",
+    "l": "worldwide gross (Sacnilk)"
+   },
+   {
+    "n": "₹441.95 cr",
+    "l": "India gross (Sacnilk)"
+   },
+   {
+    "n": "₹62 cr",
+    "l": "day-1 collection (The Week)"
+   }
+  ],
+  "what": [
+   "It opened on 2 October. The Week calls the opening the third-biggest in Bollywood history, with ₹176.50 crore over the first three days.",
+   "After 8 days The Week reported ₹407 crore worldwide (₹260 crore India net), already ahead of Drishyam 2’s roughly ₹342 crore lifetime and Tanhaji’s ₹367.65 crore worldwide. Tanhaji’s domestic net record of ₹279.59 crore had not yet been passed at that point.",
+   "Trackers differ on gross versus net, Sacnilk’s Hindi net is rounded, and The Week notes its own day-8 totals do not fully reconcile. Treat all figures as estimates."
+  ],
+  "why": "A hit sequel at this scale shows audiences still turn out in large numbers for well-loved franchises.",
+  "india": "The effect is direct. Big Hindi hits lift multiplex revenue and footfall, and this run overlaps the festive season. Collection numbers differ by tracker, so check producers’ announcements. This is analysis.",
+  "sources": [
+   {
+    "n": "Sacnilk (2026 Hindi list)",
+    "u": "https://www.sacnilk.com/latest-boxoffice-collection/hindi-movies-2026"
+   },
+   {
+    "n": "The Week (day 8)",
+    "u": "https://www.theweek.in/news/entertainment/2026/10/10/drishyam-3-hindi-day-8-box-office-collection.html"
+   }
+  ],
+  "q": "Drishyam 3 The Conclusion box office worldwide Ajay Devgn",
+  "art": {
+   "type": "hbars",
+   "title": "Worldwide collection, ₹ crore",
+   "max": 620,
+   "rows": [
+    {
+     "l": "Drishyam 2\n(lifetime)",
+     "v": 342,
+     "t": "≈ 342"
+    },
+    {
+     "l": "Tanhaji\n(worldwide)",
+     "v": 367.65,
+     "t": "367.65"
+    },
+    {
+     "l": "Drishyam 3,\nday 8",
+     "v": 407,
+     "t": "407"
+    },
+    {
+     "l": "Drishyam 3,\nSacnilk list",
+     "v": 572.45,
+     "t": "572.45",
+     "c": "var(--ent)"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "On what date did Drishyam 3: The Conclusion (Hindi) open in cinemas?",
+   "o": [
+    "2 September",
+    "2 October",
+    "5 November",
+    "8 November"
+   ],
+   "a": 1,
+   "e": "The Week reports day 1 on 2 October."
+  }
+ },
+ {
+  "id": "e4",
+  "level": "Low",
+  "date": "Mon 26 – Sat 31 Oct",
+  "tag": "OTT · TV",
+  "title": "This week on OTT: Dhindora, Koffee with Karan 9 episode 3 and a Diwali family drama",
+  "summary": "Netflix streams Bhuvan Bam’s Dhindora from 28 October and the Diwali family drama Meethe Mein Kya Hai on 30 October, while JioHotstar airs episode 3 of Koffee with Karan 9 on 28 October with Janhvi Kapoor, Arjun Kapoor and Varun Dhawan.",
+  "nums": [
+   {
+    "n": "28 Oct",
+    "l": "Dhindora (Netflix); KWK9 ep. 3"
+   },
+   {
+    "n": "30 Oct",
+    "l": "Meethe Mein Kya Hai (Netflix)"
+   },
+   {
+    "n": "16",
+    "l": "Bigg Boss 20 contestants"
+   }
+  ],
+  "what": [
+   "Dhindora Season 1 is a comedy series starring Bhuvan Bam; it first released free on his YouTube channel in 2021.",
+   "Baththa, a Tamil action thriller with Vijay Sethupathi that reached theatres on 1 October, also comes to Netflix this week; the exact date was not given.",
+   "Meethe Mein Kya Hai, directed by Radhika Bansal, stars Ayesha Raza, Gaurav Sharma and Tarana Raja among others.",
+   "Bigg Boss 20, hosted by Salman Khan, continues on JioHotstar at 9 pm and Colors at 10:30 pm; it premiered on 6 September with 16 contestants."
+  ],
+  "why": "The festive week is when platforms release family-friendly and star-led titles to catch viewers at home.",
+  "india": "The effect is direct: these are Indian titles on platforms aimed at Indian viewers. Release dates can shift, so check the platform apps. This is analysis.",
+  "sources": [
+   {
+    "n": "India TV",
+    "u": "https://www.indiatvnews.com/entertainment/ott/ott-releases-this-week-october-26-31-dhindora-baththa-koffee-with-karan-9-meethe-mein-kya-hai-and-others-2026-10-25-1057870"
+   }
+  ],
+  "q": "OTT releases this week Dhindora Koffee with Karan 9 Meethe Mein Kya Hai",
+  "art": {
+   "type": "stats",
+   "title": "OTT this week, 26–31 Oct",
+   "tiles": [
+    {
+     "n": "Wed 28",
+     "c": "Dhindora (Netflix)\nKWK9 ep. 3 (JioHotstar)"
+    },
+    {
+     "n": "Fri 30",
+     "c": "Meethe Mein Kya Hai\n(Netflix)"
+    },
+    {
+     "n": "Baththa",
+     "c": "Vijay Sethupathi,\nNetflix this week"
+    },
+    {
+     "n": "16",
+     "c": "Bigg Boss 20\ncontestants"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "Which show’s third episode streams on JioHotstar on Wednesday 28 Oct?",
+   "o": [
+    "Koffee with Karan 9",
+    "Dhindora",
+    "Bigg Boss 20",
+    "Meethe Mein Kya Hai"
+   ],
+   "a": 0,
+   "e": "Guests are Janhvi Kapoor, Arjun Kapoor and Varun Dhawan."
+  }
+ },
+ {
+  "id": "e5",
+  "level": "Low",
+  "date": "Fri 23 – Sun 25 Oct",
+  "tag": "Global screens",
+  "title": "Small films punch above their weight: Wicker earns $5.7M and HYBE Cine Fest $4.5M",
+  "summary": "Black Bear’s Wicker earned $5.7 million on just 1,471 theatres, which the source calls the studio’s first clear hit. HYBE Cine Fest 2026, a Trafalgar Releasing event, took $4.5 million to rank sixth in the US.",
+  "nums": [
+   {
+    "n": "$5.7M",
+    "l": "Wicker, US weekend"
+   },
+   {
+    "n": "1,471",
+    "l": "Wicker theatres"
+   },
+   {
+    "n": "$4.5M",
+    "l": "HYBE Cine Fest 2026"
+   }
+  ],
+  "what": [
+   "Wicker averaged about $3,875 a theatre (calculated: $5.7 million over 1,471 theatres), higher than Street Fighter’s roughly $2,405 on 3,575 screens.",
+   "HYBE Cine Fest 2026 ranked sixth with $4.5 million; the weekend chart gave no theatre count for it.",
+   "Other top-ten titles: Other Mommy $3.8M (−53%), Sense and Sensibility $3.4M (−53%), Whalefall $3.2M (−59%) and Verity $3.0M (−49%)."
+  ],
+  "why": "Smaller and event-style releases are filling the gaps between big franchise films.",
+  "india": "No India link is reported. K-pop has a large fan base in India (general background), so event screenings of this kind could find Indian audiences, but nothing here says any are planned. This is analysis.",
+  "sources": [
+   {
+    "n": "Awards Radar (Box Office Mojo chart)",
+    "u": "https://awardsradar.com/2026/10/25/box-office-report-week-of-october-25/"
+   }
+  ],
+  "q": "Wicker Black Bear box office HYBE Cine Fest 2026",
+  "art": {
+   "type": "hbars",
+   "title": "Per-theatre average, $ (calculated)",
+   "max": 8200,
+   "rows": [
+    {
+     "l": "You Can See\nEverything",
+     "v": 7345,
+     "t": "≈ 7,345"
+    },
+    {
+     "l": "Clayface",
+     "v": 6940,
+     "t": "≈ 6,940"
+    },
+    {
+     "l": "Wildwood",
+     "v": 3945,
+     "t": "≈ 3,945"
+    },
+    {
+     "l": "Wicker",
+     "v": 3875,
+     "t": "≈ 3,875",
+     "c": "var(--ent)"
+    },
+    {
+     "l": "Street Fighter",
+     "v": 2405,
+     "t": "≈ 2,405"
+    }
+   ]
+  },
+  "quiz": {
+   "q": "Which film does the report call Black Bear’s first clear hit?",
+   "o": [
+    "Wicker",
+    "Clayface",
+    "Verity",
+    "Whalefall"
+   ],
+   "a": 0,
+   "e": "Wicker earned $5.7 million on 1,471 theatres."
+  }
+ }
+] }
   };
 
   var Q = function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); };
@@ -584,7 +1358,10 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     var p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hour12: false }).formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
     return { iso: p.year + '-' + p.month + '-' + p.day, mins: (+p.hour % 24) * 60 + (+p.minute), wk: p.weekday };
   }
-  function topicKeys() { return Object.keys(NEWS); }
+  var SITE = 'https://tanushdaga-news.github.io/daily-news/', REPO = 'https://github.com/tanushdaga-news/daily-news';
+  function allKeys() { return Object.keys(NEWS); }
+  var active = (function () { var a = lsGet('kk-cats'); var all = Object.keys(NEWS); if (a && a.length) { a = a.filter(function (k) { return NEWS[k]; }); if (a.length) return a; } return all; })();
+  function topicKeys() { return allKeys().filter(function (k) { return active.indexOf(k) > -1; }); }
   function totalStories() { var n = 0; topicKeys().forEach(function (k) { n += NEWS[k].stories.length; }); return n; }
   function seenCount() { var n = 0; topicKeys().forEach(function (k) { NEWS[k].stories.forEach(function (s) { if (seen[s.id]) n++; }); }); return n; }
 
@@ -632,15 +1409,39 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   }
   function renderTabs() {
     var box = $('tabs'), cur = $('topic').value; box.textContent = '';
-    var ic = { business: '📈', global: '🌍', sports: '🏆' };
+    var ic = { business: '📈', tech: '💻', global: '🌍', sports: '🏆', entertainment: '🎬' };
     topicKeys().forEach(function (k) {
-      var b = h('button', { class: 'tabbtn', type: 'button', 'aria-pressed': String(view === 'news' && k === cur), style: '--cat:' + NEWS[k].color }, [h('span', { class: 'ic', text: ic[k] || '📰' }), NEWS[k].label.replace(' news', ''), h('small', { text: NEWS[k].stories.length + ' stories' })]);
+      var b = h('button', { class: 'tabbtn', type: 'button', 'aria-pressed': String(view === 'news' && k === cur), style: '--cat:' + NEWS[k].color }, [h('span', { class: 'ic', text: ic[k] || '📰' }), (NEWS[k].short || NEWS[k].label.replace(' news', '')), h('small', { text: NEWS[k].stories.length + ' stories' })]);
       b.addEventListener('click', function () { view = 'news'; $('topic').value = k; lsSet('nd2-topic', k); renderNews(); });
       box.appendChild(b);
     });
     var q = h('button', { class: 'tabbtn', type: 'button', 'aria-pressed': String(view === 'quiz'), style: '--cat:#7b3fd1' }, [h('span', { class: 'ic', text: '🧠' }), 'Quiz', h('small', { text: '5 questions' })]);
     q.addEventListener('click', function () { view = 'quiz'; quizReset(); renderNews(); });
     box.appendChild(q);
+    var ab = h('button', { class: 'tabbtn', type: 'button', 'aria-pressed': String(view === 'about'), style: '--cat:#5f6f77' }, [h('span', { class: 'ic', text: 'ℹ️' }), 'About', h('small', { text: 'how it works' })]);
+    ab.addEventListener('click', function () { view = 'about'; renderNews(); window.scrollTo(0, 0); });
+    box.appendChild(ab);
+  }
+  function renderCats() {
+    var box = $('cats'); box.textContent = '';
+    box.appendChild(h('h2', { text: 'Your categories' }));
+    var row = h('div', { class: 'row', role: 'group', 'aria-label': 'Choose your categories' });
+    var ic = { business: '📈', tech: '💻', global: '🌍', sports: '🏆', entertainment: '🎬' };
+    allKeys().forEach(function (k) {
+      var on = active.indexOf(k) > -1;
+      var b = h('button', { class: 'catbtn', type: 'button', 'aria-pressed': String(on), style: '--cat:' + NEWS[k].color, text: (on ? '✓ ' : '') + (ic[k] || '') + ' ' + (NEWS[k].short || NEWS[k].label.replace(' news', '')) });
+      b.addEventListener('click', function () {
+        var i = active.indexOf(k);
+        if (i > -1) { if (active.length === 1) { toast('Keep at least one category on'); return; } active.splice(i, 1); } else active.push(k);
+        lsSet('kk-cats', active);
+        if (topicKeys().indexOf($('topic').value) < 0) { $('topic').value = topicKeys()[0]; }
+        if (quiz.state !== 'intro') quizReset();
+        renderPills(); renderNews();
+      });
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+    box.appendChild(h('small', { text: active.length === allKeys().length ? 'All ' + active.length + ' categories on (default). Tap one to turn it off.' : active.length + ' of ' + allKeys().length + ' on. The quiz and your streak use only these.' }));
   }
   function surprise() {
     var all = []; topicKeys().forEach(function (k) { NEWS[k].stories.forEach(function (s) { all.push([k, s]); }); });
@@ -735,11 +1536,13 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     return { q: 'In the story “' + s.title + '”, which figure goes with: ' + n.l + '?', o: shuffle([{ t: n.n, c: true }].concat(others.slice(0, 3).map(function (t) { return { t: t, c: false }; }))), e: '', src: s.title };
   }
   function pickQuestions() {
-    var keys = shuffle(topicKeys().slice()), counts = shuffle([2, 2, 1]), want = {}, qs = [];
-    keys.forEach(function (k, i) { want[k] = counts[i % counts.length]; });
-    keys.forEach(function (k) {
-      var got = 0; shuffle(NEWS[k].stories.slice()).forEach(function (s) { if (got >= want[k]) return; var q = buildQ(s); if (q) { qs.push(q); got++; } });
-    });
+    var keys = shuffle(topicKeys().slice()), pools = {}, qs = [], guard = 0;
+    keys.forEach(function (k) { pools[k] = shuffle(NEWS[k].stories.slice()); });
+    while (qs.length < 5 && guard++ < 60) {
+      var k = keys[(guard - 1) % keys.length], s = pools[k].shift();
+      if (!s) { if (keys.every(function (x) { return !pools[x].length; })) break; continue; }
+      var q = buildQ(s); if (q) qs.push(q);
+    }
     return shuffle(qs).slice(0, 5);
   }
   function startQuiz() { quiz = { state: 'q', qs: pickQuestions(), i: 0, score: 0, locked: false, res: [] }; renderQuiz(); }
@@ -758,7 +1561,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
       wrap.appendChild(h('div', { class: 'qemoji', text: '🧠' }));
       wrap.appendChild(h('h2', { text: 'Today’s news quiz' }));
       wrap.appendChild(h('p', { text: 'Five quick questions from today’s ' + totalStories() + ' stories. One mark each. Read the stories first, then see how much you remember.' }));
-      wrap.appendChild(h('div', { class: 'qfacts' }, [h('span', { text: '5 questions' }), h('span', { text: '1 mark each' }), h('span', { text: 'From all 3 topics' })]));
+      wrap.appendChild(h('div', { class: 'qfacts' }, [h('span', { text: '5 questions' }), h('span', { text: '1 mark each' }), h('span', { text: 'From ' + topicKeys().length + (topicKeys().length === 1 ? ' category' : ' categories') })]));
       if (best !== null) wrap.appendChild(h('p', { class: 'qbest', text: 'Your best score on this edition: ' + best + '/5' }));
       var go = h('button', { class: 'btn primary big', type: 'button', text: best !== null ? 'Take it again' : 'Start the quiz' });
       go.addEventListener('click', startQuiz); wrap.appendChild(go);
@@ -949,13 +1752,15 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     copy.addEventListener('click', function () {
       copyText(story.title + '\n' + story.summary + '\nImpact on India (' + story.level + '): ' + story.india);
     });
-    main.appendChild(h('div', { class: 'actions' }, [toggle, save, copy]));
+    var shareTxt = story.title + ' — ' + story.summary + ' (Khabar Kadak: ' + SITE + ')';
+    var share = h('a', { class: 'btn link', href: 'https://wa.me/?text=' + encodeURIComponent(shareTxt), target: '_blank', rel: 'noopener noreferrer', text: 'Share on WhatsApp' });
+    var rep = h('a', { class: 'btn link', href: REPO + '/issues/new?title=' + encodeURIComponent('Possible error: ' + story.id + ' ' + story.title) + '&body=' + encodeURIComponent('What looks wrong, and a link to the correct source:\n'), target: '_blank', rel: 'noopener noreferrer', text: 'Report an error' });
+    main.appendChild(h('div', { class: 'actions' }, [toggle, save, copy, share, rep]));
 
     c.appendChild(figure); c.appendChild(main); c.appendChild(depth);
     return c;
   }
 
-  function topicKeys() { return Object.keys(NEWS); }
   function renderProgress() {
     var key = $('topic').value, cat = NEWS[key];
     var n = cat.stories.filter(function (s) { return seen[s.id]; }).length, all = seenCount(), tot = totalStories();
@@ -963,10 +1768,11 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     $('ptext').textContent = n + ' of ' + cat.stories.length + ' stories read here · ' + all + ' of ' + tot + ' today' + (all < tot ? ' (read all ' + tot + ' to grow your streak)' : ' ✓');
   }
   function renderNews() {
-    renderTabs();
-    var isQ = view === 'quiz';
-    ['chips', 'shead', 'progress', 'list', 'nextwrap'].forEach(function (id) { $(id).hidden = isQ; });
-    $('quizbox').hidden = !isQ;
+    renderCats(); renderTabs();
+    var isQ = view === 'quiz', isA = view === 'about';
+    ['chips', 'shead', 'progress', 'list', 'nextwrap'].forEach(function (id) { $(id).hidden = isQ || isA; });
+    $('quizbox').hidden = !isQ; $('aboutbox').hidden = !isA;
+    if (isA) { renderAbout(); return; }
     if (isQ) { renderQuiz(); return; }
     var key = $('topic').value, cat = NEWS[key], list = $('list');
     list.textContent = '';
@@ -995,8 +1801,52 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     renderProgress();
   }
 
+
+  // ---------- install (PWA) ----------
+  var deferredInstall = null;
+  var onSite = /(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
+  if (onSite) {
+    try {
+      var lk = document.createElement('link'); lk.rel = 'manifest'; lk.href = 'manifest.webmanifest'; document.head.appendChild(lk);
+      var ai = document.createElement('link'); ai.rel = 'apple-touch-icon'; ai.href = 'apple-touch-icon.png'; document.head.appendChild(ai);
+      var tc = document.createElement('meta'); tc.name = 'theme-color'; tc.content = '#0b6e8a'; document.head.appendChild(tc);
+      if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+    } catch (e) {}
+  }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredInstall = e; if (view === 'about') renderAbout(); });
+  window.addEventListener('appinstalled', function () { deferredInstall = null; toast('Installed. Find Khabar Kadak on your home screen.'); });
+  function renderAbout() {
+    var box = $('aboutbox'); box.textContent = '';
+    var A = h('div', { class: 'about' });
+    function H(t) { A.appendChild(h('h3', { text: t })); }
+    function P(t) { A.appendChild(h('p', { text: t })); }
+    function L(tag, items) { var u = h(tag); items.forEach(function (t) { u.appendChild(h('li', { text: t })); }); A.appendChild(u); }
+    A.appendChild(h('h2', { text: 'About Khabar Kadak' }));
+    P('“Khabar” is Hindi for news and “kadak” means strong, as in strong chai. This is a short, strong daily brew: five stories in each of five categories (Business, Tech, Global, Sports, Entertainment), each with the numbers behind it and an “Impact on India” note. You choose which categories to follow; all five are on by default.');
+    H('Get it on your phone (free)');
+    if (onSite) {
+      var row = h('div', { class: 'actions' });
+      if (deferredInstall) { var ib = h('button', { class: 'btn primary', type: 'button', text: '📲 Install the app' }); ib.addEventListener('click', function () { deferredInstall.prompt(); deferredInstall = null; renderAbout(); }); row.appendChild(ib); }
+      A.appendChild(row);
+      L('ul', ['Android (Chrome): tap the Install button above, or the ⋮ menu, then Install app.', 'iPhone (Safari): tap the Share icon, then Add to Home Screen.', 'It then opens full-screen from your home screen like an app. It is a web app, so there is nothing to download from a store, and it costs nothing.']);
+    } else {
+      P('Open the website below on your phone, then use Install app (Android Chrome) or Share, then Add to Home Screen (iPhone Safari). It then opens like an app and costs nothing.');
+      A.appendChild(h('p', {}, [h('a', { href: SITE, target: '_blank', rel: 'noopener noreferrer', text: SITE })]));
+    }
+    H('Who checks it for mistakes?');
+    P('AI can state wrong things with confidence, so this page does not ask you to trust it blindly. What is in place today:');
+    L('ul', ['Every story links to the outlets it was drawn from. Open them and compare.', 'Numbers are copied from those sources, and where outlets disagree (for example gross versus net, or a headline against its body text) the story says so.', 'Anything computed by us, such as a per-theatre average, is labelled “calculated”. Impact-on-India text is labelled analysis, not reporting.', 'Each morning’s edition is rebuilt from fresh sources; the build step is meant to re-open the cited pages and compare headline numbers before publishing. Treat that as a safeguard, not a guarantee.', 'Every story has a Report an error button that opens a public issue on GitHub. A person reviews reports and corrections are listed below.']);
+    P('Honest limit: today the daily check is automated and the reviewer is the project owner, a student, not a newsroom. This is a learning project. For money, health or legal decisions, always rely on the original source.');
+    H('How it would be promoted');
+    L('ul', ['WhatsApp first: every story has a one-tap share, and the colourful summary is made to be forwarded in family and college groups.', 'Campus launch: short posts for B-school, engineering and commerce groups with the daily streak and quiz as a challenge (“beat my 7-day streak”).', 'Short videos: 30-second Reels or Shorts reading one story with its chart.', 'Student ambassadors: one or two per college who share it and send corrections.', 'Newsletter and search: a free email version and clear page titles so the stories can be found.']);
+    H('Corrections log');
+    L('ul', ['Earlier edition: a Nasdaq move was given as 2.88%; Reuters reported 2.60%. Corrected.']);
+    P('Report anything that looks wrong from the button on each story, or on GitHub: ' + REPO + '/issues');
+    box.appendChild(A);
+  }
+
   var sn = lsGet('nd2-name'); if (sn) $('name').value = sn;
-  var st = lsGet('nd2-topic'); if (st && NEWS[st]) $('topic').value = st;
+  var st = lsGet('nd2-topic'); if (st && NEWS[st] && active.indexOf(st) > -1) $('topic').value = st; else $('topic').value = topicKeys()[0];
   $('name').addEventListener('input', function () { lsSet('nd2-name', $('name').value); renderGreeting(); });
   $('topic').addEventListener('change', function () { lsSet('nd2-topic', $('topic').value); renderNews(); });
   Array.prototype.forEach.call(document.querySelectorAll('.chip[data-f]'), function (b) {
@@ -1014,5 +1864,4 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   setInterval(function () { renderGreeting(); renderPills(); }, 60000);
 })();
 </script>
-
 </body></html>
