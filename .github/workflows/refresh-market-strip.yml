@@ -1,0 +1,38 @@
+name: Refresh market strip
+
+on:
+  schedule:
+    # 15:45 India time, Monday to Friday; GitHub may start scheduled jobs late.
+    - cron: "15 10 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-strip-refresh
+  cancel-in-progress: false
+
+jobs:
+  update-market-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch latest daily market candles
+        run: python scripts/update_market_data.py
+      - name: Commit updated market strip data
+        run: |
+          if git diff --quiet -- market-data.json; then
+            echo "Market data unchanged; no commit needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add market-data.json
+          git commit -m "Refresh end-of-day market strip"
+          git push
