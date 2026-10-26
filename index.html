@@ -166,14 +166,6 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
 .tick a { font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; }
 .tick a:hover { text-decoration: underline; }
 .stripnote { position: relative; z-index: 1; margin: 10px 0 0; font-size: 12px; color: rgba(255,255,255,.85); }
-.market-panel { margin-top: 22px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
-.market-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.market-heading h2 { margin: 4px 0 0; font-size: clamp(22px, 4vw, 30px); }
-.market-heading a { color: var(--accent); font-weight: 700; font-size: 13px; text-decoration: none; white-space: nowrap; }
-.market-sub, .market-note { color: var(--muted); font-size: 12px; margin: 5px 0 0; }
-.market-note { margin-top: 10px; }
-.tradingview-widget-copyright { font-size: 11px; color: var(--muted); text-align: center; padding-top: 4px; }
-.tradingview-widget-copyright a { color: var(--muted); }
 .stale { margin-top: 14px; border: 1px solid var(--warn); background: color-mix(in srgb, var(--warn) 14%, var(--surface)); border-radius: 12px; padding: 12px 16px; font-size: 14px; }
 .tabs { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-top: 20px; }
 .tabbtn { border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 12px 8px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: transform .15s, border-color .15s, background .15s; }
@@ -270,43 +262,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
     <div class="pills" id="pills"></div>
     <div class="strip" id="strip" aria-label="Key numbers"></div>
     <p class="stripnote" id="stripnote"></p>
-    <section class="market-panel" aria-labelledby="markets-title">
-      <div class="market-heading">
-        <div><p class="eyebrow">Market watch</p><h2 id="markets-title">Live market dashboard</h2><p class="market-sub">Sensex · Nifty 50 · Bank Nifty · Nifty IT · India VIX</p></div>
-        <a href="https://www.tradingview.com/markets/indices/" target="_blank" rel="noopener noreferrer">Open markets ↗</a>
-      </div>
-      <div class="tradingview-widget-container" style="height:550px;width:100%">
-        <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
-        <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener noreferrer" target="_blank">Market data and charts by TradingView</a></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-        {
-          "colorTheme": "light",
-          "dateRange": "1D",
-          "showChart": true,
-          "locale": "en",
-          "largeChartUrl": "",
-          "isTransparent": false,
-          "showSymbolLogo": true,
-          "showFloatingTooltip": false,
-          "width": "100%",
-          "height": "550",
-          "tabs": [
-            {
-              "title": "India indices",
-              "symbols": [
-                { "s": "BSE:SENSEX", "d": "Sensex" },
-                { "s": "NSE:NIFTY", "d": "Nifty 50" },
-                { "s": "NSE:BANKNIFTY", "d": "Bank Nifty" },
-                { "s": "NSE:CNXIT", "d": "Nifty IT" },
-                { "s": "NSE:INDIAVIX", "d": "India VIX" }
-              ]
-            }
-          ]
-        }
-        </script>
-      </div>
-      <p class="market-note">Quotes and intraday charts are supplied by TradingView and may be delayed or unavailable depending on exchange data permissions. Verify prices with your broker or the exchange before making financial decisions.</p>
-    </section>
+
   </div>
   <div class="stale" id="stale" hidden></div>
 
