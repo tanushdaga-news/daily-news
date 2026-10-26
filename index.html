@@ -1296,11 +1296,11 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   // Latest verified Indian market closes: Monday 26 Oct 2026.
   // These are dated closing values, not a real-time feed. Replace with a licensed API for automatic updates.
   var STRIP = [
-    { n: '73,606.75', l: 'Sensex · close 26 Oct', d: '+0.66%', dir: 'up', u: Q('Sensex close 26 October 2026') },
-    { n: '22,753.20', l: 'Nifty 50 · close 26 Oct', d: '+0.68%', dir: 'up', u: Q('Nifty 50 close 26 October 2026') },
-    { n: '54,366.70', l: 'Bank Nifty · close 26 Oct', d: '+0.15%', dir: 'up', u: Q('Bank Nifty close 26 October 2026') },
-    { n: '32,273.05', l: 'Nifty IT · close 26 Oct', d: '+0.87%', dir: 'up', u: Q('Nifty IT close 26 October 2026') },
-    { n: '17.16', l: 'India VIX · close 26 Oct', d: '+1.78%', dir: 'up', u: Q('India VIX close 26 October 2026') }
+    { n: '—', l: 'Sensex · latest close', d: '', dir: '', u: Q('Sensex latest close') },
+    { n: '—', l: 'Nifty 50 · latest close', d: '', dir: '', u: Q('Nifty 50 latest close') },
+    { n: '—', l: 'Bank Nifty · latest close', d: '', dir: '', u: Q('Bank Nifty latest close') },
+    { n: '—', l: 'Nifty IT · latest close', d: '', dir: '', u: Q('Nifty IT latest close') },
+    { n: '—', l: 'India VIX · latest close', d: '', dir: '', u: Q('India VIX latest close') }
   ];
 
   var NS = 'http://www.w3.org/2000/svg';
@@ -1352,9 +1352,24 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
       if (t.dir) row.appendChild(h('span', { class: 'arr ' + t.dir, 'aria-label': t.dir === 'up' ? 'up' : 'down', text: t.dir === 'up' ? '▲' : '▼' }));
       var chg = h('i', { class: t.dir === 'up' ? 'pos' : t.dir === 'down' ? 'neg' : '', text: t.d });
       row.appendChild(chg);
-      st.appendChild(h('div', { class: 'tick' }, [row, h('span', { text: t.l }), h('div', {}, [h('a', { href: t.u, target: '_blank', rel: 'noopener noreferrer', text: 'Live quote ↗' })])]));
+      st.appendChild(h('div', { class: 'tick' }, [row, h('span', { text: t.l }), h('div', {}, [h('a', { href: t.u, target: '_blank', rel: 'noopener noreferrer', text: 'Market source ↗' })])]));
     });
-    $('stripnote').textContent = 'Latest verified closing figures as of Monday 26 Oct 2026. These values are not live and will not refresh automatically; tap “Live quote” to check the latest market information.';
+    var updated = STRIP_UPDATED || 'waiting for the next scheduled update';
+    $('stripnote').textContent = 'End-of-day values · Last data update: ' + updated + '. Refreshed automatically after market close on trading days; data can be delayed or unavailable if the provider has an issue.';
+  }
+  var STRIP_UPDATED = '';
+  function loadMarketStrip() {
+    fetch('market-data.json?ts=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error('Market data unavailable');
+      return r.json();
+    }).then(function (data) {
+      if (!data || !Array.isArray(data.items) || !data.items.length) throw new Error('No market data');
+      STRIP_UPDATED = data.updatedAt || data.marketDate || '';
+      STRIP = data.items;
+      renderStrip();
+    }).catch(function () {
+      $('stripnote').textContent = 'Market data is temporarily unavailable. Showing the last values available in this browser; check the source links for current quotes.';
+    });
   }
 
   // ---------- IST clock, NSE hours, edition age ----------
@@ -1862,7 +1877,7 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   });
 
   $('surprise').addEventListener('click', surprise);
-  renderGreeting(); renderStrip(); renderPills(); renderNews(); checkBreak();
+  renderGreeting(); renderStrip(); loadMarketStrip(); renderPills(); renderNews(); checkBreak();
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePopup(); });
   $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closePopup(); });
   setInterval(function () { renderGreeting(); renderPills(); }, 60000);
