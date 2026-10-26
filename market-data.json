@@ -1,42 +1,43 @@
 {
-  "updatedAt": "Waiting for first scheduled refresh",
-  "marketDate": "—",
+  "updatedAt": "26 Oct 2026, 11:59 PM IST",
+  "marketDate": "2026-10-26",
   "source": "Yahoo Finance daily candles; may be delayed and is not an exchange-authorised live feed",
   "items": [
     {
-      "n": "—",
-      "l": "Sensex · latest close",
-      "d": "",
-      "dir": "",
-      "u": "https://www.google.com/search?q=Sensex+latest+close"
+      "n": "73,606.75",
+      "l": "Sensex · close 26 Oct 2026",
+      "d": "+0.66%",
+      "dir": "up",
+      "u": "https://www.google.com/search?q=Sensex%20latest%20close"
     },
     {
-      "n": "—",
-      "l": "Nifty 50 · latest close",
-      "d": "",
-      "dir": "",
-      "u": "https://www.google.com/search?q=Nifty+50+latest+close"
+      "n": "22,753.20",
+      "l": "Nifty 50 · close 26 Oct 2026",
+      "d": "+0.68%",
+      "dir": "up",
+      "u": "https://www.google.com/search?q=Nifty%2050%20latest%20close"
     },
     {
-      "n": "—",
-      "l": "Bank Nifty · latest close",
-      "d": "",
-      "dir": "",
-      "u": "https://www.google.com/search?q=Bank+Nifty+latest+close"
+      "n": "54,366.70",
+      "l": "Bank Nifty · close 26 Oct 2026",
+      "d": "+0.15%",
+      "dir": "up",
+      "u": "https://www.google.com/search?q=Bank%20Nifty%20latest%20close"
     },
     {
-      "n": "—",
-      "l": "Nifty IT · latest close",
-      "d": "",
-      "dir": "",
-      "u": "https://www.google.com/search?q=Nifty+IT+latest+close"
+      "n": "32,273.05",
+      "l": "Nifty IT · close 26 Oct 2026",
+      "d": "+0.87%",
+      "dir": "up",
+      "u": "https://www.google.com/search?q=Nifty%20IT%20latest%20close"
     },
     {
-      "n": "—",
-      "l": "India VIX · latest close",
-      "d": "",
-      "dir": "",
-      "u": "https://www.google.com/search?q=India+VIX+latest+close"
+      "n": "17.16",
+      "l": "India VIX · close 26 Oct 2026",
+      "d": "+1.78%",
+      "dir": "up",
+      "u": "https://www.google.com/search?q=India%20VIX%20latest%20close"
     }
-  ]
+  ],
+  "warnings": []
 }
