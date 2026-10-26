@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><title>Khabar Kadak</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><title>THE 5IVE</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap');
@@ -166,6 +166,14 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
 .tick a { font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; }
 .tick a:hover { text-decoration: underline; }
 .stripnote { position: relative; z-index: 1; margin: 10px 0 0; font-size: 12px; color: rgba(255,255,255,.85); }
+.market-panel { margin-top: 22px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.market-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.market-heading h2 { margin: 4px 0 0; font-size: clamp(22px, 4vw, 30px); }
+.market-heading a { color: var(--accent); font-weight: 700; font-size: 13px; text-decoration: none; white-space: nowrap; }
+.market-sub, .market-note { color: var(--muted); font-size: 12px; margin: 5px 0 0; }
+.market-note { margin-top: 10px; }
+.tradingview-widget-copyright { font-size: 11px; color: var(--muted); text-align: center; padding-top: 4px; }
+.tradingview-widget-copyright a { color: var(--muted); }
 .stale { margin-top: 14px; border: 1px solid var(--warn); background: color-mix(in srgb, var(--warn) 14%, var(--surface)); border-radius: 12px; padding: 12px 16px; font-size: 14px; }
 .tabs { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-top: 20px; }
 .tabbtn { border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 12px 8px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: transform .15s, border-color .15s, background .15s; }
@@ -254,14 +262,51 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   <div class="hero">
     <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
     <header>
-      <p class="brand">🗞️ KHABAR KADAK <span>· news with the numbers, and what it means for India</span></p>
+      <p class="brand">🗞️ THE 5IVE <span>· news with the numbers, and what it means for India</span></p>
       <p class="eyebrow" id="today"></p>
       <h1 id="greeting">Good morning.</h1>
-      <p class="sub">Pick your categories. Five stories each, with the numbers behind them and what they could mean for India.</p>
+      <p class="sub">Your daily briefing: business, tech, global affairs, sports and entertainment — the five stories that matter, with the numbers behind them.</p>
     </header>
     <div class="pills" id="pills"></div>
     <div class="strip" id="strip" aria-label="Key numbers"></div>
     <p class="stripnote" id="stripnote"></p>
+    <section class="market-panel" aria-labelledby="markets-title">
+      <div class="market-heading">
+        <div><p class="eyebrow">Market watch</p><h2 id="markets-title">Live market dashboard</h2><p class="market-sub">Sensex · Nifty 50 · Bank Nifty · Nifty IT · India VIX</p></div>
+        <a href="https://www.tradingview.com/markets/indices/" target="_blank" rel="noopener noreferrer">Open markets ↗</a>
+      </div>
+      <div class="tradingview-widget-container" style="height:550px;width:100%">
+        <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+        <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener noreferrer" target="_blank">Market data and charts by TradingView</a></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        {
+          "colorTheme": "light",
+          "dateRange": "1D",
+          "showChart": true,
+          "locale": "en",
+          "largeChartUrl": "",
+          "isTransparent": false,
+          "showSymbolLogo": true,
+          "showFloatingTooltip": false,
+          "width": "100%",
+          "height": "550",
+          "tabs": [
+            {
+              "title": "India indices",
+              "symbols": [
+                { "s": "BSE:SENSEX", "d": "Sensex" },
+                { "s": "NSE:NIFTY", "d": "Nifty 50" },
+                { "s": "NSE:BANKNIFTY", "d": "Bank Nifty" },
+                { "s": "NSE:CNXIT", "d": "Nifty IT" },
+                { "s": "NSE:INDIAVIX", "d": "India VIX" }
+              ]
+            }
+          ]
+        }
+        </script>
+      </div>
+      <p class="market-note">Quotes and intraday charts are supplied by TradingView and may be delayed or unavailable depending on exchange data permissions. Verify prices with your broker or the exchange before making financial decisions.</p>
+    </section>
   </div>
   <div class="stale" id="stale" hidden></div>
 
@@ -293,7 +338,7 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
   <section id="quizbox" hidden></section>
   <section id="aboutbox" hidden></section>
 
-  <p class="foot">Stories are an edition of reports from 23 to 26 Oct 2026 (see the banner above if it is out of date), summarised from the linked outlets; figures are as those outlets reported them. The numbers at the top are the last reported closing figures, not live ticks. The “Impact on India” panels are analysis, not reporting, and are marked as such. The pictures are charts built from reported numbers, not photographs. Your streak grows by one day when you open the full depth of every story in the categories you have selected; missing a whole day resets it. See the About tab for how stories are checked and what that does and does not guarantee.</p>
+  <p class="foot">Stories are summaries of reports from linked outlets; figures are as those outlets reported them. The top strip shows the edition’s reported figures, while the market dashboard below is provided by TradingView and may be delayed. “Impact on India” panels are analysis, not reporting. Read any 15 stories across categories in a day to earn a streak day. Streak progress is saved in this browser; account-based syncing across devices would require a sign-in service.</p>
 </div>
 <div class="modal" id="modal" hidden></div>
 <div class="toast" id="toast" hidden></div>
@@ -864,21 +909,21 @@ tech: { label: "Tech news", short: "Tech", color: "var(--tech)", stories: [
         q: 'Asian Champions Trophy hockey 2026 India Bangladesh Jalandhar',
         art: { type: 'stats', title: 'Asian Champions Trophy, India', tiles: [
           { n: '27 Oct', c: 'India v Bangladesh\nJalandhar, 19:00' }, { n: '1 Nov', c: 'India v Malaysia' }, { n: '4 Nov', c: 'Semi-finals, Mohali' }, { n: '5 Nov', c: 'Final, Mohali' }] } },
-      { id: 's3', quiz: {"q": "Where is the third T20I between New Zealand and India played?", "o": ["Auckland", "Hamilton", "Wellington", "Christchurch"], "a": 2, "e": "The 4th is at Auckland on 30 Oct and the 5th at Hamilton on 1 Nov."}, level: 'High', date: 'Tue 27 Oct', tag: 'Cricket',
-        title: 'India can clinch the T20I series in Wellington on Tuesday',
-        summary: 'With a 2–0 lead after winning the second T20I on 24 Oct, India need one win in the remaining three T20Is to take the series. The third match is on Tuesday 27 Oct in Wellington, listed at 12:30 PM IST.',
-        nums: [{ n: '27 Oct', l: '3rd T20I, Wellington' }, { n: '12:30 PM', l: 'IST start (listed)' }, { n: '3 left', l: 'matches in the series' }],
+      { id: 's3', quiz: {"q": "What was Shadab Khan’s score in Pakistan’s one-wicket ODI win over England?", "o": ["89 not out", "105", "113 not out", "127"], "a": 2, "e": "Shadab made 113 not out from 96 balls."}, level: 'High', date: 'Sun 25 Oct', tag: 'Cricket · Global',
+        title: 'Shadab Khan’s unbeaten 113 powers Pakistan to a one-wicket win over England',
+        summary: 'Pakistan chased 242 to beat England by one wicket in Lahore, recovering from 154/9 through an unbeaten 89-run last-wicket stand between Shadab Khan and Haris Rauf. Shadab made 113 not out from 96 balls, sealing Pakistan’s third straight win in the ODI tri-series.',
+        nums: [{ n: '113* (96)', l: 'Shadab Khan' }, { n: '89 runs', l: 'unbeaten last-wicket stand' }, { n: '1 wicket', l: 'Pakistan win' }],
         what: [
-          'Remaining T20Is: 3rd on 27 Oct at Wellington, 4th on 30 Oct at Auckland and 5th on 1 Nov at Hamilton (Yahoo Sports, ESPN).',
-          'Squads: Shreyas Iyer captains India with Tilak Varma as vice-captain, and Mitchell Santner leads New Zealand (BCCI and ESPN listings). Team news for the third match was not confirmed in the sources found.',
-          'The tour then has five ODIs from 4 Nov and two Tests, the first in Wellington from 19 Nov; sources differ on some ODI venues (Esquire India, ESPN).',
-          'In 32 completed T20Is between the sides before this tour, India had won 20, New Zealand 11, with one tie (NewsBytes).'],
-        why: 'A third straight win would settle the series with two matches to spare and let India rotate players.',
-        india: 'The effect is direct for Indian fans. The 12:30 PM IST start means the match runs through the Indian afternoon. This is analysis.',
-        sources: [{ n: 'Yahoo Sports', u: 'https://sports.yahoo.com/articles/ind-vs-nz-2nd-t20i-061200901.html' }, { n: 'ESPN (3rd T20I)', u: 'https://www.espn.com/cricket/series/24469/game/1539434/new-zealand-vs-india-3rd-t20i-24469' }, { n: 'Esquire India (schedule)', u: 'https://www.esquireindia.co.in/culture/sports/india-vs-new-zealand-2026-t20i-odi-test-series-schedules-venues-squads-live-streaming-sony-sports-sonyliv-october-22' }, { n: 'BCCI (squads)', u: 'https://www.bcci.tv/news/article/india-and-india-a-squads-for-new-zealand-tour-announced' }, { n: 'NewsBytes', u: 'https://www.newsbytesapp.com/news/sports/new-zealand-versus-india-2nd-t20i-preview-and-stats/story' }],
-        q: 'India vs New Zealand 3rd T20I Wellington',
-        art: { type: 'stats', title: 'India v NZ T20I series', tiles: [
-          { n: '2–0', c: 'India lead after\n2 matches' }, { n: '27 Oct', c: '3rd T20I, Wellington\n12:30 PM IST' }, { n: '30 Oct', c: '4th T20I, Auckland' }, { n: '1 Nov', c: '5th T20I, Hamilton' }] } },
+          'England were bowled out for 241 in 46.4 overs; Ben Duckett top-scored with 105 from 111 balls.',
+          'Pakistan slumped to 154/9 before Shadab and Haris Rauf put on an unbeaten 89-run partnership. Rauf finished seven not out and hit the winning boundary.',
+          'The victory secured Pakistan’s place in the tri-series final and left England with three defeats in three matches.',
+          'The Pakistan Cricket Board reported Shadab’s 113 not out as the highest ODI score by a batter at No. 8 or lower, and the stand as a record successful-chase 10th-wicket partnership.'],
+        why: 'The result is a reminder that international cricket coverage extends well beyond India: the Pakistan–England tri-series has produced high-scoring chases and dramatic finishes.',
+        india: 'India were not involved in this match, but it matters to Indian cricket followers tracking the wider international game and the form of teams they may meet in ICC events. This is analysis.',
+        sources: [{ n: 'Pakistan Cricket Board', u: 'https://www.pcb.com.pk/news-detail/shadab-s-record-breaking-unbeaten-century-gives-pakistan-stunning-one-wicket-win-over-england.html' }, { n: 'ABC News', u: 'https://www.abc.net.au/news/2026-10-26/england-falls-to-second-incredible-odi-defeat-in-a-week/107307980' }],
+        q: 'Pakistan England Shadab Khan ODI Lahore 25 October 2026',
+        art: { type: 'stats', title: 'Pakistan v England, key figures', tiles: [
+          { n: '113*', c: 'Shadab Khan\n96 balls' }, { n: '105', c: 'Ben Duckett\n111 balls' }, { n: '89', c: 'Unbeaten 10th-wicket stand' }, { n: '242', c: 'Target chased by Pakistan' }] } },
       { id: 's4', quiz: {"q": "What was the score when India’s men beat Malaysia on Sunday at the Commonwealth Kabaddi Championship?", "o": ["37–23", "44–30", "46–26", "73–13"], "a": 0, "e": "44–30 was the men’s win over Uganda on Saturday and 46–26 their win over England on Friday; 73–13 was the women’s win over Malaysia."}, level: 'High', date: 'Fri 23 – Sun 25 Oct', tag: 'Kabaddi',
         title: 'India’s kabaddi teams are 3–0 at the Commonwealth Championship in Ahmedabad',
         summary: 'On Sunday India’s women beat Uganda 41–18 and the men beat Malaysia 37–23. That follows Saturday’s wins (men 44–30 over Uganda, women 32–16 over Singapore) and Friday’s openers (men 46–26 over England, women 73–13 over Malaysia).',
@@ -1307,7 +1352,8 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var saved = lsGet('nd2-saved') || {};
-  var SEEN_KEY = 'nd3-seen-' + SNAPSHOT_ISO;
+  var DAILY_GOAL = 15;
+  var SEEN_KEY = 'nd3-seen-' + ist().iso;
   var seen = lsGet(SEEN_KEY) || {};   // stories whose depth was opened in this edition
   var exp = {};                        // stories currently expanded (this visit only)
   var filter = 'all';
@@ -1362,8 +1408,8 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   function allKeys() { return Object.keys(NEWS); }
   var active = (function () { var a = lsGet('kk-cats'); var all = Object.keys(NEWS); if (a && a.length) { a = a.filter(function (k) { return NEWS[k]; }); if (a.length) return a; } return all; })();
   function topicKeys() { return allKeys().filter(function (k) { return active.indexOf(k) > -1; }); }
-  function totalStories() { var n = 0; topicKeys().forEach(function (k) { n += NEWS[k].stories.length; }); return n; }
-  function seenCount() { var n = 0; topicKeys().forEach(function (k) { NEWS[k].stories.forEach(function (s) { if (seen[s.id]) n++; }); }); return n; }
+  function totalStories() { var n = 0; allKeys().forEach(function (k) { n += NEWS[k].stories.length; }); return n; }
+  function seenCount() { var n = 0; allKeys().forEach(function (k) { NEWS[k].stories.forEach(function (s) { if (seen[s.id]) n++; }); }); return n; }
 
   // ---------- streak: a day counts only when all stories were opened ----------
   function dayDiff(a, b) { return Math.round((Date.parse(b) - Date.parse(a)) / 86400000); }
@@ -1371,15 +1417,15 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   function markSeen(id) {
     if (!seen[id]) {
       seen[id] = 1; lsSet(SEEN_KEY, seen); renderPills();
-      if (seenCount() >= totalStories()) completeEdition();
+      if (seenCount() >= DAILY_GOAL) completeEdition();
     }
     renderProgress();
   }
   function completeEdition() {
-    var r = streakGet();
-    if (r.last && dayDiff(r.last, SNAPSHOT_ISO) <= 0) return;      // already counted (or an older edition)
-    var n = (r.last && r.n > 0 && dayDiff(r.last, SNAPSHOT_ISO) === 1) ? r.n + 1 : 1;
-    lsSet('nd3-streak', { last: SNAPSHOT_ISO, n: n }); renderPills();
+    var r = streakGet(), today = ist().iso;
+    if (r.last && dayDiff(r.last, today) <= 0) return; // already counted today
+    var n = (r.last && r.n > 0 && dayDiff(r.last, today) === 1) ? r.n + 1 : 1;
+    lsSet('nd3-streak', { last: today, n: n }); renderPills();
     if (n % 10 === 0) {
       popup({ tone: '#e0701a', emoji: '🔥', big: String(n), label: 'DAY STREAK', heading: 'GOOD! KEEP GOING', sub: 'You have read every story for ' + n + ' days in a row.', confetti: true, buttons: [{ t: 'Keep it going', primary: true }] });
     } else {
@@ -1399,9 +1445,9 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     box.appendChild(h('span', { class: 'pill' }, [h('i', { class: 'led' + (open ? ' on' : '') }), open ? 'NSE trading hours now' : 'NSE closed (hours 9:15–15:30 IST, Mon–Fri)']));
     var days = Math.round((Date.parse(t.iso) - Date.parse(SNAPSHOT_ISO)) / 86400000);
     box.appendChild(h('span', { class: 'pill', text: 'Edition: ' + SNAPSHOT }));
-    var n = seenCount(), tot = totalStories(), r = streakGet();
-    var tip = 'Open “Read the depth” on all ' + tot + ' stories to add a day to your streak.';
-    box.appendChild(h('span', { class: 'pill', title: tip, text: (n >= tot ? '✅ ' : '📖 ') + n + '/' + tot + ' read' }));
+    var n = seenCount(), r = streakGet();
+    var tip = 'Read any ' + DAILY_GOAL + ' stories across categories in one day to earn a streak day.';
+    box.appendChild(h('span', { class: 'pill', title: tip, text: (n >= DAILY_GOAL ? '✅ ' : '📖 ') + n + '/' + DAILY_GOAL + ' daily goal' }));
     box.appendChild(h('span', { class: 'pill', title: tip, text: '🔥 ' + r.n + '-day streak' }));
     var s2 = $('stale');
     if (days >= 1) { s2.hidden = false; s2.textContent = 'This edition is from ' + SNAPSHOT + ', ' + days + ' day' + (days > 1 ? 's' : '') + ' ago. A fresh edition is meant to be published each morning; reload the page later.'; }
@@ -1752,7 +1798,7 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     copy.addEventListener('click', function () {
       copyText(story.title + '\n' + story.summary + '\nImpact on India (' + story.level + '): ' + story.india);
     });
-    var shareTxt = story.title + ' — ' + story.summary + ' (Khabar Kadak: ' + SITE + ')';
+    var shareTxt = story.title + ' — ' + story.summary + ' (THE 5IVE: ' + SITE + ')';
     var share = h('a', { class: 'btn link', href: 'https://wa.me/?text=' + encodeURIComponent(shareTxt), target: '_blank', rel: 'noopener noreferrer', text: 'Share on WhatsApp' });
     var rep = h('a', { class: 'btn link', href: REPO + '/issues/new?title=' + encodeURIComponent('Possible error: ' + story.id + ' ' + story.title) + '&body=' + encodeURIComponent('What looks wrong, and a link to the correct source:\n'), target: '_blank', rel: 'noopener noreferrer', text: 'Report an error' });
     main.appendChild(h('div', { class: 'actions' }, [toggle, save, copy, share, rep]));
@@ -1763,9 +1809,9 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
 
   function renderProgress() {
     var key = $('topic').value, cat = NEWS[key];
-    var n = cat.stories.filter(function (s) { return seen[s.id]; }).length, all = seenCount(), tot = totalStories();
+    var n = cat.stories.filter(function (s) { return seen[s.id]; }).length, all = seenCount();
     $('bar').style.width = (n / cat.stories.length * 100) + '%';
-    $('ptext').textContent = n + ' of ' + cat.stories.length + ' stories read here · ' + all + ' of ' + tot + ' today' + (all < tot ? ' (read all ' + tot + ' to grow your streak)' : ' ✓');
+    $('ptext').textContent = n + ' of ' + cat.stories.length + ' stories read here · ' + all + '/' + DAILY_GOAL + ' daily goal' + (all < DAILY_GOAL ? ' (' + (DAILY_GOAL - all) + ' more for your streak)' : ' ✓ streak earned');
   }
   function renderNews() {
     renderCats(); renderTabs();
@@ -1814,23 +1860,23 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     } catch (e) {}
   }
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredInstall = e; if (view === 'about') renderAbout(); });
-  window.addEventListener('appinstalled', function () { deferredInstall = null; toast('Installed. Find Khabar Kadak on your home screen.'); });
+  window.addEventListener('appinstalled', function () { deferredInstall = null; toast('Installed. Find THE 5IVE on your home screen.'); });
   function renderAbout() {
     var box = $('aboutbox'); box.textContent = '';
     var A = h('div', { class: 'about' });
     function H(t) { A.appendChild(h('h3', { text: t })); }
     function P(t) { A.appendChild(h('p', { text: t })); }
     function L(tag, items) { var u = h(tag); items.forEach(function (t) { u.appendChild(h('li', { text: t })); }); A.appendChild(u); }
-    A.appendChild(h('h2', { text: 'About Khabar Kadak' }));
-    P('“Khabar” is Hindi for news and “kadak” means strong, as in strong chai. This is a short, strong daily brew: five stories in each of five categories (Business, Tech, Global, Sports, Entertainment), each with the numbers behind it and an “Impact on India” note. You choose which categories to follow; all five are on by default.');
+    A.appendChild(h('h2', { text: 'About THE 5IVE' }));
+    P('THE 5IVE is a quick daily briefing across five categories: Business, Tech, Global Affairs, Sports and Entertainment. Read any 15 stories in a day to earn a streak day. Sports coverage includes cricket around the world, not only India matches. Your streak is currently stored in this browser; syncing across devices would require account sign-in.');
     H('Get it on your phone (free)');
     if (onSite) {
       var row = h('div', { class: 'actions' });
       if (deferredInstall) { var ib = h('button', { class: 'btn primary', type: 'button', text: '📲 Install the app' }); ib.addEventListener('click', function () { deferredInstall.prompt(); deferredInstall = null; renderAbout(); }); row.appendChild(ib); }
       A.appendChild(row);
-      L('ul', ['Android (Chrome): tap the Install button above, or the ⋮ menu, then Install app.', 'iPhone (Safari): tap the Share icon, then Add to Home Screen.', 'It then opens full-screen from your home screen like an app. It is a web app, so there is nothing to download from a store, and it costs nothing.']);
+      L('ul', ['Android (Chrome): tap the Install button above, or the ⋮ menu, then Install THE 5IVE.', 'iPhone (Safari): tap the Share icon, then Add to Home Screen.', 'It then opens full-screen from your home screen like an app. It is a web app, so there is nothing to download from a store, and it costs nothing.']);
     } else {
-      P('Open the website below on your phone, then use Install app (Android Chrome) or Share, then Add to Home Screen (iPhone Safari). It then opens like an app and costs nothing.');
+      P('Open the website below on your phone, then use Install THE 5IVE (Android Chrome) or Share, then Add to Home Screen (iPhone Safari). It then opens like an app and costs nothing.');
       A.appendChild(h('p', {}, [h('a', { href: SITE, target: '_blank', rel: 'noopener noreferrer', text: SITE })]));
     }
     H('Who checks it for mistakes?');
