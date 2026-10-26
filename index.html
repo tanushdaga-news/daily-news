@@ -1293,12 +1293,14 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   };
 
   var Q = function (q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); };
+  // Latest verified Indian market closes: Monday 26 Oct 2026.
+  // These are dated closing values, not a real-time feed. Replace with a licensed API for automatic updates.
   var STRIP = [
-    { n: '$116.72', l: 'Brent crude, settle Fri 23 Oct', d: '+3.1%', dir: 'up', u: Q('brent crude oil price') },
-    { n: '73,123.83', l: 'Sensex, close Fri 23 Oct', d: '−0.17%', dir: 'down', u: Q('sensex live') },
-    { n: '22,600', l: 'Nifty 50, close Fri 23 Oct', d: '−0.39%', dir: 'down', u: Q('nifty 50 live') },
-    { n: '25,955.34', l: 'Nasdaq, close Fri 23 Oct', d: '−0.21%', dir: 'down', u: Q('nasdaq composite live') },
-    { n: '22.19x', l: 'Jio IPO, final subscription', d: 'allotment 26 Oct', dir: '', u: Q('jio platforms ipo allotment status') }
+    { n: '73,606.75', l: 'Sensex · close 26 Oct', d: '+0.66%', dir: 'up', u: Q('Sensex close 26 October 2026') },
+    { n: '22,753.20', l: 'Nifty 50 · close 26 Oct', d: '+0.68%', dir: 'up', u: Q('Nifty 50 close 26 October 2026') },
+    { n: '54,366.70', l: 'Bank Nifty · close 26 Oct', d: '+0.15%', dir: 'up', u: Q('Bank Nifty close 26 October 2026') },
+    { n: '32,273.05', l: 'Nifty IT · close 26 Oct', d: '+0.87%', dir: 'up', u: Q('Nifty IT close 26 October 2026') },
+    { n: '17.16', l: 'India VIX · close 26 Oct', d: '+1.78%', dir: 'up', u: Q('India VIX close 26 October 2026') }
   ];
 
   var NS = 'http://www.w3.org/2000/svg';
@@ -1352,7 +1354,7 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
       row.appendChild(chg);
       st.appendChild(h('div', { class: 'tick' }, [row, h('span', { text: t.l }), h('div', {}, [h('a', { href: t.u, target: '_blank', rel: 'noopener noreferrer', text: 'Live quote ↗' })])]));
     });
-    $('stripnote').textContent = 'Last reported closing figures from the ' + SNAPSHOT + ' edition, not live ticks. Tap “Live quote” for the current value.';
+    $('stripnote').textContent = 'Latest verified closing figures as of Monday 26 Oct 2026. These values are not live and will not refresh automatically; tap “Live quote” to check the latest market information.';
   }
 
   // ---------- IST clock, NSE hours, edition age ----------
