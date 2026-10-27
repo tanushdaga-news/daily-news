@@ -1,0 +1,39 @@
+name: Refresh daily news edition
+
+on:
+  schedule:
+    # 06:00 IST daily = 00:30 UTC. GitHub may start scheduled jobs late.
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-news-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch fresh RSS headlines
+        run: python scripts/update_fresh_news.py
+      - name: Commit fresh news feed
+        run: |
+          if git diff --quiet -- fresh-news.json; then
+            echo "Fresh news feed unchanged; no commit needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add fresh-news.json
+          git commit -m "Refresh daily RSS news edition"
+          git push
