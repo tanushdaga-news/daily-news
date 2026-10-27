@@ -28,7 +28,7 @@ jobs:
         run: python scripts/update_fresh_news.py
       - name: Commit fresh news feed
         run: |
-          if git diff --quiet -- fresh-news.json; then
+          if [ -z "$(git status --porcelain -- fresh-news.json)" ]; then
             echo "Fresh news feed unchanged; no commit needed."
             exit 0
           fi
