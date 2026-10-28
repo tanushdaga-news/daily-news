@@ -1741,16 +1741,78 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     if (story.id && story.id.indexOf('rss-') === 0) {
       var key = story.id.split('-')[1];
       var accent = ({ business: 'var(--biz)', tech: 'var(--tech)', global: 'var(--glob)', sports: 'var(--sport)', entertainment: 'var(--ent)' })[key] || 'var(--accent)';
-      add(svg, 'rect', { x: 0, y: 0, width: 360, height: 202, rx: 0, fill: 'var(--surface)' });
-      add(svg, 'rect', { x: 18, y: 18, width: 324, height: 166, rx: 12, fill: 'var(--art-bg)' });
-      add(svg, 'circle', { cx: 284, cy: 68, r: 42, fill: accent, opacity: 0.16 });
-      add(svg, 'circle', { cx: 284, cy: 68, r: 25, fill: accent, opacity: 0.25 });
-      add(svg, 'rect', { x: 36, y: 42, width: 7, height: 38, rx: 3.5, fill: accent });
-      txt(svg, 55, 56, 'THE 5IVE · FRESH EDITION', 11, 'var(--muted)', 'start', 700);
-      txt(svg, 36, 108, (story.tag || 'LATEST NEWS').toUpperCase().slice(0, 28), 13, accent, 'start', 700);
-      add(svg, 'line', { x1: 36, y1: 125, x2: 300, y2: 125, stroke: 'var(--line)', 'stroke-width': 1.5 });
-      txt(svg, 36, 150, 'LATEST HEADLINE', 18, 'var(--fg)', 'start', 700);
-      txt(svg, 36, 169, 'Read the source for full context', 10, 'var(--muted)', 'start', 500);
+      var headline = String(story.title || '').toLowerCase();
+      var motif = key === 'business'
+        ? (/(stock|share|market|ipo|bank|price|econom|trade|oil|company|profit|invest)/.test(headline) ? 'market' : 'building')
+        : key === 'tech'
+        ? (/(ai|artificial intelligence|robot|chip|data|software|app|phone|cyber|google|microsoft|apple)/.test(headline) ? 'ai' : 'device')
+        : key === 'global'
+        ? (/(war|attack|missile|military|border|iran|israel|ukraine|peace|summit|election|president)/.test(headline) ? 'globe' : 'diplomacy')
+        : key === 'sports'
+        ? (/(cricket|ipl|wicket|bat|bowler|odi|test match)/.test(headline) ? 'cricket' : (/(football|soccer|goal|fifa)/.test(headline) ? 'football' : 'trophy'))
+        : (/(film|movie|cinema|actor|actress|box office|streaming|series|ott)/.test(headline) ? 'film' : 'spotlight');
+      add(svg, 'rect', { x: 0, y: 0, width: 360, height: 202, fill: 'var(--surface)' });
+      add(svg, 'rect', { x: 12, y: 12, width: 336, height: 178, rx: 14, fill: 'var(--art-bg)' });
+      add(svg, 'circle', { cx: 270, cy: 72, r: 61, fill: accent, opacity: 0.10 });
+      add(svg, 'circle', { cx: 270, cy: 72, r: 43, fill: accent, opacity: 0.10 });
+      // Draw a category-specific editorial scene with vector shapes, not stock photography.
+      if (motif === 'market') {
+        add(svg, 'path', { d: 'M52 145 L52 113 L84 113 L84 93 L116 93 L116 70 L148 70', fill: 'none', stroke: accent, 'stroke-width': 8, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+        add(svg, 'path', { d: 'M132 70 L148 70 L148 86', fill: 'none', stroke: accent, 'stroke-width': 8, 'stroke-linecap': 'round' });
+        [0,1,2,3].forEach(function(i){ add(svg,'rect',{x:190+i*28,y:126-i*15,width:17,height:30+i*15,rx:3,fill:accent,opacity:0.35+i*0.14}); });
+        add(svg, 'circle', { cx: 256, cy: 61, r: 22, fill: accent, opacity: 0.18 });
+      } else if (motif === 'building') {
+        add(svg,'rect',{x:66,y:54,width:82,height:98,rx:5,fill:accent,opacity:0.82});
+        for(var wy=0;wy<4;wy++) for(var wx=0;wx<3;wx++) add(svg,'rect',{x:78+wx*22,y:66+wy*20,width:10,height:10,rx:2,fill:'var(--surface)',opacity:0.9});
+        add(svg,'path',{d:'M178 151 L178 91 L207 72 L236 91 L236 151 Z',fill:accent,opacity:0.42});
+      } else if (motif === 'ai') {
+        add(svg,'rect',{x:66,y:50,width:118,height:96,rx:13,fill:accent,opacity:0.18,stroke:accent,'stroke-width':3});
+        add(svg,'rect',{x:83,y:67,width:84,height:62,rx:8,fill:'var(--surface)',stroke:accent,'stroke-width':2});
+        [[100,84],[149,84],[100,111],[149,111],[124,97]].forEach(function(p){add(svg,'circle',{cx:p[0],cy:p[1],r:6,fill:accent});});
+        [[106,84,143,84],[100,90,100,105],[149,90,149,105],[106,111,143,111],[124,90,124,105]].forEach(function(p){add(svg,'line',{x1:p[0],y1:p[1],x2:p[2],y2:p[3],stroke:accent,'stroke-width':2});});
+        add(svg,'path',{d:'M208 82 h42 m-21 -21 v42 M208 121 h42',stroke:accent,'stroke-width':5,'stroke-linecap':'round',opacity:0.7});
+      } else if (motif === 'device') {
+        add(svg,'rect',{x:92,y:35,width:76,height:126,rx:12,fill:accent});
+        add(svg,'rect',{x:100,y:47,width:60,height:94,rx:6,fill:'var(--surface)'});
+        add(svg,'circle',{cx:130,cy:151,r:4,fill:'var(--surface)'});
+        add(svg,'circle',{cx:219,cy:83,r:25,fill:accent,opacity:0.25});
+        add(svg,'path',{d:'M204 83 l11 11 l21 -25',fill:'none',stroke:accent,'stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round'});
+      } else if (motif === 'globe' || motif === 'diplomacy') {
+        add(svg,'circle',{cx:139,cy:96,r:55,fill:accent,opacity:0.14,stroke:accent,'stroke-width':3});
+        add(svg,'ellipse',{cx:139,cy:96,rx:25,ry:55,fill:'none',stroke:accent,'stroke-width':3});
+        add(svg,'path',{d:'M84 96 H194 M95 69 Q139 86 183 69 M95 123 Q139 106 183 123',fill:'none',stroke:accent,'stroke-width':3,opacity:0.85});
+        if(motif==='diplomacy') { add(svg,'circle',{cx:232,cy:78,r:20,fill:accent,opacity:0.25}); add(svg,'circle',{cx:270,cy:108,r:20,fill:accent,opacity:0.45}); add(svg,'path',{d:'M220 95 L251 96',stroke:accent,'stroke-width':4,'stroke-linecap':'round'}); }
+        else { add(svg,'path',{d:'M228 125 l16 -28 l16 28 z',fill:accent,opacity:0.8}); add(svg,'path',{d:'M244 101 v12',stroke:'var(--surface)','stroke-width':3}); add(svg,'circle',{cx:244,cy:119,r:2,fill:'var(--surface)'}); }
+      } else if (motif === 'cricket') {
+        add(svg,'path',{d:'M75 136 Q110 102 146 63',fill:'none',stroke:accent,'stroke-width':18,'stroke-linecap':'round'});
+        add(svg,'path',{d:'M70 140 Q106 107 142 68',fill:'none',stroke:'var(--surface)','stroke-width':3,'stroke-linecap':'round'});
+        add(svg,'circle',{cx:223,cy:91,r:17,fill:accent});
+        add(svg,'path',{d:'M218 77 Q231 91 218 105',fill:'none',stroke:'var(--surface)','stroke-width':2});
+        [0,1,2].forEach(function(i){add(svg,'rect',{x:266+i*10,y:116,width:5,height:32,rx:2,fill:accent});});
+      } else if (motif === 'football') {
+        add(svg,'circle',{cx:157,cy:96,r:53,fill:'var(--surface)',stroke:accent,'stroke-width':6});
+        add(svg,'path',{d:'M157 76 l18 13 l-7 21 h-22 l-7 -21 z M157 43 l13 8 M202 71 l-14 8 M195 124 l-14 -5 M119 124 l8 -15 M112 70 l17 9',fill:'none',stroke:accent,'stroke-width':4,'stroke-linejoin':'round'});
+        add(svg,'path',{d:'M235 55 l18 14 l-7 22 h-22 l-7 -22 z',fill:accent,opacity:0.25});
+      } else if (motif === 'trophy') {
+        add(svg,'path',{d:'M114 50 h70 v27 q0 36 -35 42 q-35 -6 -35 -42 z',fill:accent,opacity:0.85});
+        add(svg,'path',{d:'M114 61 H91 Q89 91 122 95 M184 61 H207 Q209 91 176 95',fill:'none',stroke:accent,'stroke-width':8,'stroke-linecap':'round'});
+        add(svg,'rect',{x:145,y:119,width:9,height:20,fill:accent});
+        add(svg,'rect',{x:127,y:138,width:45,height:10,rx:3,fill:accent});
+        add(svg,'path',{d:'M230 128 l10 10 l20 -25',fill:'none',stroke:accent,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'});
+      } else if (motif === 'film') {
+        add(svg,'rect',{x:74,y:48,width:130,height:100,rx:9,fill:accent,opacity:0.85});
+        add(svg,'rect',{x:84,y:58,width:110,height:80,rx:4,fill:'var(--surface)'});
+        add(svg,'path',{d:'M125 77 l0 42 l34 -21 z',fill:accent});
+        for(var fy=0;fy<4;fy++){add(svg,'rect',{x:77+fy*34,y:48,width:14,height:8,rx:2,fill:'var(--surface)'});add(svg,'rect',{x:77+fy*34,y:140,width:14,height:8,rx:2,fill:'var(--surface)'});}
+      } else {
+        add(svg,'circle',{cx:139,cy:95,r:49,fill:accent,opacity:0.18});
+        add(svg,'path',{d:'M139 48 L151 79 L184 81 L159 102 L167 134 L139 116 L111 134 L119 102 L94 81 L127 79 Z',fill:accent,opacity:0.85});
+        add(svg,'circle',{cx:139,cy:95,r:17,fill:'var(--surface)',opacity:0.85});
+      }
+      add(svg, 'rect', { x: 18, y: 16, width: 5, height: 34, rx: 2.5, fill: accent });
+      txt(svg, 34, 31, 'THE 5IVE · ILLUSTRATED NEWS', 10, 'var(--muted)', 'start', 700);
+      var label = ({business:'BUSINESS',tech:'TECHNOLOGY',global:'GLOBAL AFFAIRS',sports:'SPORTS',entertainment:'ENTERTAINMENT'})[key] || 'LATEST NEWS';
+      txt(svg, 34, 174, label, 11, accent, 'start', 700);
       return svg;
     }
     if (!story.art || !DRAW[story.art.type]) {
@@ -1775,27 +1837,8 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     var c = h('article', { class: 'card', id: 'card-' + story.id, style: '--i:' + idx });
     var illustration = art(story);
     var figure = h('div', { class: 'art' });
-    var captionText = story.image
-      ? ('Photo' + (story.image_credit ? ' · ' + story.image_credit : ' · Wikimedia Commons') + (story.image_license ? ' · ' + story.image_license : ''))
-      : (story.id && story.id.indexOf('rss-') === 0 ? 'THE 5IVE editorial illustration' : 'Chart from reported numbers');
-    var caption = h('em', { text: captionText });
-    if (story.image && story.id && story.id.indexOf('rss-') === 0) {
-      var photo = h('img', { class: 'story-photo', src: story.image, alt: story.image_alt || story.title || 'News photo', loading: 'lazy', referrerpolicy: 'no-referrer' });
-      illustration.hidden = true;
-      photo.addEventListener('error', function () {
-        photo.hidden = true;
-        illustration.hidden = false;
-        caption.textContent = 'THE 5IVE editorial illustration';
-      });
-      photo.addEventListener('load', function () {
-        photo.hidden = false;
-        illustration.hidden = true;
-      });
-      figure.appendChild(photo);
-      figure.appendChild(illustration);
-    } else {
-      figure.appendChild(illustration);
-    }
+    var caption = h('em', { text: story.id && story.id.indexOf('rss-') === 0 ? 'THE 5IVE · original illustration' : 'Chart from reported numbers' });
+    figure.appendChild(illustration);
     figure.appendChild(caption);
     var main = h('div', { class: 'main' });
     main.appendChild(h('div', { class: 'meta' }, [h('span', { class: 'tag', text: story.tag }), h('span', { text: story.date }), lvl(story.level)]));
