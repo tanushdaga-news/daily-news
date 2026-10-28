@@ -261,6 +261,11 @@ def main():
         except Exception as exc:
             print(f"Feed failed for {label}: {exc}")
             edition["categories"].append({"id": key, "label": label, "stories": [], "error": "Feed temporarily unavailable"})
+    # Fetch each publisher's article image where available so cards do not all reuse
+    # a single category illustration. Keep the editorial illustration as a safe fallback.
+    all_stories = [story for category in edition["categories"] for story in category.get("stories", [])]
+    add_article_images(all_stories)
+
     with open("fresh-news.json", "w", encoding="utf-8") as f:
         json.dump(edition, f, ensure_ascii=False, indent=2)
         f.write("\n")
