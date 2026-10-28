@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build a daily, no-API news edition from Google News RSS search feeds."""
 import json
+import os
 import re
 import time
 import urllib.parse
@@ -72,6 +73,88 @@ def add_article_images(stories):
             image = job.result()
             if image:
                 jobs[job]["image"] = image
+
+def commons_image(search_term):
+    """Find a reusable Wikimedia Commons image and return its thumbnail URL and attribution."""
+    params = urllib.parse.urlencode({
+        "action": "query", "generator": "search", "gsrsearch": search_term,
+        "gsrnamespace": 6, "gsrlimit": 1, "prop": "imageinfo",
+        "iiprop": "url|extmetadata", "iiurlwidth": 900, "format": "json"
+    })
+    req = urllib.request.Request("https://commons.wikimedia.org/w/api.php?" + params,
+        headers={"User-Agent": "THE5IVE-NewsBot/1.0 (daily news site; image attribution included)"})
+    with urllib.request.urlopen(req, timeout=12) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+    pages = (payload.get("query") or {}).get("pages") or {}
+    for page in pages.values():
+        info_list = page.get("imageinfo") or []
+        if not info_list:
+            continue
+        info = info_list[0]
+        meta = info.get("extmetadata") or {}
+        def meta_value(key):
+            raw = (meta.get(key) or {}).get("value", "")
+            return clean(raw)
+        return {
+            "url": info.get("thumburl") or info.get("url") or "",
+            "page": info.get("descriptionurl") or "",
+            "credit": meta_value("Artist") or meta_value("Credit") or "Wikimedia Commons contributor",
+            "license": meta_value("LicenseShortName") or "See source page",
+            "title": clean(page.get("title", "").replace("File:", "")),
+        }
+    return None
+
+def download_commons_image(story, category, index):
+    """Save a Commons thumbnail locally so the website does not depend on hotlinking."""
+    query = (story.get("title") or "")[:140]
+    fallback_queries = {
+        "business": "stock market trading finance business",
+        "tech": "technology artificial intelligence computer",
+        "global": "world globe international news",
+        "sports": "cricket football sports",
+        "entertainment": "cinema film entertainment",
+    }
+    candidates = []
+    for term in (query, fallback_queries.get(category, "news photography")):
+        if term and term not in candidates:
+            candidates.append(term)
+    for term in candidates:
+        try:
+            result = commons_image(term)
+            if not result or not result.get("url"):
+                continue
+            req = urllib.request.Request(result["url"], headers={"User-Agent": HEADERS["User-Agent"]})
+            with urllib.request.urlopen(req, timeout=15) as response:
+                image_bytes = response.read(2_500_000)
+                content_type = response.headers.get("Content-Type", "")
+            if not content_type.startswith("image/") or len(image_bytes) < 1500:
+                continue
+            os.makedirs("news-images", exist_ok=True)
+            path = "news-images/" + category + "-" + str(index + 1) + ".jpg"
+            with open(path, "wb") as out:
+                out.write(image_bytes)
+            story["image"] = path
+            story["image_credit"] = result["credit"]
+            story["image_license"] = result["license"]
+            story["image_source"] = result["page"]
+            story["image_alt"] = result["title"] or story.get("title", "News image")
+            return True
+        except Exception as exc:
+            print("Image lookup skipped for", category, index + 1, ":", str(exc)[:120])
+    return False
+
+def add_commons_images(categories):
+    # Resolve images concurrently, but keep per-category fallback images for every story.
+    jobs = []
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        for category in categories:
+            for index, story in enumerate(category.get("stories") or []):
+                jobs.append(pool.submit(download_commons_image, story, category["id"], index))
+        for job in as_completed(jobs):
+            try:
+                job.result()
+            except Exception as exc:
+                print("Image worker failed:", str(exc)[:120])
 
 def fetch_feed(query):
     params = urllib.parse.urlencode({
@@ -147,6 +230,7 @@ def main():
     with open("fresh-news.json", "w", encoding="utf-8") as f:
         json.dump(edition, f, ensure_ascii=False, indent=2)
         f.write("\n")
+    add_commons_images(edition["categories"])
     total = sum(len(c["stories"]) for c in edition["categories"])
     print(f"Wrote fresh-news.json with {total} RSS stories across {len(CATEGORIES)} categories.")
     if total == 0:
