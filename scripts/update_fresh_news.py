@@ -36,7 +36,7 @@ def safe_image_url(value):
 
 def image_from_description(description):
     # Google News RSS descriptions sometimes include a publisher thumbnail.
-    match = re.search(r'<img[^>]+src=["\\']([^"\\']+)["\\']', description or "", re.I)
+    match = re.search(r"<img[^>]+src=[\"']([^\"']+)[\"']", description or "", re.I)
     return safe_image_url(match.group(1)) if match else ""
 
 def article_image(url):
@@ -46,10 +46,10 @@ def article_image(url):
         with urllib.request.urlopen(req, timeout=7) as response:
             page = response.read(250_000).decode("utf-8", errors="ignore")
         patterns = [
-            r'<meta[^>]+property=["\\']og:image(?::secure_url)?["\\'][^>]+content=["\\']([^"\\']+)',
-            r'<meta[^>]+content=["\\']([^"\\']+)["\\'][^>]+property=["\\']og:image(?::secure_url)?["\\']',
-            r'<meta[^>]+name=["\\']twitter:image(?::src)?["\\'][^>]+content=["\\']([^"\\']+)',
-            r'<meta[^>]+content=["\\']([^"\\']+)["\\'][^>]+name=["\\']twitter:image(?::src)?["\\']',
+            r"<meta[^>]+property=[\"']og:image(?::secure_url)?[\"'][^>]+content=[\"']([^\"']+)",
+            r"<meta[^>]+content=[\"']([^\"']+)[\"'][^>]+property=[\"']og:image(?::secure_url)?[\"']",
+            r"<meta[^>]+name=[\"']twitter:image(?::src)?[\"'][^>]+content=[\"']([^\"']+)",
+            r"<meta[^>]+content=[\"']([^\"']+)[\"'][^>]+name=[\"']twitter:image(?::src)?[\"']",
         ]
         for pattern in patterns:
             match = re.search(pattern, page, re.I)
