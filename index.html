@@ -1749,7 +1749,11 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
         : key === 'global'
         ? (/(war|attack|missile|military|border|iran|israel|ukraine|peace|summit|election|president)/.test(headline) ? 'globe' : 'diplomacy')
         : key === 'sports'
-        ? (/(cricket|ipl|wicket|bat|bowler|odi|test match)/.test(headline) ? 'cricket' : (/(football|soccer|goal|fifa)/.test(headline) ? 'football' : 'trophy'))
+        ? (/(cricket|ipl|wicket|batting|bowler|odi|test match|ashes|t20|world cup|bcci|icc)/.test(headline) ? 'cricket'
+          : (/(football|soccer|goal|fifa|premier league|champions league|liverpool|chelsea|arsenal|manchester city|man city|manchester united|man united|tottenham|real madrid|barcelona|bayern|juventus|inter milan|psg|brighton|la liga|bundesliga|serie a)/.test(headline) ? 'football'
+          : (/(tennis|wimbledon|atp|wta|grand slam|alcaraz|sinner|djokovic|swiatek|gauff)/.test(headline) ? 'tennis'
+          : (/(formula 1|formula one|f1|grand prix|verstappen|hamilton|leclerc|mclaren)/.test(headline) ? 'racing'
+          : (/(basketball|nba|wnba|lakers|warriors|celtics|playoffs)/.test(headline) ? 'basketball' : 'trophy'))))
         : (/(film|movie|cinema|actor|actress|box office|streaming|series|ott)/.test(headline) ? 'film' : 'spotlight');
       add(svg, 'rect', { x: 0, y: 0, width: 360, height: 202, fill: 'var(--surface)' });
       add(svg, 'rect', { x: 12, y: 12, width: 336, height: 178, rx: 14, fill: 'var(--art-bg)' });
