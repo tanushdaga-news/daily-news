@@ -1735,7 +1735,7 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
 
   var DRAW = { hbars: hbars, vbars: vbars, stats: stats, waffle: waffle, hormuz: hormuz };
   function art(story) {
-    var svg = el('svg', { viewBox: '0 0 360 202', role: 'img', 'aria-label': (story.id && story.id.indexOf('rss-') === 0 ? 'Editorial illustration for: ' : 'Chart for: ') + story.title });
+    var svg = el('svg', { viewBox: '0 0 360 202', width: 360, height: 202, role: 'img', 'aria-label': (story.id && story.id.indexOf('rss-') === 0 ? 'Editorial illustration for: ' : 'Chart for: ') + story.title });
     // RSS items do not carry verified numerical datasets, so use an editorial illustration
     // instead of attempting to draw a chart from missing figures.
     if (story.id && story.id.indexOf('rss-') === 0) {
