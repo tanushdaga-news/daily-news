@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 from html import unescape
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 CATEGORIES = [
     ("business", "Business", "business India economy companies markets"),
@@ -22,6 +23,55 @@ HEADERS = {"User-Agent": "THE5IVE-NewsBot/1.0 (RSS reader; public GitHub Actions
 def clean(value):
     value = re.sub(r"<[^>]+>", " ", value or "")
     return re.sub(r"\s+", " ", unescape(value)).strip()
+
+def safe_image_url(value):
+    value = unescape((value or "").strip())
+    if value.startswith("//"):
+        value = "https:" + value
+    if not value.startswith(("https://", "http://")):
+        return ""
+    if any(token in value.lower() for token in ("favicon", "sprite", "tracking", "pixel.gif")):
+        return ""
+    return value
+
+def image_from_description(description):
+    # Google News RSS descriptions sometimes include a publisher thumbnail.
+    match = re.search(r'<img[^>]+src=["\\']([^"\\']+)["\\']', description or "", re.I)
+    return safe_image_url(match.group(1)) if match else ""
+
+def article_image(url):
+    # Best-effort Open Graph/Twitter image lookup; no API key required.
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; THE5IVE-NewsBot/1.0)"})
+        with urllib.request.urlopen(req, timeout=7) as response:
+            page = response.read(250_000).decode("utf-8", errors="ignore")
+        patterns = [
+            r'<meta[^>]+property=["\\']og:image(?::secure_url)?["\\'][^>]+content=["\\']([^"\\']+)',
+            r'<meta[^>]+content=["\\']([^"\\']+)["\\'][^>]+property=["\\']og:image(?::secure_url)?["\\']',
+            r'<meta[^>]+name=["\\']twitter:image(?::src)?["\\'][^>]+content=["\\']([^"\\']+)',
+            r'<meta[^>]+content=["\\']([^"\\']+)["\\'][^>]+name=["\\']twitter:image(?::src)?["\\']',
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, page, re.I)
+            if match:
+                image = safe_image_url(urllib.parse.urljoin(response.geturl(), match.group(1)))
+                if image:
+                    return image
+    except Exception:
+        pass
+    return ""
+
+def add_article_images(stories):
+    # Prefer an image embedded in the RSS entry, then try the publisher's OG image.
+    missing = [story for story in stories if not story.get("image") and story.get("url")]
+    if not missing:
+        return
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        jobs = {pool.submit(article_image, story["url"]): story for story in missing}
+        for job in as_completed(jobs):
+            image = job.result()
+            if image:
+                jobs[job]["image"] = image
 
 def fetch_feed(query):
     params = urllib.parse.urlencode({
@@ -37,7 +87,13 @@ def fetch_feed(query):
     for item in root.findall("./channel/item"):
         title = clean(item.findtext("title"))
         link = (item.findtext("link") or "").strip()
-        desc = clean(item.findtext("description"))
+        raw_desc = item.findtext("description") or ""
+        desc = clean(raw_desc)
+        image = image_from_description(raw_desc)
+        for media_tag in ("{http://search.yahoo.com/mrss/}content", "{http://search.yahoo.com/mrss/}thumbnail"):
+            media = item.find(media_tag)
+            if not image and media is not None:
+                image = safe_image_url(media.attrib.get("url", ""))
         source = clean(item.findtext("source")) or "Google News"
         pub = item.findtext("pubDate") or ""
         try:
@@ -51,6 +107,7 @@ def fetch_feed(query):
             "title": title,
             "url": link,
             "summary": desc[:420] if desc else "Open the source for the full report.",
+            "image": image,
             "source": source,
             "published": published.isoformat(),
             "_dt": published,
@@ -82,6 +139,7 @@ def main():
                 selected.append(item)
                 if len(selected) >= 5:
                     break
+            add_article_images(selected)
             edition["categories"].append({"id": key, "label": label, "stories": selected})
         except Exception as exc:
             print(f"Feed failed for {label}: {exc}")
