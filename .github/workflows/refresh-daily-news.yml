@@ -28,12 +28,12 @@ jobs:
         run: python scripts/update_fresh_news.py
       - name: Commit fresh news feed
         run: |
-          if [ -z "$(git status --porcelain -- fresh-news.json)" ]; then
+          if [ -z "$(git status --porcelain -- fresh-news.json news-images/)" ]; then
             echo "Fresh news feed unchanged; no commit needed."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add fresh-news.json
+          git add fresh-news.json news-images/
           git commit -m "Refresh daily RSS news edition"
           git push
