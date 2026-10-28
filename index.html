@@ -1741,7 +1741,7 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     if (story.id && story.id.indexOf('rss-') === 0) {
       var key = story.id.split('-')[1];
       var accent = ({ business: 'var(--biz)', tech: 'var(--tech)', global: 'var(--glob)', sports: 'var(--sport)', entertainment: 'var(--ent)' })[key] || 'var(--accent)';
-      var headline = String(story.title || '').toLowerCase();
+      var headline = String(story.title || story.summary || '').toLowerCase();
       var motif = key === 'business'
         ? (/(stock|share|market|ipo|bank|price|econom|trade|oil|company|profit|invest)/.test(headline) ? 'market' : 'building')
         : key === 'tech'
@@ -2013,6 +2013,16 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
       if (!incoming.length) return;
       var options = incoming.map(function (item) { return item.title; });
       NEWS[key].stories = incoming.map(function (story, index) {
+        // Some RSS descriptions contain the real headline while the title is only a generic placeholder.
+        var rawTitle = String(story.title || '').trim();
+        var rawSummary = String(story.summary || '').trim();
+        var genericTitle = !rawTitle || /^(latest news|news|top stories|breaking news|headlines?)$/i.test(rawTitle);
+        if (genericTitle && rawSummary && rawSummary.length > 12) {
+          var summaryHeadline = rawSummary.split(/(?:\s+[—–|]\s+|\.\s+(?=[A-Z]))/)[0].trim();
+          if (summaryHeadline.length > 12) {
+            story = Object.assign({}, story, { title: summaryHeadline, summary: rawTitle });
+          }
+        }
         var published = story.published ? new Date(story.published) : null;
         var dateLabel = published && !isNaN(published.getTime())
           ? published.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
