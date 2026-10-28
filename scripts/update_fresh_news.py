@@ -257,12 +257,10 @@ def main():
                 selected.append(item)
                 if len(selected) >= 5:
                     break
-            add_article_images(selected)
             edition["categories"].append({"id": key, "label": label, "stories": selected})
         except Exception as exc:
             print(f"Feed failed for {label}: {exc}")
             edition["categories"].append({"id": key, "label": label, "stories": [], "error": "Feed temporarily unavailable"})
-    add_commons_images(edition["categories"])
     with open("fresh-news.json", "w", encoding="utf-8") as f:
         json.dump(edition, f, ensure_ascii=False, indent=2)
         f.write("\n")
