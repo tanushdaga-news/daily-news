@@ -1801,6 +1801,30 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
         add(svg,'circle',{cx:157,cy:96,r:53,fill:'var(--surface)',stroke:accent,'stroke-width':6});
         add(svg,'path',{d:'M157 76 l18 13 l-7 21 h-22 l-7 -21 z M157 43 l13 8 M202 71 l-14 8 M195 124 l-14 -5 M119 124 l8 -15 M112 70 l17 9',fill:'none',stroke:accent,'stroke-width':4,'stroke-linejoin':'round'});
         add(svg,'path',{d:'M235 55 l18 14 l-7 22 h-22 l-7 -22 z',fill:accent,opacity:0.25});
+      } else if (motif === 'tennis') {
+        // Tennis court, net, racket and a ball in motion.
+        add(svg,'rect',{x:48,y:43,width:214,height:112,rx:8,fill:accent,opacity:0.16,stroke:accent,'stroke-width':3});
+        add(svg,'path',{d:'M155 44 V155 M49 99 H261 M73 44 V155 M237 44 V155',fill:'none',stroke:accent,'stroke-width':2,opacity:0.8});
+        add(svg,'ellipse',{cx:285,cy:70,rx:28,ry:37,transform:'rotate(32 285 70)',fill:'none',stroke:accent,'stroke-width':7});
+        add(svg,'path',{d:'M265 94 L237 130',stroke:accent,'stroke-width':9,'stroke-linecap':'round'});
+        add(svg,'path',{d:'M275 47 Q289 60 295 83 M293 44 Q278 63 275 91 M263 62 L304 77 M268 81 L300 55',fill:'none',stroke:accent,'stroke-width':2,opacity:0.7});
+        add(svg,'circle',{cx:216,cy:54,r:11,fill:'#d5e84a',stroke:accent,'stroke-width':2});
+      } else if (motif === 'racing') {
+        // Formula-style racing car on a dynamic track.
+        add(svg,'path',{d:'M35 142 Q115 95 184 128 T326 87',fill:'none',stroke:accent,'stroke-width':15,opacity:0.16,'stroke-linecap':'round'});
+        add(svg,'path',{d:'M35 142 Q115 95 184 128 T326 87',fill:'none',stroke:accent,'stroke-width':3,'stroke-dasharray':'10 8','stroke-linecap':'round'});
+        add(svg,'path',{d:'M91 116 L115 83 L191 83 L223 108 L267 112 L277 133 L81 133 Z',fill:accent});
+        add(svg,'path',{d:'M127 87 L146 87 L146 106 L111 106 Z M154 87 L185 87 L205 106 L154 106 Z',fill:'var(--surface)',opacity:0.88});
+        add(svg,'circle',{cx:120,cy:136,r:17,fill:'#17252c',stroke:'var(--surface)','stroke-width':4});
+        add(svg,'circle',{cx:237,cy:136,r:17,fill:'#17252c',stroke:'var(--surface)','stroke-width':4});
+        add(svg,'path',{d:'M68 62 H110 M80 73 H130 M56 84 H95',stroke:accent,'stroke-width':5,'stroke-linecap':'round',opacity:0.55});
+      } else if (motif === 'basketball') {
+        // Basketball court and ball with characteristic seam lines.
+        add(svg,'rect',{x:38,y:42,width:284,height:118,rx:7,fill:accent,opacity:0.13,stroke:accent,'stroke-width':3});
+        add(svg,'path',{d:'M180 43 V159 M180 72 A30 30 0 0 1 180 132 M38 75 H75 V127 H38 M322 75 H285 V127 H322',fill:'none',stroke:accent,'stroke-width':2,opacity:0.75});
+        add(svg,'circle',{cx:218,cy:87,r:35,fill:'#e88935',stroke:accent,'stroke-width':3});
+        add(svg,'path',{d:'M183 87 H253 M218 52 Q194 87 218 122 M218 52 Q242 87 218 122',fill:'none',stroke:'#5c351e','stroke-width':3,'stroke-linecap':'round'});
+        add(svg,'path',{d:'M64 65 H89 M70 65 V83 M64 83 H89',fill:'none',stroke:accent,'stroke-width':4,'stroke-linecap':'round'});
       } else if (motif === 'trophy') {
         // A lively sports scene instead of a generic trophy icon.
         add(svg,'path',{d:'M36 153 Q180 119 324 153',fill:'none',stroke:accent,'stroke-width':3,opacity:0.35});
