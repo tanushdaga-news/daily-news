@@ -1775,9 +1775,12 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     var c = h('article', { class: 'card', id: 'card-' + story.id, style: '--i:' + idx });
     var illustration = art(story);
     var figure = h('div', { class: 'art' });
-    var caption = h('em', { text: story.image ? 'Photo from publisher' : (story.id && story.id.indexOf('rss-') === 0 ? 'THE 5IVE editorial illustration' : 'Chart from reported numbers') });
+    var captionText = story.image
+      ? ('Photo' + (story.image_credit ? ' · ' + story.image_credit : ' · Wikimedia Commons') + (story.image_license ? ' · ' + story.image_license : ''))
+      : (story.id && story.id.indexOf('rss-') === 0 ? 'THE 5IVE editorial illustration' : 'Chart from reported numbers');
+    var caption = h('em', { text: captionText });
     if (story.image && story.id && story.id.indexOf('rss-') === 0) {
-      var photo = h('img', { class: 'story-photo', src: story.image, alt: story.title || 'News photo', loading: 'lazy', referrerpolicy: 'no-referrer' });
+      var photo = h('img', { class: 'story-photo', src: story.image, alt: story.image_alt || story.title || 'News photo', loading: 'lazy', referrerpolicy: 'no-referrer' });
       illustration.hidden = true;
       photo.addEventListener('error', function () {
         photo.hidden = true;
@@ -1975,6 +1978,10 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
           tag: (sourceCategory.label || NEWS[key].label) + ' · RSS',
           title: story.title || 'Latest news',
           image: story.image || '',
+          image_alt: story.image_alt || story.title || 'News photograph',
+          image_credit: story.image_credit || '',
+          image_license: story.image_license || '',
+          image_source: story.image_source || '',
           summary: story.summary || 'Open the original source for the full report.',
           nums: [],
           what: [story.summary || 'Open the source link below for the full report.', 'This headline was retrieved from a public news RSS feed.'],
