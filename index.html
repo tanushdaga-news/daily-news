@@ -89,6 +89,8 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr); animation: rise .45s ease both; animation-delay: calc(var(--i) * 60ms); }
 .art { background: var(--art-bg); min-width: 0; position: relative; }
 .art svg { display: block; width: 100%; height: auto; }
+.art .story-photo { display: block; width: 100%; height: auto; aspect-ratio: 360 / 202; object-fit: cover; background: var(--art-bg); }
+.art .story-photo[hidden], .art svg[hidden] { display: none; }
 .art em { position: absolute; right: 10px; bottom: 6px; font-style: normal; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .main { padding: 20px 20px 18px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 @media (min-width: 820px) {
@@ -1771,7 +1773,27 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   function card(story, cat, idx) {
     var isOpen = !!exp[story.id];
     var c = h('article', { class: 'card', id: 'card-' + story.id, style: '--i:' + idx });
-    var figure = h('div', { class: 'art' }, [art(story), h('em', { text: 'Chart from reported numbers' })]);
+    var illustration = art(story);
+    var figure = h('div', { class: 'art' });
+    var caption = h('em', { text: story.image ? 'Photo from publisher' : (story.id && story.id.indexOf('rss-') === 0 ? 'THE 5IVE editorial illustration' : 'Chart from reported numbers') });
+    if (story.image && story.id && story.id.indexOf('rss-') === 0) {
+      var photo = h('img', { class: 'story-photo', src: story.image, alt: story.title || 'News photo', loading: 'lazy', referrerpolicy: 'no-referrer' });
+      illustration.hidden = true;
+      photo.addEventListener('error', function () {
+        photo.hidden = true;
+        illustration.hidden = false;
+        caption.textContent = 'THE 5IVE editorial illustration';
+      });
+      photo.addEventListener('load', function () {
+        photo.hidden = false;
+        illustration.hidden = true;
+      });
+      figure.appendChild(photo);
+      figure.appendChild(illustration);
+    } else {
+      figure.appendChild(illustration);
+    }
+    figure.appendChild(caption);
     var main = h('div', { class: 'main' });
     main.appendChild(h('div', { class: 'meta' }, [h('span', { class: 'tag', text: story.tag }), h('span', { text: story.date }), lvl(story.level)]));
     main.appendChild(h('h3', { text: story.title }));
@@ -1952,6 +1974,7 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
           date: dateLabel,
           tag: (sourceCategory.label || NEWS[key].label) + ' · RSS',
           title: story.title || 'Latest news',
+          image: story.image || '',
           summary: story.summary || 'Open the original source for the full report.',
           nums: [],
           what: [story.summary || 'Open the source link below for the full report.', 'This headline was retrieved from a public news RSS feed.'],
