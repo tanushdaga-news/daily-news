@@ -1842,17 +1842,10 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     var illustration = art(story);
     var figure = h('div', { class: 'art' });
     var isRssStory = story.id && story.id.indexOf('rss-') === 0;
-    var caption = h('em', { text: isRssStory ? (story.image ? 'News image · see source for details' : 'THE 5IVE · editorial illustration') : 'Chart from reported numbers' });
-    if (isRssStory && story.image) {
-      var photo = h('img', { class: 'story-photo', src: story.image, alt: story.image_alt || story.title || 'News photograph', loading: 'lazy', referrerpolicy: 'no-referrer' });
-      photo.addEventListener('error', function () {
-        if (photo.parentNode) photo.parentNode.replaceChild(illustration, photo);
-        caption.textContent = 'THE 5IVE · editorial illustration';
-      });
-      figure.appendChild(photo);
-    } else {
-      figure.appendChild(illustration);
-    }
+    // THE 5IVE uses original, headline-driven vector illustrations for RSS cards.
+    // Never display publisher photographs, even when the feed contains an image URL.
+    var caption = h('em', { text: isRssStory ? 'THE 5IVE · original illustration' : 'Chart from reported numbers' });
+    figure.appendChild(illustration);
     figure.appendChild(caption);
     var main = h('div', { class: 'main' });
     main.appendChild(h('div', { class: 'meta' }, [h('span', { class: 'tag', text: story.tag }), h('span', { text: story.date }), lvl(story.level)]));
