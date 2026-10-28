@@ -1900,6 +1900,61 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   $('surprise').addEventListener('click', surprise);
   renderGreeting(); renderStrip(); loadMarketStrip(); renderPills(); renderNews(); checkBreak();
 
+  // ---------- Map the daily RSS edition into the main THE 5IVE experience ----------
+  function applyFreshNewsToMain(data) {
+    var categoryMap = { business: 'business', tech: 'tech', global: 'global', sports: 'sports', entertainment: 'entertainment' };
+    var allHeadlines = [];
+    (data.categories || []).forEach(function (sourceCategory) {
+      var key = categoryMap[sourceCategory.id];
+      if (!key || !NEWS[key]) return;
+      var incoming = (sourceCategory.stories || []).slice(0, 5);
+      incoming.forEach(function (story, index) {
+        allHeadlines.push({ category: key, story: story, index: index });
+      });
+      if (!incoming.length) return;
+      var options = incoming.map(function (item) { return item.title; });
+      NEWS[key].stories = incoming.map(function (story, index) {
+        var published = story.published ? new Date(story.published) : null;
+        var dateLabel = published && !isNaN(published.getTime())
+          ? published.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
+          : 'Latest RSS headline';
+        var quizOptions = [story.title].concat(options.filter(function (title) { return title !== story.title; }).slice(0, 3));
+        return {
+          id: 'rss-' + key + '-' + index + '-' + String(story.published || '').replace(/[^0-9]/g, '').slice(0, 12),
+          level: 'Medium',
+          date: dateLabel,
+          tag: (sourceCategory.label || NEWS[key].label) + ' · RSS',
+          title: story.title || 'Latest news',
+          summary: story.summary || 'Open the original source for the full report.',
+          nums: [],
+          what: [story.summary || 'Open the source link below for the full report.', 'This headline was retrieved from a public news RSS feed.'],
+          why: 'This is a fresh headline for the category. Read the linked source for the full context before drawing conclusions.',
+          india: 'Potential relevance to India depends on the full report and its context. This feed card does not add unverified figures or claim a measured impact.',
+          sources: [{ n: story.source || 'Original report', u: story.url || 'https://news.google.com/' }],
+          q: story.title || 'latest news',
+          art: { type: 'hbars', title: 'RSS headline · no figures inferred', max: 1, rows: [{ l: 'Source', v: 0, t: 'RSS feed', textOnly: true }] },
+          quiz: { q: 'Which headline appeared in today’s ' + (sourceCategory.label || NEWS[key].label) + ' feed?', o: quizOptions, a: 0, e: 'This question checks the headline only; open the source for the full report.' }
+        };
+      });
+    });
+    if (!allHeadlines.length) return;
+    var generated = data.generated_at ? new Date(data.generated_at) : new Date();
+    if (!isNaN(generated.getTime())) {
+      SNAPSHOT = generated.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      SNAPSHOT_ISO = generated.toISOString().slice(0, 10);
+    }
+    // Keep the original design and controls, but make refreshed RSS stories the main edition.
+    var section = document.getElementById('rss-edition');
+    if (section) section.style.display = 'none';
+    var status = document.getElementById('stale');
+    if (status) {
+      status.hidden = false;
+      status.textContent = 'Latest RSS edition · ' + (data.generated_label || SNAPSHOT) + ' · headlines link to their original sources.';
+    }
+    renderNews();
+    renderPills();
+  }
+
   // ---------- free daily RSS headlines ----------
   function loadFreshRSS() {
     var status = document.getElementById('rss-status');
@@ -1945,6 +2000,7 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
           }
           target.appendChild(section);
         });
+        if (total) applyFreshNewsToMain(data);
         status.textContent = total
           ? 'Updated ' + (data.generated_label || 'in the latest scheduled run') + ' · ' + total + ' headlines · Free RSS edition'
           : 'No fresh headlines were returned. The previous editorial edition below is still available.';
