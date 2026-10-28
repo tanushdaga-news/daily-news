@@ -1733,7 +1733,29 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
 
   var DRAW = { hbars: hbars, vbars: vbars, stats: stats, waffle: waffle, hormuz: hormuz };
   function art(story) {
-    var svg = el('svg', { viewBox: '0 0 360 202', role: 'img', 'aria-label': 'Chart for: ' + story.title });
+    var svg = el('svg', { viewBox: '0 0 360 202', role: 'img', 'aria-label': (story.id && story.id.indexOf('rss-') === 0 ? 'Editorial illustration for: ' : 'Chart for: ') + story.title });
+    // RSS items do not carry verified numerical datasets, so use an editorial illustration
+    // instead of attempting to draw a chart from missing figures.
+    if (story.id && story.id.indexOf('rss-') === 0) {
+      var key = story.id.split('-')[1];
+      var accent = ({ business: 'var(--biz)', tech: 'var(--tech)', global: 'var(--glob)', sports: 'var(--sport)', entertainment: 'var(--ent)' })[key] || 'var(--accent)';
+      add(svg, 'rect', { x: 0, y: 0, width: 360, height: 202, rx: 0, fill: 'var(--surface)' });
+      add(svg, 'rect', { x: 18, y: 18, width: 324, height: 166, rx: 12, fill: 'var(--art-bg)' });
+      add(svg, 'circle', { cx: 284, cy: 68, r: 42, fill: accent, opacity: 0.16 });
+      add(svg, 'circle', { cx: 284, cy: 68, r: 25, fill: accent, opacity: 0.25 });
+      add(svg, 'rect', { x: 36, y: 42, width: 7, height: 38, rx: 3.5, fill: accent });
+      txt(svg, 55, 56, 'THE 5IVE · FRESH EDITION', 11, 'var(--muted)', 'start', 700);
+      txt(svg, 36, 108, (story.tag || 'LATEST NEWS').toUpperCase().slice(0, 28), 13, accent, 'start', 700);
+      add(svg, 'line', { x1: 36, y1: 125, x2: 300, y2: 125, stroke: 'var(--line)', 'stroke-width': 1.5 });
+      txt(svg, 36, 150, 'LATEST HEADLINE', 18, 'var(--fg)', 'start', 700);
+      txt(svg, 36, 169, 'Read the source for full context', 10, 'var(--muted)', 'start', 500);
+      return svg;
+    }
+    if (!story.art || !DRAW[story.art.type]) {
+      add(svg, 'rect', { x: 0, y: 0, width: 360, height: 202, fill: 'var(--art-bg)' });
+      txt(svg, 18, 96, 'THE 5IVE · NEWS', 16, 'var(--fg)', 'start', 700);
+      return svg;
+    }
     (DRAW[story.art.type])(svg, story.art);
     return svg;
   }
