@@ -34,6 +34,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add fresh-news.json news-images/
+          git add -A
           git commit -m "Refresh daily RSS news edition"
           git push
