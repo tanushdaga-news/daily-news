@@ -144,17 +144,52 @@ def download_commons_image(story, category, index):
     return False
 
 def add_commons_images(categories):
-    # Resolve images concurrently, but keep per-category fallback images for every story.
-    jobs = []
-    with ThreadPoolExecutor(max_workers=5) as pool:
-        for category in categories:
-            for index, story in enumerate(category.get("stories") or []):
-                jobs.append(pool.submit(download_commons_image, story, category["id"], index))
-        for job in as_completed(jobs):
-            try:
-                job.result()
-            except Exception as exc:
-                print("Image worker failed:", str(exc)[:120])
+    # Make at most one Commons lookup per category to avoid rate limits.
+    # Reuse a category-relevant licensed photo across that category's headlines.
+    for category in categories:
+        stories = category.get("stories") or []
+        if not stories:
+            continue
+        key = category.get("id", "global")
+        representative = {
+            "title": "",
+            "image": "",
+            "image_credit": "",
+            "image_license": "",
+            "image_source": "",
+            "image_alt": "",
+        }
+        queries = {
+            "business": "stock market business finance",
+            "tech": "technology computer artificial intelligence",
+            "global": "Earth globe world",
+            "sports": "cricket football sport",
+            "entertainment": "cinema film",
+        }
+        try:
+            result = commons_image(queries.get(key, "news photography"))
+            if result and result.get("url"):
+                req = urllib.request.Request(result["url"], headers={"User-Agent": HEADERS["User-Agent"]})
+                with urllib.request.urlopen(req, timeout=15) as response:
+                    image_bytes = response.read(2_500_000)
+                    content_type = response.headers.get("Content-Type", "")
+                if content_type.startswith("image/") and len(image_bytes) >= 1500:
+                    os.makedirs("news-images", exist_ok=True)
+                    path = "news-images/" + key + "-editorial.jpg"
+                    with open(path, "wb") as out:
+                        out.write(image_bytes)
+                    representative.update({
+                        "image": path,
+                        "image_credit": result["credit"],
+                        "image_license": result["license"],
+                        "image_source": result["page"],
+                        "image_alt": result["title"] or queries.get(key, "News"),
+                    })
+        except Exception as exc:
+            print("Category image lookup skipped for", key, ":", str(exc)[:160])
+        if representative["image"]:
+            for story in stories:
+                story.update(representative)
 
 def fetch_feed(query):
     params = urllib.parse.urlencode({
