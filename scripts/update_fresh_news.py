@@ -262,10 +262,10 @@ def main():
         except Exception as exc:
             print(f"Feed failed for {label}: {exc}")
             edition["categories"].append({"id": key, "label": label, "stories": [], "error": "Feed temporarily unavailable"})
+    add_commons_images(edition["categories"])
     with open("fresh-news.json", "w", encoding="utf-8") as f:
         json.dump(edition, f, ensure_ascii=False, indent=2)
         f.write("\n")
-    add_commons_images(edition["categories"])
     total = sum(len(c["stories"]) for c in edition["categories"])
     print(f"Wrote fresh-news.json with {total} RSS stories across {len(CATEGORIES)} categories.")
     if total == 0:
