@@ -1903,6 +1903,11 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
   // ---------- Map the daily RSS edition into the main THE 5IVE experience ----------
   function applyFreshNewsToMain(data) {
     var categoryMap = { business: 'business', tech: 'tech', global: 'global', sports: 'sports', entertainment: 'entertainment' };
+    // Clear the embedded dated edition first so a feed failure cannot leave old stories visible.
+    Object.keys(categoryMap).forEach(function (sourceKey) {
+      var targetKey = categoryMap[sourceKey];
+      if (NEWS[targetKey]) NEWS[targetKey].stories = [];
+    });
     var allHeadlines = [];
     (data.categories || []).forEach(function (sourceCategory) {
       var key = categoryMap[sourceCategory.id];
