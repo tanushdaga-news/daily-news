@@ -1794,11 +1794,15 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
         add(svg,'path',{d:'M157 76 l18 13 l-7 21 h-22 l-7 -21 z M157 43 l13 8 M202 71 l-14 8 M195 124 l-14 -5 M119 124 l8 -15 M112 70 l17 9',fill:'none',stroke:accent,'stroke-width':4,'stroke-linejoin':'round'});
         add(svg,'path',{d:'M235 55 l18 14 l-7 22 h-22 l-7 -22 z',fill:accent,opacity:0.25});
       } else if (motif === 'trophy') {
-        add(svg,'path',{d:'M114 50 h70 v27 q0 36 -35 42 q-35 -6 -35 -42 z',fill:accent,opacity:0.85});
-        add(svg,'path',{d:'M114 61 H91 Q89 91 122 95 M184 61 H207 Q209 91 176 95',fill:'none',stroke:accent,'stroke-width':8,'stroke-linecap':'round'});
-        add(svg,'rect',{x:145,y:119,width:9,height:20,fill:accent});
-        add(svg,'rect',{x:127,y:138,width:45,height:10,rx:3,fill:accent});
-        add(svg,'path',{d:'M230 128 l10 10 l20 -25',fill:'none',stroke:accent,'stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'});
+        // A lively sports scene instead of a generic trophy icon.
+        add(svg,'path',{d:'M36 153 Q180 119 324 153',fill:'none',stroke:accent,'stroke-width':3,opacity:0.35});
+        add(svg,'circle',{cx:111,cy:62,r:13,fill:accent});
+        add(svg,'path',{d:'M111 77 L133 107 L111 126 L83 110 Z',fill:accent,opacity:0.9});
+        add(svg,'path',{d:'M128 91 L163 80 L181 94',fill:'none',stroke:accent,'stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round'});
+        add(svg,'path',{d:'M108 124 L91 153 M116 124 L145 151',fill:'none',stroke:accent,'stroke-width':10,'stroke-linecap':'round'});
+        add(svg,'circle',{cx:225,cy:116,r:18,fill:'var(--surface)',stroke:accent,'stroke-width':4});
+        add(svg,'path',{d:'M225 103 l7 5 l-3 8 h-8 l-3 -8 z M210 114 l7 2 M234 125 l5 5',fill:'none',stroke:accent,'stroke-width':2});
+        add(svg,'path',{d:'M246 64 l12 10 l-4 15 h-16 l-4 -15 z',fill:accent,opacity:0.25});
       } else if (motif === 'film') {
         add(svg,'rect',{x:74,y:48,width:130,height:100,rx:9,fill:accent,opacity:0.85});
         add(svg,'rect',{x:84,y:58,width:110,height:80,rx:4,fill:'var(--surface)'});
