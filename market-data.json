@@ -1,41 +1,41 @@
 {
-  "updatedAt": "29 Oct 2026, 04:28 PM IST",
-  "marketDate": "2026-10-29",
+  "updatedAt": "30 Oct 2026, 04:26 PM IST",
+  "marketDate": "2026-10-30",
   "source": "Yahoo Finance daily candles; may be delayed and is not an exchange-authorised live feed",
   "items": [
     {
-      "n": "74,151.04",
-      "l": "Sensex · close 29 Oct 2026",
-      "d": "+1.24%",
+      "n": "74,459.53",
+      "l": "Sensex · close 30 Oct 2026",
+      "d": "+0.42%",
       "dir": "up",
       "u": "https://www.google.com/search?q=Sensex%20latest%20close"
     },
     {
-      "n": "22,936.75",
-      "l": "Nifty 50 · close 29 Oct 2026",
-      "d": "+1.05%",
+      "n": "23,053.10",
+      "l": "Nifty 50 · close 30 Oct 2026",
+      "d": "+0.51%",
       "dir": "up",
       "u": "https://www.google.com/search?q=Nifty%2050%20latest%20close"
     },
     {
-      "n": "54,909.65",
-      "l": "Bank Nifty · close 29 Oct 2026",
-      "d": "+1.18%",
-      "dir": "up",
+      "n": "54,686.95",
+      "l": "Bank Nifty · close 30 Oct 2026",
+      "d": "-0.41%",
+      "dir": "down",
       "u": "https://www.google.com/search?q=Bank%20Nifty%20latest%20close"
     },
     {
-      "n": "31,866.40",
-      "l": "Nifty IT · close 29 Oct 2026",
-      "d": "+0.99%",
+      "n": "32,606.90",
+      "l": "Nifty IT · close 30 Oct 2026",
+      "d": "+2.32%",
       "dir": "up",
       "u": "https://www.google.com/search?q=Nifty%20IT%20latest%20close"
     },
     {
-      "n": "15.12",
-      "l": "India VIX · close 29 Oct 2026",
-      "d": "-6.97%",
-      "dir": "down",
+      "n": "15.30",
+      "l": "India VIX · close 30 Oct 2026",
+      "d": "+1.21%",
+      "dir": "up",
       "u": "https://www.google.com/search?q=India%20VIX%20latest%20close"
     }
   ],
