@@ -263,6 +263,41 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(38px, 
 .rss-story small, .rss-meta { color: var(--muted); font-size: 12px; }
 .rss-loading { color: var(--muted); font-size: 14px; }
 
+
+/* THE 5IVE refresh: editorial rhythm, vivid story art, and tactile browsing */
+body { padding-top: 18px; }
+.hero { border-radius: 24px; padding: clamp(24px,4vw,42px); box-shadow: 0 18px 55px rgba(12,42,60,.12); }
+.hero h1 { letter-spacing: -.035em; }
+.chips { position: sticky; top: 8px; z-index: 8; padding: 9px; margin-left: -9px; margin-right: -9px; border-radius: 16px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); }
+.chip { transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+.chip:hover { transform: translateY(-2px); border-color: var(--accent); }
+.card { border-radius: 18px; box-shadow: 0 8px 28px rgba(12,42,60,.055); transition: transform .22s ease, box-shadow .22s ease; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 16px 38px rgba(12,42,60,.12); }
+.art { overflow: hidden; }
+.art .story-photo { width: 100%; height: 100%; min-height: 210px; max-height: 300px; object-fit: cover; transition: transform .45s ease; }
+.card:hover .art .story-photo { transform: scale(1.025); }
+.art em { padding: 4px 8px; border-radius: 999px; background: rgba(8,18,28,.68); color: #fff; right: 12px; bottom: 10px; }
+.card h3 { letter-spacing: -.018em; }
+.btn, .chip { -webkit-tap-highlight-color: transparent; }
+.btn { transition: transform .16s ease, box-shadow .16s ease; }
+.btn:active, .chip:active { transform: scale(.97); }
+.section-head { margin-top: 34px; }
+.tick { border-radius: 13px; box-shadow: 0 4px 16px rgba(12,42,60,.04); }
+@media (max-width: 819px) {
+  body { padding-left: 12px; padding-right: 12px; padding-block: 12px 40px; }
+  .hero { border-radius: 18px; }
+  .card { border-radius: 16px; }
+  .art .story-photo { aspect-ratio: 16 / 9; min-height: 0; max-height: none; }
+  .main { padding: 17px 16px 16px; }
+  .chips { top: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { white-space: nowrap; flex: 0 0 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card, .chip, .btn, .art .story-photo { transition: none !important; }
+  .card:hover, .chip:hover { transform: none; }
+}
+
 </style>
 
 <div class="wrap">
