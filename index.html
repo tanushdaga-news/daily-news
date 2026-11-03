@@ -1435,7 +1435,7 @@ entertainment: { label: "Entertainment news", short: "Entertainment", color: "va
     var p = {}; new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hour12: false }).formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
     return { iso: p.year + '-' + p.month + '-' + p.day, mins: (+p.hour % 24) * 60 + (+p.minute), wk: p.weekday };
   }
-  var SITE = 'https://www.the5ive.in/', REPO = 'https://github.com/tanushdaga-news/daily-news';
+  var SITE = 'https://tanushdaga-news.github.io/daily-news/', REPO = 'https://github.com/tanushdaga-news/daily-news';
   function allKeys() { return Object.keys(NEWS); }
   var active = (function () { var a = lsGet('kk-cats'); var all = Object.keys(NEWS); if (a && a.length) { a = a.filter(function (k) { return NEWS[k]; }); if (a.length) return a; } return all; })();
   function topicKeys() { return allKeys().filter(function (k) { return active.indexOf(k) > -1; }); }
