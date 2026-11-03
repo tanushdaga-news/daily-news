@@ -232,6 +232,64 @@ def fetch_feed(query):
         })
     return entries
 
+
+def illustration_svg(story, category, index):
+    """Create a distinct, locally hosted editorial illustration for one story."""
+    title = story.get("title", "Latest news")
+    low = title.lower()
+    palettes = {
+        "business": ("#073b35", "#14b88a", "#f3c969"),
+        "tech": ("#101b49", "#4b8cff", "#b7f3ff"),
+        "global": ("#25205d", "#9b8cff", "#f5c76b"),
+        "sports": ("#4a250c", "#ff963d", "#f6e7b5"),
+        "entertainment": ("#47133f", "#ed6bb9", "#ffd36e"),
+    }
+    bg, accent, glow = palettes.get(category, ("#142c3a", "#39a9c9", "#f4ce75"))
+    seed = sum(ord(c) for c in title) + index * 37
+    x1, x2, x3 = 60 + seed % 90, 190 + seed % 80, 280 - seed % 55
+    if category == "sports":
+        if re.search(r"cricket|wicket|bcci|ipl|batting|bowler|t20", low):
+            scene = f'<path d="M{ x1 } 148 L{ x1+85 } 52" stroke="{glow}" stroke-width="19" stroke-linecap="round"/><circle cx="{x2}" cy="86" r="17" fill="{accent}"/><path d="M{ x2-6 } 71 Q{x2+12} 86 {x2-6} 101" stroke="{bg}" stroke-width="3" fill="none"/><path d="M{ x3 } 104 v45 m12 -45 v45 m12 -45 v45" stroke="{glow}" stroke-width="6" stroke-linecap="round"/>'
+        elif re.search(r"football|soccer|fifa|goal|premier league", low):
+            scene = f'<circle cx="{x1+80}" cy="94" r="52" fill="#f7f4ed"/><path d="M{x1+80} 68 l20 14 -8 24 h-24 l-8 -24z M{x1+80} 42 l12 8 M{x1+130} 73 l-17 9 M{x1+120} 132 l-15 -9" stroke="{accent}" stroke-width="5" fill="none"/>'
+        elif re.search(r"tennis|wimbledon|atp|wta|grand slam", low):
+            scene = f'<rect x="48" y="48" width="220" height="108" rx="8" fill="{accent}" opacity=".22" stroke="{glow}" stroke-width="3"/><path d="M158 49 V155 M48 102 H268" stroke="{glow}" stroke-width="3"/><ellipse cx="{x3}" cy="76" rx="25" ry="35" transform="rotate(32 {x3} 76)" stroke="{glow}" stroke-width="7" fill="none"/><circle cx="{x2}" cy="48" r="10" fill="#d9ef63"/>'
+        elif re.search(r"formula 1|formula one|f1|grand prix|racing", low):
+            scene = f'<path d="M25 145 Q120 70 200 132 T335 66" fill="none" stroke="{glow}" stroke-width="12" opacity=".35"/><path d="M80 115 L112 82 H210 L250 116 L275 124 V139 H70 Z" fill="{accent}"/><circle cx="116" cy="140" r="17" fill="#101820" stroke="{glow}" stroke-width="4"/><circle cx="232" cy="140" r="17" fill="#101820" stroke="{glow}" stroke-width="4"/>'
+        elif re.search(r"basketball|nba|wnba", low):
+            scene = f'<rect x="35" y="43" width="290" height="116" rx="9" fill="{accent}" opacity=".2" stroke="{glow}" stroke-width="3"/><circle cx="{x2}" cy="94" r="39" fill="#e98538" stroke="{glow}" stroke-width="3"/><path d="M{x2-39} 94 H{x2+39} M{x2} 55 Q{x2-28} 94 {x2} 133 M{x2} 55 Q{x2+28} 94 {x2} 133" stroke="#653c22" stroke-width="3" fill="none"/>'
+        else:
+            scene = f'<path d="M70 145 L120 68 L165 145 Z" fill="{accent}"/><path d="M190 145 L240 54 L290 145 Z" fill="{glow}" opacity=".8"/><circle cx="{x2}" cy="82" r="19" fill="{bg}" stroke="{glow}" stroke-width="5"/>'
+    elif category == "business":
+        scene = f'<path d="M45 145 L45 110 L90 110 L90 86 L135 86 L135 63 L180 63" fill="none" stroke="{glow}" stroke-width="8" stroke-linecap="round"/><rect x="205" y="85" width="25" height="65" rx="4" fill="{accent}"/><rect x="240" y="61" width="25" height="89" rx="4" fill="{glow}"/><rect x="275" y="39" width="25" height="111" rx="4" fill="{accent}"/>'
+    elif category == "tech":
+        scene = f'<rect x="78" y="42" width="142" height="112" rx="17" fill="{accent}" opacity=".22" stroke="{glow}" stroke-width="4"/><rect x="96" y="59" width="106" height="77" rx="9" fill="{bg}" stroke="{accent}" stroke-width="3"/><circle cx="{x1+80}" cy="96" r="9" fill="{glow}"/><path d="M{ x1+80 } 66 V126 M{ x1+50 } 96 H{ x1+110 }" stroke="{accent}" stroke-width="4"/><path d="M245 70 h45 M267 48 v45" stroke="{glow}" stroke-width="6" stroke-linecap="round"/>'
+    elif category == "global":
+        scene = f'<circle cx="150" cy="98" r="63" fill="{accent}" opacity=".24" stroke="{glow}" stroke-width="4"/><ellipse cx="150" cy="98" rx="28" ry="63" fill="none" stroke="{glow}" stroke-width="3"/><path d="M88 98 H212 M101 68 Q150 88 199 68 M101 128 Q150 108 199 128" fill="none" stroke="{glow}" stroke-width="3"/><path d="M245 140 L275 80 L305 140 Z" fill="{accent}"/>'
+    else:
+        scene = f'<rect x="72" y="48" width="140" height="105" rx="10" fill="{accent}"/><rect x="83" y="59" width="118" height="83" rx="5" fill="{bg}"/><path d="M125 77 L125 124 L166 100 Z" fill="{glow}"/><circle cx="270" cy="74" r="34" fill="{glow}" opacity=".8"/>'
+    safe_title = (title[:54]).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="900" height="506" viewBox="0 0 360 202">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="{bg}"/><stop offset="1" stop-color="{accent}"/></linearGradient><radialGradient id="r"><stop stop-color="{glow}" stop-opacity=".45"/><stop offset="1" stop-color="{bg}" stop-opacity="0"/></radialGradient></defs>
+<rect width="360" height="202" fill="url(#g)"/><circle cx="{x3}" cy="64" r="100" fill="url(#r)"/><circle cx="310" cy="25" r="55" fill="{glow}" opacity=".08"/>{scene}
+<path d="M0 166 Q100 145 180 170 T360 160 V202 H0Z" fill="{bg}" opacity=".68"/>
+<text x="20" y="184" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="{glow}">THE 5IVE  /  {category.upper()}</text>
+<text x="20" y="198" font-family="Arial,sans-serif" font-size="6.5" fill="#ffffff" opacity=".85">{safe_title}</text>
+</svg>'''
+
+def add_story_illustrations(categories):
+    """Write one distinct SVG file per story; no stock-photo reuse or external hotlinks."""
+    os.makedirs("news-images", exist_ok=True)
+    for category in categories:
+        key = category.get("id", "global")
+        for index, story in enumerate(category.get("stories") or []):
+            filename = f"news-images/{key}-{index+1}.svg"
+            with open(filename, "w", encoding="utf-8") as image_file:
+                image_file.write(illustration_svg(story, key, index))
+            story["image"] = filename
+            story["image_alt"] = "Original THE 5IVE illustration: " + story.get("title", "news story")
+            story["image_credit"] = "THE 5IVE original artwork"
+
 def main():
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=48)
@@ -264,7 +322,7 @@ def main():
     # Fetch each publisher's article image where available so cards do not all reuse
     # a single category illustration. Keep the editorial illustration as a safe fallback.
     all_stories = [story for category in edition["categories"] for story in category.get("stories", [])]
-    add_article_images(all_stories)
+    add_story_illustrations(edition["categories"])
 
     with open("fresh-news.json", "w", encoding="utf-8") as f:
         json.dump(edition, f, ensure_ascii=False, indent=2)
