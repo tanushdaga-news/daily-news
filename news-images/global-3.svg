@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="506" viewBox="0 0 360 202">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#25205d"/><stop offset="1" stop-color="#9b8cff"/></linearGradient><radialGradient id="r"><stop stop-color="#f5c76b" stop-opacity=".45"/><stop offset="1" stop-color="#25205d" stop-opacity="0"/></radialGradient></defs>
+<rect width="360" height="202" fill="url(#g)"/><circle cx="272" cy="64" r="100" fill="url(#r)"/><circle cx="310" cy="25" r="55" fill="#f5c76b" opacity=".08"/><circle cx="150" cy="98" r="63" fill="#9b8cff" opacity=".24" stroke="#f5c76b" stroke-width="4"/><ellipse cx="150" cy="98" rx="28" ry="63" fill="none" stroke="#f5c76b" stroke-width="3"/><path d="M88 98 H212 M101 68 Q150 88 199 68 M101 128 Q150 108 199 128" fill="none" stroke="#f5c76b" stroke-width="3"/><path d="M245 140 L275 80 L305 140 Z" fill="#9b8cff"/>
+<path d="M0 166 Q100 145 180 170 T360 160 V202 H0Z" fill="#25205d" opacity=".68"/>
+<text x="20" y="184" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#f5c76b">THE 5IVE  /  GLOBAL</text>
+<text x="20" y="198" font-family="Arial,sans-serif" font-size="6.5" fill="#ffffff" opacity=".85">Man suspected of sending 100+ suspicious white powder </text>
+</svg>
