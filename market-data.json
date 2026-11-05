@@ -1,41 +1,41 @@
 {
-  "updatedAt": "04 Nov 2026, 04:55 PM IST",
-  "marketDate": "2026-11-04",
+  "updatedAt": "05 Nov 2026, 04:45 PM IST",
+  "marketDate": "2026-11-05",
   "source": "Yahoo Finance daily candles; may be delayed and is not an exchange-authorised live feed",
   "items": [
     {
-      "n": "77,301.40",
-      "l": "Sensex · close 04 Nov 2026",
-      "d": "+0.50%",
+      "n": "79,310.01",
+      "l": "Sensex · close 05 Nov 2026",
+      "d": "+2.60%",
       "dir": "up",
       "u": "https://www.google.com/search?q=Sensex%20latest%20close"
     },
     {
-      "n": "23,960.60",
-      "l": "Nifty 50 · close 04 Nov 2026",
-      "d": "+0.63%",
+      "n": "24,536.60",
+      "l": "Nifty 50 · close 05 Nov 2026",
+      "d": "+2.40%",
       "dir": "up",
       "u": "https://www.google.com/search?q=Nifty%2050%20latest%20close"
     },
     {
-      "n": "55,913.60",
-      "l": "Bank Nifty · close 04 Nov 2026",
-      "d": "+0.67%",
+      "n": "57,773.65",
+      "l": "Bank Nifty · close 05 Nov 2026",
+      "d": "+3.33%",
       "dir": "up",
       "u": "https://www.google.com/search?q=Bank%20Nifty%20latest%20close"
     },
     {
-      "n": "32,061.90",
-      "l": "Nifty IT · close 04 Nov 2026",
-      "d": "-1.50%",
-      "dir": "down",
+      "n": "32,837.85",
+      "l": "Nifty IT · close 05 Nov 2026",
+      "d": "+2.42%",
+      "dir": "up",
       "u": "https://www.google.com/search?q=Nifty%20IT%20latest%20close"
     },
     {
-      "n": "15.19",
-      "l": "India VIX · close 04 Nov 2026",
-      "d": "-3.39%",
-      "dir": "down",
+      "n": "15.58",
+      "l": "India VIX · close 05 Nov 2026",
+      "d": "+2.57%",
+      "dir": "up",
       "u": "https://www.google.com/search?q=India%20VIX%20latest%20close"
     }
   ],
