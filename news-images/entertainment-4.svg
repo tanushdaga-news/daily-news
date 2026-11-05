@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="506" viewBox="0 0 360 202">
 <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#47133f"/><stop offset="1" stop-color="#ed6bb9"/></linearGradient><radialGradient id="r"><stop stop-color="#ffd36e" stop-opacity=".45"/><stop offset="1" stop-color="#47133f" stop-opacity="0"/></radialGradient></defs>
-<rect width="360" height="202" fill="url(#g)"/><circle cx="248" cy="64" r="100" fill="url(#r)"/><circle cx="310" cy="25" r="55" fill="#ffd36e" opacity=".08"/><rect x="72" y="48" width="140" height="105" rx="10" fill="#ed6bb9"/><rect x="83" y="59" width="118" height="83" rx="5" fill="#47133f"/><path d="M125 77 L125 124 L166 100 Z" fill="#ffd36e"/><circle cx="270" cy="74" r="34" fill="#ffd36e" opacity=".8"/>
+<rect width="360" height="202" fill="url(#g)"/><circle cx="250" cy="64" r="100" fill="url(#r)"/><circle cx="310" cy="25" r="55" fill="#ffd36e" opacity=".08"/><rect x="72" y="48" width="140" height="105" rx="10" fill="#ed6bb9"/><rect x="83" y="59" width="118" height="83" rx="5" fill="#47133f"/><path d="M125 77 L125 124 L166 100 Z" fill="#ffd36e"/><circle cx="270" cy="74" r="34" fill="#ffd36e" opacity=".8"/>
 <path d="M0 166 Q100 145 180 170 T360 160 V202 H0Z" fill="#47133f" opacity=".68"/>
 <text x="20" y="184" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#ffd36e">THE 5IVE  /  ENTERTAINMENT</text>
-<text x="20" y="198" font-family="Arial,sans-serif" font-size="6.5" fill="#ffffff" opacity=".85">Entertainment Highlights Today: SRK Reacts To Salman's</text>
+<text x="20" y="198" font-family="Arial,sans-serif" font-size="6.5" fill="#ffffff" opacity=".85">‘Ram Naam Jan-Jan Tak Pahunche’: Ravi Dubey Thanks Aud</text>
 </svg>
