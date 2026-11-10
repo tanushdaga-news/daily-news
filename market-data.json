@@ -1,5 +1,5 @@
 {
-  "updatedAt": "09 Nov 2026, 04:39 PM IST",
+  "updatedAt": "10 Nov 2026, 04:32 PM IST",
   "marketDate": "2026-11-09",
   "source": "Yahoo Finance daily candles; may be delayed and is not an exchange-authorised live feed",
   "items": [
@@ -25,7 +25,7 @@
       "u": "https://www.google.com/search?q=Bank%20Nifty%20latest%20close"
     },
     {
-      "n": "32,468.90",
+      "n": "32,468.95",
       "l": "Nifty IT · close 09 Nov 2026",
       "d": "-1.54%",
       "dir": "down",
