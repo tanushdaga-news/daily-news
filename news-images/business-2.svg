@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="506" viewBox="0 0 360 202">
 <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#073b35"/><stop offset="1" stop-color="#14b88a"/></linearGradient><radialGradient id="r"><stop stop-color="#f3c969" stop-opacity=".45"/><stop offset="1" stop-color="#073b35" stop-opacity="0"/></radialGradient></defs>
-<rect width="360" height="202" fill="url(#g)"/><circle cx="247" cy="64" r="100" fill="url(#r)"/><circle cx="310" cy="25" r="55" fill="#f3c969" opacity=".08"/><path d="M45 145 L45 110 L90 110 L90 86 L135 86 L135 63 L180 63" fill="none" stroke="#f3c969" stroke-width="8" stroke-linecap="round"/><rect x="205" y="85" width="25" height="65" rx="4" fill="#14b88a"/><rect x="240" y="61" width="25" height="89" rx="4" fill="#f3c969"/><rect x="275" y="39" width="25" height="111" rx="4" fill="#14b88a"/>
+<rect width="360" height="202" fill="url(#g)"/><circle cx="236" cy="64" r="100" fill="url(#r)"/><circle cx="310" cy="25" r="55" fill="#f3c969" opacity=".08"/><path d="M45 145 L45 110 L90 110 L90 86 L135 86 L135 63 L180 63" fill="none" stroke="#f3c969" stroke-width="8" stroke-linecap="round"/><rect x="205" y="85" width="25" height="65" rx="4" fill="#14b88a"/><rect x="240" y="61" width="25" height="89" rx="4" fill="#f3c969"/><rect x="275" y="39" width="25" height="111" rx="4" fill="#14b88a"/>
 <path d="M0 166 Q100 145 180 170 T360 160 V202 H0Z" fill="#073b35" opacity=".68"/>
 <text x="20" y="184" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#f3c969">THE 5IVE  /  BUSINESS</text>
-<text x="20" y="198" font-family="Arial,sans-serif" font-size="6.5" fill="#ffffff" opacity=".85">What makes Singapore Asia’s economic powerhouse - Sing</text>
+<text x="20" y="198" font-family="Arial,sans-serif" font-size="6.5" fill="#ffffff" opacity=".85">Kalyan Jewellers hits 52-week high on 64% profit growt</text>
 </svg>
