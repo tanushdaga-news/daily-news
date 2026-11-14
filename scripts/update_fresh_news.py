@@ -278,7 +278,7 @@ def illustration_svg(story, category, index):
 </svg>'''
 
 def add_story_illustrations(categories):
-    """Write one distinct SVG file per story; no stock-photo reuse or external hotlinks."""
+    """Create a local editorial fallback while preserving publisher images when available."""
     os.makedirs("news-images", exist_ok=True)
     for category in categories:
         key = category.get("id", "global")
@@ -286,9 +286,15 @@ def add_story_illustrations(categories):
             filename = f"news-images/{key}-{index+1}.svg"
             with open(filename, "w", encoding="utf-8") as image_file:
                 image_file.write(illustration_svg(story, key, index))
-            story["image"] = filename
-            story["image_alt"] = "Original THE 5IVE illustration: " + story.get("title", "news story")
-            story["image_credit"] = "THE 5IVE original artwork"
+            story["fallback_image"] = filename
+            if not story.get("image"):
+                story["image"] = filename
+                story["image_alt"] = "Original THE 5IVE illustration: " + story.get("title", "news story")
+                story["image_credit"] = "THE 5IVE original artwork"
+            else:
+                story["image_alt"] = story.get("image_alt") or story.get("title", "News image")
+                story["image_credit"] = story.get("image_credit") or story.get("source") or "Source image"
+                story["image_source"] = story.get("image_source") or story.get("url", "")
 
 def main():
     now = datetime.now(timezone.utc)
@@ -319,9 +325,10 @@ def main():
         except Exception as exc:
             print(f"Feed failed for {label}: {exc}")
             edition["categories"].append({"id": key, "label": label, "stories": [], "error": "Feed temporarily unavailable"})
-    # Fetch each publisher's article image where available so cards do not all reuse
-    # a single category illustration. Keep the editorial illustration as a safe fallback.
+    # Prefer the image supplied by the feed, then a publisher Open Graph image.
+    # Keep a distinct local illustration for stories with missing or blocked images.
     all_stories = [story for category in edition["categories"] for story in category.get("stories", [])]
+    add_article_images(all_stories)
     add_story_illustrations(edition["categories"])
 
     with open("fresh-news.json", "w", encoding="utf-8") as f:
