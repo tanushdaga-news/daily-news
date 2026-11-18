@@ -1,41 +1,41 @@
 {
-  "updatedAt": "17 Nov 2026, 04:43 PM IST",
-  "marketDate": "2026-11-17",
+  "updatedAt": "18 Nov 2026, 04:45 PM IST",
+  "marketDate": "2026-11-18",
   "source": "Yahoo Finance daily candles; may be delayed and is not an exchange-authorised live feed",
   "items": [
     {
-      "n": "82,532.19",
-      "l": "Sensex · close 17 Nov 2026",
-      "d": "+0.52%",
-      "dir": "up",
+      "n": "82,031.81",
+      "l": "Sensex · close 18 Nov 2026",
+      "d": "-0.61%",
+      "dir": "down",
       "u": "https://www.google.com/search?q=Sensex%20latest%20close"
     },
     {
-      "n": "25,387.40",
-      "l": "Nifty 50 · close 17 Nov 2026",
-      "d": "+0.38%",
-      "dir": "up",
+      "n": "25,227.95",
+      "l": "Nifty 50 · close 18 Nov 2026",
+      "d": "-0.63%",
+      "dir": "down",
       "u": "https://www.google.com/search?q=Nifty%2050%20latest%20close"
     },
     {
-      "n": "62,273.25",
-      "l": "Bank Nifty · close 17 Nov 2026",
-      "d": "+1.13%",
-      "dir": "up",
+      "n": "62,038.65",
+      "l": "Bank Nifty · close 18 Nov 2026",
+      "d": "-0.38%",
+      "dir": "down",
       "u": "https://www.google.com/search?q=Bank%20Nifty%20latest%20close"
     },
     {
-      "n": "31,654.10",
-      "l": "Nifty IT · close 17 Nov 2026",
-      "d": "-0.90%",
+      "n": "31,262.30",
+      "l": "Nifty IT · close 18 Nov 2026",
+      "d": "-1.24%",
       "dir": "down",
       "u": "https://www.google.com/search?q=Nifty%20IT%20latest%20close"
     },
     {
       "n": "15.52",
-      "l": "India VIX · close 17 Nov 2026",
-      "d": "-1.02%",
-      "dir": "down",
+      "l": "India VIX · close 18 Nov 2026",
+      "d": "+0.00%",
+      "dir": "",
       "u": "https://www.google.com/search?q=India%20VIX%20latest%20close"
     }
   ],
