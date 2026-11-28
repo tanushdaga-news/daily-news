@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 5068)
+Total output lines: 353
+
 #!/usr/bin/env python3
 """Build a daily, no-API news edition from Google News RSS search feeds."""
 import json
@@ -13,11 +16,11 @@ from html import unescape
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 CATEGORIES = [
-    ("business", "Business", "business India economy companies markets"),
-    ("tech", "Technology", "technology AI startups gadgets India"),
-    ("global", "Global", "world news geopolitics international"),
-    ("sports", "Sports", "sports cricket football India"),
-    ("entertainment", "Entertainment", "entertainment films streaming celebrities India"),
+    ("india", "India", "India latest news government policy cities public affairs"),
+    ("world", "World", "world news geopolitics international diplomacy conflict"),
+    ("business", "Business", "India business economy companies markets finance"),
+    ("technology", "Technology", "technology AI startups science gadgets India"),
+    ("sports", "Sports & Cricket", "international cricket test match ODI T20 football sports"),
 ]
 HEADERS = {"User-Agent": "THE5IVE-NewsBot/1.0 (RSS reader; public GitHub Actions)"}
 
@@ -108,7 +111,10 @@ def download_commons_image(story, category, index):
     """Save a Commons thumbnail locally so the website does not depend on hotlinking."""
     query = (story.get("title") or "")[:140]
     fallback_queries = {
+        "india": "India government parliament Delhi news",
+        "world": "world globe international news",
         "business": "stock market trading finance business",
+        "technology": "technology artificial intelligence computer",
         "tech": "technology artificial intelligence computer",
         "global": "world globe international news",
         "sports": "cricket football sports",
@@ -160,7 +166,10 @@ def add_commons_images(categories):
             "image_alt": "",
         }
         queries = {
+            "india": "India parliament New Delhi skyline",
+            "world": "Earth globe world",
             "business": "stock market business finance",
+            "technology": "technology computer artificial intelligence",
             "tech": "technology computer artificial intelligence",
             "global": "Earth globe world",
             "sports": "cricket football sport",
@@ -205,12 +214,7 @@ def fetch_feed(query):
     for item in root.findall("./channel/item"):
         title = clean(item.findtext("title"))
         link = (item.findtext("link") or "").strip()
-        raw_desc = item.findtext("description") or ""
-        desc = clean(raw_desc)
-        image = image_from_description(raw_desc)
-        for media_tag in ("{http://search.yahoo.com/mrss/}content", "{http://search.yahoo.com/mrss/}thumbnail"):
-            media = item.find(media_tag)
-            if not image and media is not None:
+        raw_desc = item.findtext…68 tokens truncated…  if not image and media is not None:
                 image = safe_image_url(media.attrib.get("url", ""))
         source = clean(item.findtext("source")) or "Google News"
         pub = item.findtext("pubDate") or ""
@@ -238,7 +242,10 @@ def illustration_svg(story, category, index):
     title = story.get("title", "Latest news")
     low = title.lower()
     palettes = {
+        "india": ("#3b2412", "#f1a044", "#f3d27a"),
+        "world": ("#25205d", "#9b8cff", "#f5c76b"),
         "business": ("#073b35", "#14b88a", "#f3c969"),
+        "technology": ("#101b49", "#4b8cff", "#b7f3ff"),
         "tech": ("#101b49", "#4b8cff", "#b7f3ff"),
         "global": ("#25205d", "#9b8cff", "#f5c76b"),
         "sports": ("#4a250c", "#ff963d", "#f6e7b5"),
@@ -262,9 +269,9 @@ def illustration_svg(story, category, index):
             scene = f'<path d="M70 145 L120 68 L165 145 Z" fill="{accent}"/><path d="M190 145 L240 54 L290 145 Z" fill="{glow}" opacity=".8"/><circle cx="{x2}" cy="82" r="19" fill="{bg}" stroke="{glow}" stroke-width="5"/>'
     elif category == "business":
         scene = f'<path d="M45 145 L45 110 L90 110 L90 86 L135 86 L135 63 L180 63" fill="none" stroke="{glow}" stroke-width="8" stroke-linecap="round"/><rect x="205" y="85" width="25" height="65" rx="4" fill="{accent}"/><rect x="240" y="61" width="25" height="89" rx="4" fill="{glow}"/><rect x="275" y="39" width="25" height="111" rx="4" fill="{accent}"/>'
-    elif category == "tech":
+    elif category in ("tech", "technology"):
         scene = f'<rect x="78" y="42" width="142" height="112" rx="17" fill="{accent}" opacity=".22" stroke="{glow}" stroke-width="4"/><rect x="96" y="59" width="106" height="77" rx="9" fill="{bg}" stroke="{accent}" stroke-width="3"/><circle cx="{x1+80}" cy="96" r="9" fill="{glow}"/><path d="M{ x1+80 } 66 V126 M{ x1+50 } 96 H{ x1+110 }" stroke="{accent}" stroke-width="4"/><path d="M245 70 h45 M267 48 v45" stroke="{glow}" stroke-width="6" stroke-linecap="round"/>'
-    elif category == "global":
+    elif category in ("global", "world"):
         scene = f'<circle cx="150" cy="98" r="63" fill="{accent}" opacity=".24" stroke="{glow}" stroke-width="4"/><ellipse cx="150" cy="98" rx="28" ry="63" fill="none" stroke="{glow}" stroke-width="3"/><path d="M88 98 H212 M101 68 Q150 88 199 68 M101 128 Q150 108 199 128" fill="none" stroke="{glow}" stroke-width="3"/><path d="M245 140 L275 80 L305 140 Z" fill="{accent}"/>'
     else:
         scene = f'<rect x="72" y="48" width="140" height="105" rx="10" fill="{accent}"/><rect x="83" y="59" width="118" height="83" rx="5" fill="{bg}"/><path d="M125 77 L125 124 L166 100 Z" fill="{glow}"/><circle cx="270" cy="74" r="34" fill="{glow}" opacity=".8"/>'
@@ -341,3 +348,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
